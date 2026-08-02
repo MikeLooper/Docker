@@ -31,7 +31,7 @@ REM 10. Change to the Working directory:
 cd ..\Working
 
 REM 11. Copy the dockerfile to the publish directory (for SQL Server):
-copy /y "..\PilotApiDotNet\docker\Api\dockerfile_mssql" ".\dockerfile"
+copy /y "..\PilotApiDotNet\docker\Api_dotnet\dockerfile_mssql" ".\dockerfile"
 
 REM 12. Copy the appsettings file to the publish directory (for SQL Server):
 copy /y "..\PilotApiDotNet\docker\SqlServer\appsettings.Production.json" "."
@@ -45,7 +45,7 @@ REM 14. Create and start the container (for SQL Server):
 docker run -d -p 55551:8080 --network pilot-net -m 1g --name pilot-api-dotnet-mssql pilot-api-dotnet-mssql:1.0
 
 REM 15. Copy the dockerfile to the publish directory (for PostgreSQL):
-copy /y "..\PilotApiDotNet\docker\Api\dockerfile_postgres" ".\dockerfile"
+copy /y "..\PilotApiDotNet\docker\Api_dotnet\dockerfile_postgres" ".\dockerfile"
 
 REM 16. Copy the appsettings file to the publish directory (PostgreSQL):
 copy /y "..\PilotApiDotNet\docker\PostgreSQL\appsettings.Production.json" "."

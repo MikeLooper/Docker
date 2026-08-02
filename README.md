@@ -44,3 +44,21 @@ Follow the directions in the [API (DotNet) README](.\README-Api-dotnet.md).
 ## Pilot API (Java)
 
 Follow the directions in the [API (Java) README](.\README-Api-java.md).
+
+## Jaeger
+
+Natively supports OTLP to receive trace data.
+
+Follow the directions in the [Jaeger README](.\README-Jaeger.md).
+
+## Prometheus
+
+Send your metric data to Prometheus.
+
+Follow the directions in the [Prometheus README](.\README-Prometheus.md).
+
+## Zipkin
+
+A distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
+
+Follow the directions in the [Zipkin README](.\README-Zipkin.md).

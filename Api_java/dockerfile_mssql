@@ -1,0 +1,24 @@
+# Use the official Microsoft ASP.NET Core runtime base image
+FROM eclipse-temurin:25-jre-alpine
+WORKDIR /app
+
+# Declare the arguments
+ARG DEPLOY_DATE
+ARG DB_URL
+ARG DB_PASSWORD
+ARG SERVER_PORT
+
+# Map it to an environment variable so it persists in the image
+ENV DEPLOY_DATE=$DEPLOY_DATE
+ENV DB_URL=$DB_URL
+ENV DB_PASSWORD=$DB_PASSWORD
+ENV SERVER_PORT=$SERVER_PORT
+
+# Copy all the pre-published files from the local directory into the container
+COPY . .
+
+# Expose a custom container port, since the standard .NET is likely used by other apps
+EXPOSE 56661
+
+# Configure the container to execute your Web API DLL on startup
+ENTRYPOINT ["java", "-jar", "pilot-api.jar"]
