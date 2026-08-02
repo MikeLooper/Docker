@@ -73,7 +73,7 @@ Run the standard command from your application's root directory:
 11. Copy the dockerfile to the publish directory (for SQL Server):
 
   ```
-  copy /y "..\PilotApiDotNet\docker\Api\dockerfile_mssql" ".\dockerfile"
+  copy /y "..\PilotApiDotNet\docker\Api_dotnet\dockerfile_mssql" ".\dockerfile"
   ```
 
 12. Copy the appsettings file to the publish directory (for SQL Server):
@@ -82,15 +82,20 @@ Run the standard command from your application's root directory:
   copy /y "..\PilotApiDotNet\docker\SqlServer\appsettings.Production.json" "."
   ```
 
-13. Build the docker image (for SQL Server):
-	
+13. Build the current date variable:
+
   ```
   FOR /F "usebackq tokens=*" %i IN (`powershell -NoProfile -Command "Get-Date -Format u"`) DO SET "CURRENT_DATE=%i"
   ECHO Current Date=%CURRENT_DATE%
+  ```
+
+14. Build the docker image (for SQL Server):
+	
+  ```
   docker build --build-arg DEPLOY_DATE="%CURRENT_DATE%" -t pilot-api-dotnet-mssql:1.0 .
   ```
 
-14. Create and start the container (for SQL Server):
+15. Create and start the container (for SQL Server):
 
   ```
   docker run -d -p 55551:8080 \
@@ -99,27 +104,25 @@ Run the standard command from your application's root directory:
   --name pilot-api-dotnet-mssql pilot-api-dotnet-mssql:1.0
   ```
 
-15. Copy the dockerfile to the publish directory (for PostgreSQL):
+16. Copy the dockerfile to the publish directory (for PostgreSQL):
 
   ```
-  copy /y "..\PilotApiDotNet\docker\Api\dockerfile_postgres" ".\dockerfile"
+  copy /y "..\PilotApiDotNet\docker\Api_dotnet\dockerfile_postgres" ".\dockerfile"
   ```
 
-16. Copy the appsettings file to the publish directory (PostgreSQL):
+17. Copy the appsettings file to the publish directory (PostgreSQL):
 
   ```
   copy /y "..\PilotApiDotNet\docker\PostgreSQL\appsettings.Production.json" "."
   ```
 
-17. build the docker image (for PostgreSQL):
+18. build the docker image (for PostgreSQL):
 	
   ```
-  FOR /F "usebackq tokens=*" %i IN (`powershell -NoProfile -Command "Get-Date -Format u"`) DO SET "CURRENT_DATE=%i"
-  ECHO Current Date=%CURRENT_DATE%
   docker build --build-arg DEPLOY_DATE="%CURRENT_DATE%" -t pilot-api-dotnet-postgres:1.0 .
   ```
 
-18. Create and start the container (for PostgreSQL):
+19. Create and start the container (for PostgreSQL):
 
   ```
   docker run -d -p 55552:8080 \
@@ -128,19 +131,19 @@ Run the standard command from your application's root directory:
   --name pilot-api-dotnet-postgres pilot-api-dotnet-postgres:1.0
   ```
 
-19. Clean up prior working files (optional):
+20. Clean up prior working files (optional):
 
   ```
   erase /S /Q .\* > nul
   ```
 
-20. Launch the healthcheck to validate the deploy  (for SQL Server)
+21. Launch the healthcheck to validate the deploy  (for SQL Server)
 
   ```
   start http://localhost:55551/healthcheck
   ```
 
-21. Launch the healthcheck to validate the deploy  (for PostgreSQL)
+22. Launch the healthcheck to validate the deploy  (for PostgreSQL)
 
   ```
   start http://localhost:55552/healthcheck
