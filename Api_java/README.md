@@ -4,7 +4,7 @@ Build and run both Java API containers (SQL Server and PostgreSQL variants) usin
 
 ## Preparation
 
-Previous setup noted in the [Main README](.\README.md) should have already been accomplished.
+Previous setup noted in the [Main README](../README.md) should have already been accomplished.
 
 Change to the current directory.
   
