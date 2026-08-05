@@ -1,0 +1,25 @@
+services:
+  local-mssql:
+    container_name: local-mssql
+    hostname: local-mssql
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    ports:
+      - "1433:1433"
+    mem_limit: 2g
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+      MSSQL_AGENT_ENABLED: "true"
+    volumes:
+      - mssql_data:/var/opt/mssql
+      - ${WORKING_DIR}:/local_working
+    networks:
+      - pilot-net
+
+volumes:
+  mssql_data:
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

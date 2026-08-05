@@ -1,0 +1,42 @@
+services:
+  pilot-api-java-mssql:
+    container_name: pilot-api-java-mssql
+    image: pilot-api-java-mssql:1.0
+    build:
+      context: ${WORKING_DIR}/api-java-mssql
+      dockerfile: ../../Docker/Api_java/dockerfile_mssql
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE}
+    environment:
+      DB_URL: jdbc:sqlserver://local-mssql:1433;databaseName=NorthWind;encrypt=true;trustServerCertificate=true;connectTimeout=30
+      DB_PASSWORD: ${MSSQL_DB_PASSWORD}
+      SERVER_PORT: "${JAVA_MSSQL_PORT:-56601}"
+    ports:
+      - "${JAVA_MSSQL_PORT:-56601}:${JAVA_MSSQL_PORT:-56601}"
+    mem_limit: 1g
+    networks:
+      - pilot-net
+
+  pilot-api-java-postgres:
+    container_name: pilot-api-java-postgres
+    image: pilot-api-java-postgres:1.0
+    build:
+      context: ${WORKING_DIR}/api-java-postgres
+      dockerfile: ../../Docker/Api_java/dockerfile_postgres
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE}
+    environment:
+      DB_URL: jdbc:postgresql://local-postgres:5432/northwind
+      DB_PASSWORD: ${POSTGRES_DB_PASSWORD}
+      SERVER_PORT: "${JAVA_POSTGRES_PORT:-56701}"
+      SPRING_PROFILES_ACTIVE: postgresql
+    ports:
+      - "${JAVA_POSTGRES_PORT:-56701}:${JAVA_POSTGRES_PORT:-56701}"
+    mem_limit: 1g
+    networks:
+      - pilot-net
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net
