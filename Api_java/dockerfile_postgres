@@ -21,7 +21,7 @@ ENV SPRING_PROFILES_ACTIVE=postgresql
 COPY . .
 
 # Expose a custom container port, since the standard .NET is likely used by other apps
-EXPOSE 56662
+EXPOSE $SERVER_PORT
 
 # Configure the container to execute your Web API DLL on startup
 ENTRYPOINT ["java", "-jar", "pilot-api.jar"]

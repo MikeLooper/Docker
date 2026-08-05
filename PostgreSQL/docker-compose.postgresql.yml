@@ -1,0 +1,24 @@
+services:
+  local_postgres:
+    container_name: local_postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    mem_limit: 512m
+    environment:
+      POSTGRES_USER: DevUser
+      POSTGRES_PASSWORD: ${DEV_USER_PASSWORD}
+      POSTGRES_DB: devDb
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ${WORKING_DIR}:/local_working
+    networks:
+      - pilot-net
+
+volumes:
+  postgres_data:
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

@@ -4,15 +4,17 @@ WORKDIR /app
 
 # Declare the build-time argument
 ARG DEPLOY_DATE
+ARG APP_PORT
 
 # Map it to an environment variable so it persists in the image
 ENV DEPLOY_DATE=$DEPLOY_DATE
+ENV APP_PORT=$APP_PORT
 
 # Copy all the pre-published files from the local directory into the container
 COPY . .
 
 # Expose a custom container port, since the standard .NET is likely used by other apps
-EXPOSE 55552
+EXPOSE $APP_PORT
 
 # Configure the container to execute your Web API DLL on startup
 ENTRYPOINT ["dotnet", "PilotApi.Web.dll"]
