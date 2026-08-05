@@ -4,7 +4,7 @@ Install and set up PostgreSQL on Docker using Docker Compose.
 
 ## Preparation
 
-Previous setup noted in the [Main README](.\README.md) should have already been accomplished.
+Previous setup noted in the [Main README](../README.md) should have already been accomplished.
 
 Change to the current directory.
   

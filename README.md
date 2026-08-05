@@ -45,6 +45,8 @@ Then, execute the networking command listed in the *Network* section below.
 - `PostgreSQL\Docker-PostgreSQL-builder.bat`
 - `Api_dotnet\Docker-Api-dotnet-builder.bat`
 - `Api_java\Docker-Api-java-builder.bat`
+- `Dozzle\Docker-Dozzle-builder.bat`
+- `UptimeKuma\Docker-UptimeKuma-builder.bat`
 
 Each script is the primary entry point for its stack and is kept aligned with its corresponding README.
 
@@ -68,58 +70,68 @@ Create an internal network that will be shared by the different containers that 
 docker network inspect pilot-net >nul 2>&1 || docker network create pilot-net
 ```
 
-## SQL Server
+## Active Subjects
+
+### SQL Server
 
 A Microsoft SQL Server database installation.
 
-Follow the directions in the [SQL Server README](.\SqlServer\README-SqlServer.md)
+Follow the directions in the [SQL Server README](./SqlServer/README.md)
 
-## PostgreSQL
+### PostgreSQL
 
 A PostgreSQL database installation.
 
-Follow the directions in the [PostgreSQL README](.\PostgreSQL\README-PostgreSQL.md).
+Follow the directions in the [PostgreSQL README](./PostgreSQL/README.md).
 
-## Pilot API (DotNet)
+### Pilot API (DotNet)
 
 A .NET Core API that presents data from the Northwind database (MS SQL Server or PostgreSQL)
 
-Follow the directions in the [API (DotNet) README](.\Api_dotnet\README-Api-dotnet.md).
+Follow the directions in the [API (DotNet) README](./Api_dotnet/README.md).
 
-## Pilot API (Java)
+### Pilot API (Java)
 
 A Java Spring Boot API that presents data from the Northwind database (MS SQL Server or PostgreSQL)
 
-Follow the directions in the [API (Java) README](.\Api_java\README-Api-java.md).
+Follow the directions in the [API (Java) README](./Api_java/README.md).
 
-## Dozzle
+### Dozzle
 
 A real time Docker log viewer or partition logs.
 
-Follow the directions in the [Dozzle README](.\Dozzle\README-Dozzle.md).
+Follow the directions in the [Dozzle README](./Dozzle/README.md).
 
-## Uptime Kuma
+### Uptime Kuma
 
 Simple up or down checks and status pages for monitoring Docker partitions/applications, and other sources.
 
-Follow the directions in the [Uptime Kuma README](.\UptimeKuma\README-UptimeKuma.md).
+Follow the directions in the [Uptime Kuma README](./UptimeKuma/README.md).
 
-## Jaeger ‡
+## Future Subjects
+
+### Jaeger ‡
 
 Natively supports OTLP to receive trace data.
 
-Follow the directions in the [Jaeger README](.\README-Jaeger.md).
+Follow the directions in the [Jaeger README](./Future/README-Jaeger.md).
 
-## Prometheus ‡
+### Prometheus ‡
 
 Send your metric data to Prometheus.
 
-Follow the directions in the [Prometheus README](.\README-Prometheus.md).
+Follow the directions in the [Prometheus README](./Future/README-Prometheus.md).
 
-## Zipkin ‡
+### Zipkin ‡
 
 A distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
 
-Follow the directions in the [Zipkin README](.\README-Zipkin.md).
+Follow the directions in the [Zipkin README](./Future/README-Zipkin.md).
+
+### Redis ‡
+
+Redis provides solutions for caching
+
+Follow the directions in the [Redis README](./Future/README-Redis.md).
 
 ‡ = Future addition
