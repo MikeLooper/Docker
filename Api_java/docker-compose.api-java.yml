@@ -8,7 +8,7 @@ services:
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
     environment:
-      DB_URL: jdbc:sqlserver://local_mssql:1433;databaseName=NorthWind;encrypt=true;trustServerCertificate=true;connectTimeout=30
+      DB_URL: jdbc:sqlserver://local-mssql:1433;databaseName=NorthWind;encrypt=true;trustServerCertificate=true;connectTimeout=30
       DB_PASSWORD: ${MSSQL_DB_PASSWORD}
       SERVER_PORT: "${JAVA_MSSQL_PORT:-56601}"
     ports:
@@ -26,7 +26,7 @@ services:
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
     environment:
-      DB_URL: jdbc:postgresql://local_postgres:5432/northwind
+      DB_URL: jdbc:postgresql://local-postgres:5432/northwind
       DB_PASSWORD: ${POSTGRES_DB_PASSWORD}
       SERVER_PORT: "${JAVA_POSTGRES_PORT:-56701}"
       SPRING_PROFILES_ACTIVE: postgresql

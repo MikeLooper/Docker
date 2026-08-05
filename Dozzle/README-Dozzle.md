@@ -4,7 +4,7 @@
 
 ```
 docker run -d \
---name local_dozzle \
+--name local-dozzle \
 -m 512m \
 -p 50101:8080 \
 -v /var/run/docker.sock:/var/run/docker.sock \

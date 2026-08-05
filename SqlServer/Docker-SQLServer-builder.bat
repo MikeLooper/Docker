@@ -38,34 +38,34 @@ REM 2. Stop any prior compose services for this stack.
 docker compose -f "%COMPOSE_FILE%" down --remove-orphans
 
 REM 3. Start SQL Server with Compose.
-docker compose -f "%COMPOSE_FILE%" -p local_mssql up -d --force-recreate
+docker compose -f "%COMPOSE_FILE%" -p local-mssql up -d --force-recreate
 if errorlevel 1 (
 	echo docker compose up failed.
 	exit /b 1
 )
 
 REM 4. Validate SA password.
-docker exec local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "%SA_PASSWORD%" -C -Q "SELECT 1;"
+docker exec local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "%SA_PASSWORD%" -C -Q "SELECT 1;"
 if errorlevel 1 (
 	echo SA login validation failed. Check SA_PASSWORD complexity and value.
 	exit /b 1
 )
 
 REM 5. Create/maintain DevUser and disable sa.
-docker exec local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "%SA_PASSWORD%" -C -Q "IF NOT EXISTS (SELECT 1 FROM sys.server_principals WHERE name = 'DevUser') BEGIN CREATE LOGIN [DevUser] WITH PASSWORD = N'%DEV_USER_PASSWORD%'; END; IF IS_SRVROLEMEMBER('sysadmin','DevUser') = 0 BEGIN ALTER SERVER ROLE [sysadmin] ADD MEMBER [DevUser]; END;"
-docker exec local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -C -Q "ALTER LOGIN [sa] DISABLE;"
+docker exec local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "%SA_PASSWORD%" -C -Q "IF NOT EXISTS (SELECT 1 FROM sys.server_principals WHERE name = 'DevUser') BEGIN CREATE LOGIN [DevUser] WITH PASSWORD = N'%DEV_USER_PASSWORD%'; END; IF IS_SRVROLEMEMBER('sysadmin','DevUser') = 0 BEGIN ALTER SERVER ROLE [sysadmin] ADD MEMBER [DevUser]; END;"
+docker exec local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -C -Q "ALTER LOGIN [sa] DISABLE;"
 
 REM 6. Recreate NorthWind database.
-docker exec local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -C -Q "IF DB_ID('NorthWind') IS NOT NULL BEGIN ALTER DATABASE [NorthWind] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE [NorthWind]; END; CREATE DATABASE [NorthWind];"
+docker exec local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -C -Q "IF DB_ID('NorthWind') IS NOT NULL BEGIN ALTER DATABASE [NorthWind] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE [NorthWind]; END; CREATE DATABASE [NorthWind];"
 
 REM 7. Load NorthWind schema/data.
-docker exec -i local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C < "%~dp0Northwind.sql"
+docker exec -i local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C < "%~dp0Northwind.sql"
 
 REM 8. Validate table load.
-docker exec local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C -Q "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';"
+docker exec local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C -Q "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';"
 
 REM 9. Load custom objects.
-docker exec -i local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C < "%~dp0customobjects.sql"
+docker exec -i local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C < "%~dp0customobjects.sql"
 
 popd
 

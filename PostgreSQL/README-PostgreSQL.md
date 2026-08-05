@@ -67,11 +67,11 @@ set "IMAGE_FILE=postgres:latest"
 set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "DEV_USER_PASSWORD=replace-me"
 docker pull "%IMAGE_FILE%"
-docker compose -f docker-compose.postgresql.yml -p local_postgres up -d --force-recreate
-docker exec local_postgres psql -U DevUser -d postgres -c "DROP DATABASE IF EXISTS northwind;"
-docker exec local_postgres psql -U DevUser -d postgres -c "CREATE DATABASE northwind;"
-docker exec -i local_postgres psql -U DevUser -d northwind < northwind.sql
-docker exec -i local_postgres psql -U DevUser -d northwind < customobjects.sql
+docker compose -f docker-compose.postgresql.yml -p local-postgres up -d --force-recreate
+docker exec local-postgres psql -U DevUser -d postgres -c "DROP DATABASE IF EXISTS northwind;"
+docker exec local-postgres psql -U DevUser -d postgres -c "CREATE DATABASE northwind;"
+docker exec -i local-postgres psql -U DevUser -d northwind < northwind.sql
+docker exec -i local-postgres psql -U DevUser -d northwind < customobjects.sql
 ```
 
 ## Connection Info
@@ -84,7 +84,7 @@ docker exec -i local_postgres psql -U DevUser -d northwind < customobjects.sql
 
 ## Additional Notes
 
-- The compose service is named `local_postgres` to preserve existing references from API configs.
+- The compose service is named `local-postgres` to preserve existing references from API configs.
 - Data is persisted in named volume `postgres_data`.
 - Re-running the script intentionally reloads database objects for a deterministic local state.
 - Script loads secrets from `..\secrets\postgresql.env` and stops with a clear error when the file is missing or placeholders are unchanged.
@@ -106,7 +106,7 @@ docker compose -f docker-compose.postgresql.yml down
 3. List databases:
 
 ```
-docker exec local_postgres psql -U DevUser -d devDb -l
+docker exec local-postgres psql -U DevUser -d devDb -l
 ```
 
 ## Troubleshooting

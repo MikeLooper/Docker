@@ -71,10 +71,10 @@ set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "SA_PASSWORD=replace-me"
 set "DEV_USER_PASSWORD=replace-me"
 docker pull "%IMAGE_FILE%"
-docker compose -f docker-compose.sqlserver.yml -p local_mssql up -d --force-recreate
-docker exec local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "%SA_PASSWORD%" -C -Q "SELECT 1;"
-docker exec -i local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C < Northwind.sql
-docker exec -i local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C < customobjects.sql
+docker compose -f docker-compose.sqlserver.yml -p local-mssql up -d --force-recreate
+docker exec local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "%SA_PASSWORD%" -C -Q "SELECT 1;"
+docker exec -i local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C < Northwind.sql
+docker exec -i local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "%DEV_USER_PASSWORD%" -d NorthWind -C < customobjects.sql
 ```
 
 ## SQL Server Password Requirements
@@ -85,7 +85,7 @@ docker exec -i local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser
 
 ## Additional Notes
 
-- The compose service is named `local_mssql` to preserve compatibility with API connection strings.
+- The compose service is named `local-mssql` to preserve compatibility with API connection strings.
 - Data is persisted in named volume `mssql_data`.
 - Script is intentionally idempotent for local rebuilds: it recreates the `NorthWind` database each run.
 - Script loads secrets from `..\secrets\sqlserver.env` and stops with a clear error when the file is missing or placeholders are unchanged.
@@ -107,7 +107,7 @@ docker compose -f docker-compose.sqlserver.yml down
 3. List all databases:
 
 ```
-docker exec local_mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "<dev-user-password>" -C -Q "SELECT name FROM sys.databases;"
+docker exec local-mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U DevUser -P "<dev-user-password>" -C -Q "SELECT name FROM sys.databases;"
 ```
 
 ## Troubleshooting

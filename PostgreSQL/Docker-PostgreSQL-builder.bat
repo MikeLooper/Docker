@@ -30,24 +30,24 @@ REM 2. Stop any prior compose services for this stack.
 docker compose -f "%COMPOSE_FILE%" down --remove-orphans
 
 REM 3. Start the PostgreSQL container with Compose.
-docker compose -f "%COMPOSE_FILE%" -p local_postgres up -d --force-recreate
+docker compose -f "%COMPOSE_FILE%" -p local-postgres up -d --force-recreate
 if errorlevel 1 (
 	echo docker compose up failed.
 	exit /b 1
 )
 
 REM 4. Recreate the Northwind database.
-docker exec local_postgres psql -U DevUser -d postgres -c "DROP DATABASE IF EXISTS northwind;"
-docker exec local_postgres psql -U DevUser -d postgres -c "CREATE DATABASE northwind;"
+docker exec local-postgres psql -U DevUser -d postgres -c "DROP DATABASE IF EXISTS northwind;"
+docker exec local-postgres psql -U DevUser -d postgres -c "CREATE DATABASE northwind;"
 
 REM 5. Load Northwind schema/data.
-docker exec -i local_postgres psql -U DevUser -d northwind < "%~dp0northwind.sql"
+docker exec -i local-postgres psql -U DevUser -d northwind < "%~dp0northwind.sql"
 
 REM 6. Validate table load.
-docker exec local_postgres psql -U DevUser -d northwind -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'pilot' AND table_type = 'BASE TABLE';"
+docker exec local-postgres psql -U DevUser -d northwind -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'pilot' AND table_type = 'BASE TABLE';"
 
 REM 7. Load custom objects.
-docker exec -i local_postgres psql -U DevUser -d northwind < "%~dp0customobjects.sql"
+docker exec -i local-postgres psql -U DevUser -d northwind < "%~dp0customobjects.sql"
 
 popd
 

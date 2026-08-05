@@ -1,7 +1,7 @@
 services:
-  local_mssql:
-    container_name: local_mssql
-    hostname: local_mssql
+  local-mssql:
+    container_name: local-mssql
+    hostname: local-mssql
     image: mcr.microsoft.com/mssql/server:2025-latest
     ports:
       - "1433:1433"

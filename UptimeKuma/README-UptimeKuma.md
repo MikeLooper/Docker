@@ -6,7 +6,7 @@
 docker run -d \
 -p 3001:3001 \
 -m 512m \
---name local_uptimekuma \
+--name local-uptimekuma \
 --restart=always \
 -v uptime-kuma:/app/data \
 -v /var/run/docker.sock:/var/run/docker.sock \
