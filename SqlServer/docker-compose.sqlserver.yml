@@ -12,7 +12,6 @@ services:
       MSSQL_AGENT_ENABLED: "true"
     volumes:
       - mssql_data:/var/opt/mssql
-      - ${WORKING_DIR}:/local_working
     networks:
       - pilot-net
 

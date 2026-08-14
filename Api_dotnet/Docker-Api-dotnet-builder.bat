@@ -14,9 +14,9 @@ set "DOTNET_MSSQL_PORT=55501"
 set "DOTNET_POSTGRES_PORT=55601"
 
 REM Resolve host ports so Windows reserved/in-use ports do not break compose startup.
-call :resolve_open_port 55101 DOTNET_MSSQL_PORT
+call :resolve_open_port %DOTNET_MSSQL_PORT% DOTNET_MSSQL_PORT
 if errorlevel 1 exit /b 1
-call :resolve_open_port 55201 DOTNET_POSTGRES_PORT
+call :resolve_open_port %DOTNET_POSTGRES_PORT% DOTNET_POSTGRES_PORT
 if errorlevel 1 exit /b 1
 
 REM 1. Download the .NET image:
@@ -30,9 +30,8 @@ REM 3. Stop any prior compose services for this stack.
 docker compose -f "%COMPOSE_FILE%" down --remove-orphans
 
 REM 4. Prepare isolated build contexts.
-if exist "%WORKING_DIR_WIN%\api-dotnet-publish" rmdir /S /Q "%WORKING_DIR_WIN%\api-dotnet-publish"
-if exist "%WORKING_DIR_WIN%\api-dotnet-mssql" rmdir /S /Q "%WORKING_DIR_WIN%\api-dotnet-mssql"
-if exist "%WORKING_DIR_WIN%\api-dotnet-postgres" rmdir /S /Q "%WORKING_DIR_WIN%\api-dotnet-postgres"
+if exist "%WORKING_DIR_WIN%" rmdir /S /Q "%WORKING_DIR_WIN%"
+mkdir "%WORKING_DIR_WIN%"
 
 mkdir "%WORKING_DIR_WIN%\api-dotnet-publish"
 mkdir "%WORKING_DIR_WIN%\api-dotnet-mssql"

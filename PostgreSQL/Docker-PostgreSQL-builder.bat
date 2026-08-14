@@ -6,7 +6,6 @@ REM Docker - Setup - PostgreSQL - Compose-first
 pushd "%~dp0"
 
 set "IMAGE_FILE=postgres:latest"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "COMPOSE_FILE=%~dp0docker-compose.postgresql.yml"
 set "SECRETS_FILE=%~dp0..\secrets\postgresql.env"
 
@@ -48,6 +47,9 @@ docker exec local-postgres psql -U DevUser -d northwind -c "SELECT table_name FR
 
 REM 7. Load custom objects.
 docker exec -i local-postgres psql -U DevUser -d northwind < "%~dp0customobjects.sql"
+
+REM 8. Reset primary keys.
+docker exec -i local-postgres psql -U DevUser -d northwind < "%~dp0reset-primary-keys.sql"
 
 popd
 

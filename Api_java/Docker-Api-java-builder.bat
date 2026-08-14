@@ -41,20 +41,24 @@ if /I "%POSTGRES_DB_PASSWORD%"=="<postgres-dev-user-password>" (
 	exit /b 1
 )
 
-REM 1. Download the Java image:
+REM 1. Build arg used for deployment metadata.
+FOR /F "usebackq tokens=*" %%i IN (`powershell -NoProfile -Command "Get-Date -Format u"`) DO SET "CURRENT_DATE=%%i"
+ECHO Current Date=%CURRENT_DATE%
+
+REM 2. Download the Java image:
 docker pull "%IMAGE_FILE%"
 
-REM 1. Stop any prior compose services for this stack.
+REM 3. Stop any prior compose services for this stack.
 docker compose -f "%COMPOSE_FILE%" down --remove-orphans
 
-REM 2. Prepare isolated build contexts.
-if exist "%WORKING_DIR_WIN%\api-java-mssql" rmdir /S /Q "%WORKING_DIR_WIN%\api-java-mssql"
-if exist "%WORKING_DIR_WIN%\api-java-postgres" rmdir /S /Q "%WORKING_DIR_WIN%\api-java-postgres"
+REM 4. Prepare isolated build contexts.
+if exist "%WORKING_DIR_WIN%" rmdir /S /Q "%WORKING_DIR_WIN%"
+mkdir "%WORKING_DIR_WIN%"
 
 mkdir "%WORKING_DIR_WIN%\api-java-mssql"
 mkdir "%WORKING_DIR_WIN%\api-java-postgres"
 
-REM 3. Build the application jar when it does not already exist.
+REM 5. Build the application jar when it does not already exist.
 if not exist "%PILOT_JAVA_DIR%\pom.xml" (
 	echo PilotApiJava project path not found: "%PILOT_JAVA_DIR%"
 	echo Update PILOT_JAVA_DIR in this script to your local PilotApiJava repository path.
@@ -94,11 +98,7 @@ if errorlevel 1 (
 )
 popd
 
-REM 4. Build arg used only for deployment metadata.
-FOR /F "usebackq tokens=*" %%i IN (`powershell -NoProfile -Command "Get-Date -Format u"`) DO SET "CURRENT_DATE=%%i"
-ECHO Current Date=%CURRENT_DATE%
-
-REM 5. Build and start both API containers with Compose.
+REM 6. Build and start both API containers with Compose.
 docker compose -f "%COMPOSE_FILE%" -p pilot-api-java up -d --build --force-recreate
 if errorlevel 1 (
 	echo docker compose up failed.
@@ -107,7 +107,7 @@ if errorlevel 1 (
 
 popd
 
-REM 6. Launch health checks.
+REM 7. Launch health checks.
 start http://localhost:%JAVA_MSSQL_PORT%/healthcheck
 start http://localhost:%JAVA_POSTGRES_PORT%/healthcheck
 

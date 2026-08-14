@@ -11,6 +11,7 @@ services:
       DB_URL: jdbc:sqlserver://local-mssql:1433;databaseName=NorthWind;encrypt=true;trustServerCertificate=true;connectTimeout=30
       DB_PASSWORD: ${MSSQL_DB_PASSWORD}
       SERVER_PORT: "${JAVA_MSSQL_PORT:-56601}"
+      SPRING_PROFILES_ACTIVE: prod-sqlserver
     ports:
       - "${JAVA_MSSQL_PORT:-56601}:${JAVA_MSSQL_PORT:-56601}"
     mem_limit: 1g
@@ -29,7 +30,7 @@ services:
       DB_URL: jdbc:postgresql://local-postgres:5432/northwind
       DB_PASSWORD: ${POSTGRES_DB_PASSWORD}
       SERVER_PORT: "${JAVA_POSTGRES_PORT:-56701}"
-      SPRING_PROFILES_ACTIVE: postgresql
+      SPRING_PROFILES_ACTIVE: prod-postgres
     ports:
       - "${JAVA_POSTGRES_PORT:-56701}:${JAVA_POSTGRES_PORT:-56701}"
     mem_limit: 1g
