@@ -110,28 +110,54 @@ Follow the directions in the [Uptime Kuma README](./UptimeKuma/README.md).
 
 ## Future Subjects
 
-### Jaeger ‡
+### Jaeger
 
 Natively supports OTLP to receive trace data.
 
 Follow the directions in the [Jaeger README](./Future/README-Jaeger.md).
 
-### Prometheus ‡
+### Prometheus
 
 Send your metric data to Prometheus.
 
 Follow the directions in the [Prometheus README](./Future/README-Prometheus.md).
 
-### Zipkin ‡
+### Zipkin
 
 A distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
 
 Follow the directions in the [Zipkin README](./Future/README-Zipkin.md).
 
-### Redis ‡
+### Redis
 
 Redis provides solutions for caching
 
 Follow the directions in the [Redis README](./Future/README-Redis.md).
 
-‡ = Future addition
+## Docker Containers and Ports
+
+| Status: | Type:                   | Name:                       | Inner Port: | Outer Port: |
+| ------- | ----------------------- | --------------------------- | ----------- | ----------- |
+|         | SQL Server              | local-mssql                 | 1433        | 1433        |
+|         | PostgreSQL              | local-postgres              | 5432        | 5432        |
+|         | ApiDotNet (SQL Server)  | pilot-api-dotnet-mssql      | 8080        | 55501       |
+|         | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 55601       |
+|         | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 56601       |
+|         | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 56701       |
+| TBD     | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 58501       |
+| TBD     | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 58601       |
+| TBD     | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8080        | 57601       |
+| TBD     | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8080        | 57701       |
+| TBD     | Angular UI              | pilot-ui                    | ???         | ???         |
+| TBD     | Jaeger                  | local-jaeger                | 4317        | 4317        |
+| TBD     | Prometheus              | local-prometheus            | 9464        | 9464        |
+| TBD     | Zipkin                  | local-zipkin                | 9411        | 9411        |
+| TBD     | Grafana                 | local-grafana               | 3000        | 3000        |
+|         | Dozzle                  | local-dozzle                | 8080        | 51101       |
+| TBD     | Komodo                  | local-komodo                | 9120        | 9120        |
+|         | Uptime Kuma             | local-uptimekuma            | 3001        | 3001        |
+| TBD     | Homer                   | local-homer                 | 8080        | 51201       |
+| TBD     | Bitwarden               | local-bitwarden             | ???         | ???         |
+| TBD     | Duplicati               | local-duplicati             | 8200        | 8200        |
+| TBD     | Keycloak                | local-keycloak              | ???         | ???         |
+| TBD     | GO Feature Flag         | local-gofeatureflag         | ???         | ???         |
