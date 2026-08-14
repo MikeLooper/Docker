@@ -6,7 +6,6 @@ REM Docker - Setup - SQL Server - Compose-first
 pushd "%~dp0"
 
 set "IMAGE_FILE=mcr.microsoft.com/mssql/server:2025-latest"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "COMPOSE_FILE=%~dp0docker-compose.sqlserver.yml"
 set "SECRETS_FILE=%~dp0..\secrets\sqlserver.env"
 

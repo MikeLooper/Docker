@@ -6,7 +6,7 @@
 docker run -d \
 --name local-dozzle \
 -m 512m \
--p 50101:8080 \
+-p 51101:8080 \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v dozzle_data:/data \
 amir20/dozzle:latest

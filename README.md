@@ -27,7 +27,7 @@ cd C:\Working\Storage\Dev\GitHub\Docker
 Create a new working directory (if not already existing):
 
 ```
-mkdir C:\Working\Storage\Dev\GitHub\Working
+if not exist C:\Working\Storage\Dev\GitHub\Working mkdir C:\Working\Storage\Dev\GitHub\Working
 ```
 
 Then, execute the networking command listed in the *Network* section below.
