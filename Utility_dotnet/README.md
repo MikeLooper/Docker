@@ -33,12 +33,12 @@ C:\Working\Storage\Dev\GitHub\PilotApiDotNet
 Use:
 
 ```
-Docker-Api-dotnet-builder.bat
+Docker-utility-dotnet-builder.bat
 ```
 
 This script uses:
 
-- `docker-compose.api-dotnet.yml` for build/run
+- `docker-compose.utility-dotnet.yml` for build/run
 - Docker CLI only where needed (`dotnet publish`, shared network check)
 
 ## What The Script Does
@@ -46,16 +46,16 @@ This script uses:
 1. Stops prior stack with `docker compose down`.
 2. Publishes .NET API for Linux.
 3. Creates isolated build contexts under:
-   - `C:\Working\Storage\Dev\GitHub\Working\api-dotnet-mssql`
-   - `C:\Working\Storage\Dev\GitHub\Working\api-dotnet-postgres`
-4. Copies database-specific production settings `appsettings-api-dotnet-*.env` as `appsettings.Production.json` into each context.
-5. Runs `docker compose -p pilot-api-dotnet up -d --build --force-recreate`.
+   - `C:\Working\Storage\Dev\GitHub\Working\utility-dotnet-mssql`
+   - `C:\Working\Storage\Dev\GitHub\Working\utility-dotnet-postgres`
+4. Copies database-specific production settings `appsettings-utility-dotnet-*.env` as `appsettings.Production.json` into each context.
+5. Runs `docker compose -p utility-api-dotnet up -d --build --force-recreate`.
 6. Opens healthcheck URLs.
 
 Before compose startup, the script probes host ports in two separate ranges:
 
-- SQL Server variant: `55501-55599`
-- PostgreSQL variant: `55601-55699`
+- SQL Server variant: `58501-58599`
+- PostgreSQL variant: `58601-58699`
 
 If the preferred start port is blocked/reserved/in-use on Windows, the script picks the first open
 port within that range and prints the replacement.
@@ -67,9 +67,9 @@ Run from this repository folder:
 ```bat
 set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "CURRENT_DATE=2026-08-03 00:00:00Z"
-set "DOTNET_MSSQL_PORT=55501"
-set "DOTNET_POSTGRES_PORT=55601"
-docker compose -f docker-compose.api-dotnet.yml -p pilot-api-dotnet up -d --build --force-recreate
+set "DOTNET_MSSQL_PORT=58501"
+set "DOTNET_POSTGRES_PORT=58601"
+docker compose -f docker-compose.utility-dotnet.yml -p utility-api-dotnet up -d --build --force-recreate
 ```
 
 You can override host ports explicitly with `DOTNET_MSSQL_PORT` and `DOTNET_POSTGRES_PORT`.
@@ -90,14 +90,14 @@ http://localhost:<DOTNET_POSTGRES_PORT>/healthcheck
 
 ## Additional Notes
 
-- The compose file still tags images as `pilot-api-dotnet-mssql:1.0` and `pilot-api-dotnet-postgres:1.0`.
+- The compose file still tags images as `utility-api-dotnet-mssql:1.0` and `utility-api-dotnet-postgres:1.0`.
 - Keeping separate build contexts prevents appsettings collisions when both images are built in one compose run.
 - Script validates `PILOT_DOTNET_DIR` and fails early if no `.sln` or `.csproj` is found.
-- Script validates that `PilotApi.Web.dll` exists after publish before building Docker images.
+- Script validates that `PilotUtilityApi.Web.dll` exists after publish before building Docker images.
 - If one of the API projects fails to start, inspect logs with:
 
 ```
-docker compose -f docker-compose.api-dotnet.yml logs --tail 200
+docker compose -f docker-compose.utility-dotnet.yml logs --tail 200
 ```
 
 ## Additional CLI Commands
@@ -105,13 +105,13 @@ docker compose -f docker-compose.api-dotnet.yml logs --tail 200
 1. Restart this stack:
 
 ```
-docker compose -f docker-compose.api-dotnet.yml restart
+docker compose -f docker-compose.utility-dotnet.yml restart
 ```
 
 2. Stop and remove this stack:
 
 ```
-docker compose -f docker-compose.api-dotnet.yml down
+docker compose -f docker-compose.utility-dotnet.yml down
 ```
 
 

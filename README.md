@@ -38,6 +38,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `PostgreSQL\docker-compose.postgresql.yml`
 - `Api_dotnet\docker-compose.api-dotnet.yml`
 - `Api_java\docker-compose.api-java.yml`
+- `Utility_dotnet\docker-compose.utility-dotnet.yml`
 
 ## Builder Scripts
 
@@ -45,6 +46,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `PostgreSQL\Docker-PostgreSQL-builder.bat`
 - `Api_dotnet\Docker-Api-dotnet-builder.bat`
 - `Api_java\Docker-Api-java-builder.bat`
+- `Utility_dotnet\Docker-Utility-dornet-builder.bat`
 - `Dozzle\Docker-Dozzle-builder.bat`
 - `UptimeKuma\Docker-UptimeKuma-builder.bat`
 
@@ -96,6 +98,12 @@ A Java Spring Boot API that presents data from the Northwind database (MS SQL Se
 
 Follow the directions in the [API (Java) README](./Api_java/README.md).
 
+### Utility API (DotNet)
+
+A .NET Core API that contain utility tooling (MS SQL Server or PostgreSQL)
+
+Follow the directions in the [Utility (DotNet) README](./Utility_dotnet/README.md).
+
 ### Dozzle
 
 A real time Docker log viewer or partition logs.
@@ -144,8 +152,8 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |         | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 55601       |
 |         | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 56601       |
 |         | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 56701       |
-| TBD     | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 58501       |
-| TBD     | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 58601       |
+|         | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 58501       |
+|         | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 58601       |
 | TBD     | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8080        | 57601       |
 | TBD     | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8080        | 57701       |
 | TBD     | Angular UI              | pilot-ui                    | ???         | ???         |

@@ -1,0 +1,35 @@
+services:
+  utility-api-dotnet-mssql:
+    container_name: utility-api-dotnet-mssql
+    image: utility-api-dotnet-mssql:1.0
+    build:
+      context: ${WORKING_DIR}/utility-dotnet-mssql
+      dockerfile: ../../Docker/Utility_dotnet/dockerfile_mssql
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE}
+        APP_PORT: ${DOTNET_MSSQL_PORT:-58501}
+    ports:
+      - "${DOTNET_MSSQL_PORT:-58501}:8080"
+    mem_limit: 1g
+    networks:
+      - pilot-net
+
+  utility-api-dotnet-postgres:
+    container_name: utility-api-dotnet-postgres
+    image: utility-api-dotnet-postgres:1.0
+    build:
+      context: ${WORKING_DIR}/utility-dotnet-postgres
+      dockerfile: ../../Docker/Utility_dotnet/dockerfile_postgres
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE}
+        APP_PORT: ${DOTNET_POSTGRES_PORT:-58601}
+    ports:
+      - "${DOTNET_POSTGRES_PORT:-58601}:8080"
+    mem_limit: 1g
+    networks:
+      - pilot-net
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net
