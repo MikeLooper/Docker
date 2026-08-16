@@ -1,0 +1,17 @@
+# Serve the pre-built Angular bundle with a non-root Nginx image.
+FROM nginxinc/nginx-unprivileged:stable-alpine
+
+# Declare the build-time argument
+ARG DEPLOY_DATE
+
+# Map it to an environment variable so it persists in the image
+ENV APP_DEPLOY_DATE=$DEPLOY_DATE
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY pilot-proxy-headers.conf /etc/nginx/pilot-proxy-headers.conf
+
+# Copy the published Angular browser bundle from the prepared build context
+COPY browser/ /usr/share/nginx/html/
+
+# The unprivileged Nginx image listens on 8080 as a non-root user
+EXPOSE 8080

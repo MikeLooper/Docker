@@ -1,0 +1,21 @@
+services:
+  pilot-ui:
+    container_name: pilot-ui
+    image: pilot-ui-angular:1.0
+    build:
+      context: ${WORKING_DIR}/ui-angular
+      dockerfile: ../../Docker/Ui_angular/dockerfile
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE}
+    environment:
+      APP_DEPLOY_DATE: ${CURRENT_DATE}
+    ports:
+      - "${UI_ANGULAR_PORT:-55401}:8080"
+    mem_limit: 512m
+    networks:
+      - pilot-net
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

@@ -39,6 +39,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `Api_dotnet\docker-compose.api-dotnet.yml`
 - `Api_java\docker-compose.api-java.yml`
 - `Utility_dotnet\docker-compose.utility-dotnet.yml`
+- `Ui_angular\docker-compose.ui-angular.yml`
 
 ## Builder Scripts
 
@@ -47,6 +48,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `Api_dotnet\Docker-Api-dotnet-builder.bat`
 - `Api_java\Docker-Api-java-builder.bat`
 - `Utility_dotnet\Docker-Utility-dornet-builder.bat`
+- `Ui_angular\Docker-Ui-angular-builder.bat`
 - `Dozzle\Docker-Dozzle-builder.bat`
 - `UptimeKuma\Docker-UptimeKuma-builder.bat`
 
@@ -104,6 +106,12 @@ A .NET Core API that contain utility tooling (MS SQL Server or PostgreSQL)
 
 Follow the directions in the [Utility (DotNet) README](./Utility_dotnet/README.md).
 
+### Pilot UI (Angular)
+
+An Angular single page application that presents the Northwind data from the Pilot APIs.
+
+Follow the directions in the [UI (Angular) README](./Ui_angular/README.md).
+
 ### Dozzle
 
 A real time Docker log viewer or partition logs.
@@ -156,7 +164,7 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |         | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 58601       |
 | TBD     | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8080        | 57601       |
 | TBD     | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8080        | 57701       |
-| TBD     | Angular UI              | pilot-ui                    | ???         | ???         |
+|         | Angular UI              | pilot-ui                    | 4200        | 55401       |
 | TBD     | Jaeger                  | local-jaeger                | 4317        | 4317        |
 | TBD     | Prometheus              | local-prometheus            | 9464        | 9464        |
 | TBD     | Zipkin                  | local-zipkin                | 9411        | 9411        |
