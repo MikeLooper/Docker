@@ -12,3 +12,4 @@ docker start pilot-api-python-mssql
 docker start utility-api-dotnet-postgres
 docker start utility-api-dotnet-mssql
 docker start pilot-ui
+docker start local-homepage

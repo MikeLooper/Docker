@@ -1,0 +1,162 @@
+# https://gethomepage.dev/configs/services/
+# https://gethomepage.dev/widgets/
+# https://gethomepage.dev/widgets/services/customapi/
+
+- Dashboards:
+    - Dozzle:
+        href: http://localhost:51101/
+        description: Dozzle dashboard for monitoring Docker containers.
+        icon: doozle.png
+        container: local-dozzle
+
+    - UptimKuma:
+        href: http://localhost:3001/
+        description: UptimKuma dashboard for monitoring website uptime.
+        icon: uptime-kuma.png
+        container: local-uptimkuma
+
+- Databases:
+    - SQL Server:
+        href: http://localhost:1433/
+        description: Local SQL Server database for development and testing.
+        icon: microsoft-sql-server.png
+        container: local-mssql
+
+    - PostgreSQL:
+        href: http://localhost:5432/
+        description: Local PostgreSQL database for development and testing.
+        icon: postgresql.png
+        container: local-postgres
+
+- APIs:
+    - pilot-api-dotnet:
+        - pilot-api-dotnet (SQL Server):
+            href: http://localhost:55501/swagger
+            description: Pilot .NET API for SQL Server development and testing.
+            icon: sh-asp-net-core-light.png
+            server: local-docker # The docker server
+            container: pilot-api-dotnet-mssql
+            widget:
+                type: customapi
+                url: http://pilot-api-dotnet-mssql:8080/about
+                method: GET
+                mappings:
+                    - field: apiVersion
+                      label: Api Version
+                    - field: deployDate
+                      label: Deploy Date
+
+        - pilot-api-dotnet (PostgreSQL):
+            href: http://localhost:55601/swagger
+            description: Pilot .NET API for PostgreSQL development and testing.
+            icon: sh-asp-net-core-light.png
+            container: pilot-api-dotnet-postgres
+            widget:
+                type: customapi
+                url: http://pilot-api-dotnet-postgres:8080/about
+                method: GET
+                mappings:
+                    - field: apiVersion
+                      label: Api Version
+                    - field: deployDate
+                      label: Deploy Date
+
+    - pilot-api-java:
+        - pilot-api-java (SQL Server):
+            href: http://localhost:56601/swagger-ui/index.html
+            description: Pilot Java API for SQL Server development and testing.
+            icon: sh-java.png
+            container: pilot-api-java-mssql
+            widget:
+                type: customapi
+                url: http://pilot-api-java-mssql:56601/about
+                method: GET
+                mappings:
+                    - field: apiVersion
+                      label: Api Version
+                    - field: deployDate
+                      label: Deploy Date
+
+        - pilot-api-java (PostgreSQL):
+            href: http://localhost:56701/swagger-ui/index.html
+            description: Pilot Java API for PostgreSQL development and testing.
+            icon: sh-java.png
+            container: pilot-api-java-postgres
+            widget:
+                type: customapi
+                url: http://pilot-api-java-postgres:56701/about
+                method: GET
+                mappings:
+                    - field: apiVersion
+                      label: Api Version
+                    - field: deployDate
+                      label: Deploy Date
+
+    - pilot-api-python:
+        - pilot-api-python (SQL Server):
+            href: http://localhost:54501/docs
+            description: Pilot Python API for SQL Server development and testing.
+            icon: sh-python.png
+            container: pilot-api-python-mssql
+            widget:
+                type: customapi
+                url: http://pilot-api-python-mssql:54501/about
+                method: GET
+                mappings:
+                    - field: apiVersion
+                      label: Api Version
+                    - field: deployDate
+                      label: Deploy Date
+
+        - pilot-api-python (PostgreSQL):
+            href: http://localhost:54601/docs
+            description: Pilot Python API for PostgreSQL development and testing.
+            icon: sh-python.png
+            container: pilot-api-python-postgres
+            widget:
+                type: customapi
+                url: http://pilot-api-python-postgres:54601/about
+                method: GET
+                mappings:
+                    - field: apiVersion
+                      label: Api Version
+                    - field: deployDate
+                      label: Deploy Date
+
+    - utility-api-dotnet:
+        - utility-api-dotnet (SQL Server):
+            href: http://localhost:58501/swagger
+            description: Utility .NET API for SQL Server development and testing.
+            icon: sh-asp-net-core.png
+            container: utility-api-dotnet-mssql
+            widget:
+                type: customapi
+                url: http://utility-api-dotnet-mssql:8080/about?show-details=false
+                method: GET
+                mappings:
+                    - field: apiVersion
+                      label: Api Version
+                    - field: deployDate
+                      label: Deploy Date
+
+        - utility-api-dotnet (PostgreSQL):
+            href: http://localhost:58601/swagger
+            description: Utility .NET API for PostgreSQL development and testing.
+            icon: sh-asp-net-core.png
+            container: utility-api-dotnet-postgres
+            widget:
+                type: customapi
+                url: http://utility-api-dotnet-postgres:8080/about?show-details=false
+                method: GET
+                mappings:
+                    - field: apiVersion
+                      label: Api Version
+                    - field: deployDate
+                      label: Deploy Date
+
+- UIs:
+    - pilot-ui:
+        href: http://localhost:55401
+        description: Pilot UI for development and testing.
+        icon: sh-fizzy.png
+        container: pilot-ui

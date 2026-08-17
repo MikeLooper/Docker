@@ -34,25 +34,27 @@ Then, execute the networking command listed in the *Network* section below.
 
 ## Compose Files
 
-- `SqlServer\docker-compose.sqlserver.yml`
-- `PostgreSQL\docker-compose.postgresql.yml`
 - `Api_dotnet\docker-compose.api-dotnet.yml`
 - `Api_java\docker-compose.api-java.yml`
 - `Api_python\docker-compose.api-python.yml`
-- `Utility_dotnet\docker-compose.utility-dotnet.yml`
+- `Homepage\docker-compose.homepage.yml`
+- `PostgreSQL\docker-compose.postgresql.yml`
+- `SqlServer\docker-compose.sqlserver.yml`
 - `Ui_angular\docker-compose.ui-angular.yml`
+- `Utility_dotnet\docker-compose.utility-dotnet.yml`
 
 ## Builder Scripts
 
-- `SqlServer\Docker-SQLServer-builder.bat`
-- `PostgreSQL\Docker-PostgreSQL-builder.bat`
 - `Api_dotnet\Docker-Api-dotnet-builder.bat`
 - `Api_java\Docker-Api-java-builder.bat`
 - `Api_python\Docker-Api-python-builder.bat`
-- `Utility_dotnet\Docker-Utility-dornet-builder.bat`
-- `Ui_angular\Docker-Ui-angular-builder.bat`
 - `Dozzle\Docker-Dozzle-builder.bat`
+- `Homepage\Docker-Homepage-builder.bat`
+- `PostgreSQL\Docker-PostgreSQL-builder.bat`
+- `SqlServer\Docker-SQLServer-builder.bat`
+- `Ui_angular\Docker-Ui-angular-builder.bat`
 - `UptimeKuma\Docker-UptimeKuma-builder.bat`
+- `Utility_dotnet\Docker-Utility-dornet-builder.bat`
 
 Each script is the primary entry point for its stack and is kept aligned with its corresponding README.
 
@@ -78,17 +80,17 @@ docker network inspect pilot-net >nul 2>&1 || docker network create pilot-net
 
 ## Active Subjects
 
-### SQL Server
+### Dozzle
 
-A Microsoft SQL Server database installation.
+A real time Docker log viewer or partition logs.
 
-Follow the directions in the [SQL Server README](./SqlServer/README.md)
+Follow the directions in the [Dozzle README](./Dozzle/README.md).
 
-### PostgreSQL
+### Homepage
 
-A PostgreSQL database installation.
+A highly customizable homepage (or startpage / application dashboard) with Docker and service API integrations.
 
-Follow the directions in the [PostgreSQL README](./PostgreSQL/README.md).
+Follow the directions in the [Homepage README](./Homepage/README.md).
 
 ### Pilot API (DotNet)
 
@@ -108,29 +110,35 @@ A Python FastAPI application that presents data from the Northwind database (MS 
 
 Follow the directions in the [API (Python) README](./Api_python/README.md).
 
-### Utility API (DotNet)
-
-A .NET Core API that contain utility tooling (MS SQL Server or PostgreSQL)
-
-Follow the directions in the [Utility (DotNet) README](./Utility_dotnet/README.md).
-
 ### Pilot UI (Angular)
 
 An Angular single page application that presents the Northwind data from the Pilot APIs.
 
 Follow the directions in the [UI (Angular) README](./Ui_angular/README.md).
 
-### Dozzle
+### PostgreSQL
 
-A real time Docker log viewer or partition logs.
+A PostgreSQL database installation.
 
-Follow the directions in the [Dozzle README](./Dozzle/README.md).
+Follow the directions in the [PostgreSQL README](./PostgreSQL/README.md).
+
+### SQL Server
+
+A Microsoft SQL Server database installation.
+
+Follow the directions in the [SQL Server README](./SqlServer/README.md)
 
 ### Uptime Kuma
 
 Simple up or down checks and status pages for monitoring Docker partitions/applications, and other sources.
 
 Follow the directions in the [Uptime Kuma README](./UptimeKuma/README.md).
+
+### Utility API (DotNet)
+
+A .NET Core API that contain utility tooling (MS SQL Server or PostgreSQL)
+
+Follow the directions in the [Utility (DotNet) README](./Utility_dotnet/README.md).
 
 ## Future Subjects
 
@@ -162,24 +170,25 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 
 | Status: | Type:                   | Name:                       | Inner Port: | Outer Port: |
 | ------- | ----------------------- | --------------------------- | ----------- | ----------- |
-|         | SQL Server              | local-mssql                 | 1433        | 1433        |
-|         | PostgreSQL              | local-postgres              | 5432        | 5432        |
+|         | Angular UI              | pilot-ui                    | 4200        | 55401       |
 |         | ApiDotNet (SQL Server)  | pilot-api-dotnet-mssql      | 8080        | 55501       |
 |         | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 55601       |
 |         | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 56601       |
 |         | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 56701       |
-|         | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 58501       |
-|         | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 58601       |
 |         | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 54501       |
 |         | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 54601       |
-|         | Angular UI              | pilot-ui                    | 4200        | 55401       |
+|         | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 58501       |
+|         | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 58601       |
+|         | Dozzle                  | local-dozzle                | 8080        | 51101       |
+|         | Homepage                | local-homepage              | 3000        | 54301       |
+|         | PostgreSQL              | local-postgres              | 5432        | 5432        |
+|         | SQL Server              | local-mssql                 | 1433        | 1433        |
+|         | Uptime Kuma             | local-uptimekuma            | 3001        | 3001        |
 | TBD     | Jaeger                  | local-jaeger                | 4317        | 4317        |
 | TBD     | Prometheus              | local-prometheus            | 9464        | 9464        |
 | TBD     | Zipkin                  | local-zipkin                | 9411        | 9411        |
 | TBD     | Grafana                 | local-grafana               | 3000        | 3000        |
-|         | Dozzle                  | local-dozzle                | 8080        | 51101       |
 | TBD     | Komodo                  | local-komodo                | 9120        | 9120        |
-|         | Uptime Kuma             | local-uptimekuma            | 3001        | 3001        |
 | TBD     | Homer                   | local-homer                 | 8080        | 51201       |
 | TBD     | Bitwarden               | local-bitwarden             | ???         | ???         |
 | TBD     | Duplicati               | local-duplicati             | 8200        | 8200        |

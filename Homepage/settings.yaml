@@ -1,0 +1,19 @@
+# https://gethomepage.dev/configs/settings/
+
+title: Pilot Homepage
+description: A homepage for my Pilot projects.
+# Supported colors are: slate, gray, zinc, neutral, stone, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose, red, white
+color: neutral
+layout:
+  Media:
+    style: row
+    columns: 4
+#   APIs:
+#     pilot-api-dotnet:
+#       initiallyCollapsed: true
+#     pilot-api-java:
+#       initiallyCollapsed: true
+#     pilot-api-python:
+#       initiallyCollapsed: true
+#     utility-api-dotnet:
+#       initiallyCollapsed: true
