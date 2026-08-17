@@ -1,0 +1,26 @@
+Build a new Docker container for a Python application (two copies of the app; one for each of two databases).
+- Create two secrets files, in the `secrets` directory, copied from `C:\Working\Storage\Dev\GitHub\PilotApiPython\.env`, which will be used to replace the settings in the Python application environment file:
+	- appsettings-api-python-sqlserver.env   <-- SQL Server	
+	- appsettings-api-python-postgresql.env  <-- PostgreSQL
+- Use the `Api_python` directory as a home for the source files.
+- Create other files in the `Api_python` directory as needed to support the batch file.
+
+Create a Windows batch file that will do the following:
+1. Pull an appropriate Docker image for running a Python application.
+2. Stop and remove any existing Docker containers named:
+	- `pilot-api-python-mssql`,
+	- `pilot-api-python-postgres`.
+3. Build and publish the Python application from the source code in this directory: `C:\Working\Storage\Dev\GitHub\PilotApiPython`.
+4. Build and start a Docker container containing the Python application, for SQL Server:
+- Include the `appsettings-api-python-sqlserver.env` file to replace the application `.env` file.
+- Name the application Docker image: `pilot-api-python-sqlserver`.
+- Supply the current date as an image environment variable called `APP_DEPLOY_DATE`.
+- Name the application Docker container `pilot-api-python-mssql`, with a port of 57601.
+5. Build and start a Docker container containing the Python application, for PostgreSQL:
+- Include the `appsettings-api-python-postgresql.env` file to replace the application `.env` file.
+- Name the application Docker image: `pilot-api-python-postgres`.
+- Supply the current date as an image environment variable called `APP_DEPLOY_DATE`.
+- Name the application Docker container `pilot-api-python-postgres`, with a port of 57701.
+6. Launch the applications (SQL Server and PostgreSQL) in the system browser.
+
+Create a README file that describes these applications, files, and the usage process.

@@ -1,0 +1,29 @@
+# Python runtime image for the PostgreSQL variant of the Pilot API
+FROM python:3.12-slim
+WORKDIR /app
+
+# Declare the build-time arguments
+ARG DEPLOY_DATE
+ARG APP_PORT=54601
+
+# Map them to environment variables so they persist in the image
+ENV APP_DEPLOY_DATE=$DEPLOY_DATE
+ENV APP_PORT=$APP_PORT
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Copy the pre-built wheel and the environment file from the build context
+COPY . .
+
+# psycopg[binary] ships its own libpq, so no extra system packages are required
+RUN python -m pip install --no-cache-dir --upgrade pip \
+    && python -m pip install --no-cache-dir /app/*.whl \
+    && rm -f /app/*.whl
+
+# Run as a non-root user
+RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE $APP_PORT
+
+CMD ["sh", "-c", "exec uvicorn pilot_api.main:app --host 0.0.0.0 --port ${APP_PORT}"]

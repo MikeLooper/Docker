@@ -38,6 +38,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `PostgreSQL\docker-compose.postgresql.yml`
 - `Api_dotnet\docker-compose.api-dotnet.yml`
 - `Api_java\docker-compose.api-java.yml`
+- `Api_python\docker-compose.api-python.yml`
 - `Utility_dotnet\docker-compose.utility-dotnet.yml`
 - `Ui_angular\docker-compose.ui-angular.yml`
 
@@ -47,6 +48,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `PostgreSQL\Docker-PostgreSQL-builder.bat`
 - `Api_dotnet\Docker-Api-dotnet-builder.bat`
 - `Api_java\Docker-Api-java-builder.bat`
+- `Api_python\Docker-Api-python-builder.bat`
 - `Utility_dotnet\Docker-Utility-dornet-builder.bat`
 - `Ui_angular\Docker-Ui-angular-builder.bat`
 - `Dozzle\Docker-Dozzle-builder.bat`
@@ -54,8 +56,8 @@ Then, execute the networking command listed in the *Network* section below.
 
 Each script is the primary entry point for its stack and is kept aligned with its corresponding README.
 
-On Windows, the API builder scripts for .NET and Java automatically probe and select open host ports
-within predefined ranges when preferred ports are reserved or in use.
+On Windows, the API builder scripts for .NET, Java, and Python automatically probe and select open
+host ports within predefined ranges when preferred ports are reserved or in use.
 
 ## Secrets
 
@@ -99,6 +101,12 @@ Follow the directions in the [API (DotNet) README](./Api_dotnet/README.md).
 A Java Spring Boot API that presents data from the Northwind database (MS SQL Server or PostgreSQL)
 
 Follow the directions in the [API (Java) README](./Api_java/README.md).
+
+### Pilot API (Python)
+
+A Python FastAPI application that presents data from the Northwind database (MS SQL Server or PostgreSQL)
+
+Follow the directions in the [API (Python) README](./Api_python/README.md).
 
 ### Utility API (DotNet)
 
@@ -162,8 +170,8 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |         | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 56701       |
 |         | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 58501       |
 |         | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 58601       |
-| TBD     | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8080        | 57601       |
-| TBD     | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8080        | 57701       |
+|         | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 54501       |
+|         | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 54601       |
 |         | Angular UI              | pilot-ui                    | 4200        | 55401       |
 | TBD     | Jaeger                  | local-jaeger                | 4317        | 4317        |
 | TBD     | Prometheus              | local-prometheus            | 9464        | 9464        |

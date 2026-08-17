@@ -1,0 +1,41 @@
+services:
+  pilot-api-python-mssql:
+    container_name: pilot-api-python-mssql
+    image: pilot-api-python-sqlserver
+    build:
+      context: ${WORKING_DIR}/api-python-mssql
+      dockerfile: ../../Docker/Api_python/dockerfile_mssql
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE}
+        APP_PORT: ${PYTHON_MSSQL_PORT:-54501}
+    environment:
+      APP_DEPLOY_DATE: ${CURRENT_DATE}
+      APP_PORT: "${PYTHON_MSSQL_PORT:-54501}"
+    ports:
+      - "${PYTHON_MSSQL_PORT:-54501}:${PYTHON_MSSQL_PORT:-54501}"
+    mem_limit: 1g
+    networks:
+      - pilot-net
+
+  pilot-api-python-postgres:
+    container_name: pilot-api-python-postgres
+    image: pilot-api-python-postgres
+    build:
+      context: ${WORKING_DIR}/api-python-postgres
+      dockerfile: ../../Docker/Api_python/dockerfile_postgres
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE}
+        APP_PORT: ${PYTHON_POSTGRES_PORT:-54601}
+    environment:
+      APP_DEPLOY_DATE: ${CURRENT_DATE}
+      APP_PORT: "${PYTHON_POSTGRES_PORT:-54601}"
+    ports:
+      - "${PYTHON_POSTGRES_PORT:-54601}:${PYTHON_POSTGRES_PORT:-54601}"
+    mem_limit: 1g
+    networks:
+      - pilot-net
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net
