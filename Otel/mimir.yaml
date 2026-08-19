@@ -1,0 +1,53 @@
+# Grafana Mimir configuration for local development
+
+# Run all components in a single process
+target: all
+
+# Server settings
+server:
+  http_listen_port: 9009
+  grpc_listen_port: 9095
+
+# Single-tenant mode for simplicity
+multitenancy_enabled: false
+
+# Block storage configuration
+blocks_storage:
+  backend: filesystem
+  filesystem:
+    dir: /data/blocks
+  tsdb:
+    dir: /data/tsdb
+  bucket_store:
+    sync_dir: /data/sync
+
+# Compactor settings
+compactor:
+  data_dir: /data/compactor
+  sharding_ring:
+    kvstore:
+      store: memberlist
+
+# Distributor accepts remote write from the Collector
+distributor:
+  ring:
+    kvstore:
+      store: memberlist
+
+# Ingester configuration
+ingester:
+  ring:
+    kvstore:
+      store: memberlist
+    replication_factor: 1
+
+# Store gateway for querying blocks
+store_gateway:
+  sharding_ring:
+    replication_factor: 1
+
+# Ruler for alerting rules
+ruler_storage:
+  backend: filesystem
+  filesystem:
+    dir: /data/rules

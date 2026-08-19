@@ -11,13 +11,13 @@ set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
 set "COMPOSE_FILE=%~dp0docker-compose.api-java.yml"
 set "PILOT_JAVA_DIR=%~dp0..\..\PilotApiJava"
 set "SECRETS_FILE=%~dp0..\secrets\api-java.env"
-set "JAVA_MSSQL_PORT=56601"
-set "JAVA_POSTGRES_PORT=56701"
+set "JAVA_MSSQL_PORT=55301"
+set "JAVA_POSTGRES_PORT=55401"
 
 REM Resolve host ports so Windows reserved/in-use ports do not break compose startup.
-call :resolve_open_port 56601 JAVA_MSSQL_PORT
+call :resolve_open_port 55301 JAVA_MSSQL_PORT
 if errorlevel 1 exit /b 1
-call :resolve_open_port 56701 JAVA_POSTGRES_PORT
+call :resolve_open_port 55401 JAVA_POSTGRES_PORT
 if errorlevel 1 exit /b 1
 
 REM Load runtime secrets from file.

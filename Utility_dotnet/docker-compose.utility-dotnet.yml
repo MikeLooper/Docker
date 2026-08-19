@@ -7,9 +7,9 @@ services:
       dockerfile: ../../Docker/Utility_dotnet/dockerfile_mssql
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
-        APP_PORT: ${DOTNET_MSSQL_PORT:-58501}
+        APP_PORT: ${DOTNET_MSSQL_PORT:-55701}
     ports:
-      - "${DOTNET_MSSQL_PORT:-58501}:8080"
+      - "${DOTNET_MSSQL_PORT:-55701}:8080"
     mem_limit: 1g
     networks:
       - pilot-net
@@ -22,9 +22,9 @@ services:
       dockerfile: ../../Docker/Utility_dotnet/dockerfile_postgres
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
-        APP_PORT: ${DOTNET_POSTGRES_PORT:-58601}
+        APP_PORT: ${DOTNET_POSTGRES_PORT:-55801}
     ports:
-      - "${DOTNET_POSTGRES_PORT:-58601}:8080"
+      - "${DOTNET_POSTGRES_PORT:-55801}:8080"
     mem_limit: 1g
     networks:
       - pilot-net

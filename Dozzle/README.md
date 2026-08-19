@@ -6,7 +6,7 @@
 docker run -d \
 --name local-dozzle \
 -m 512m \
--p 51101:8080 \
+-p 56101:8080 \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v dozzle_data:/data \
 amir20/dozzle:latest
@@ -20,4 +20,4 @@ The first time this tool is used, it wil require some set up questions are answe
 
 ## Usage
 
-In a browser, open http://localhost:51101
+In a browser, open http://localhost:56101

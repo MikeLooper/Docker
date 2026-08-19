@@ -1,0 +1,58 @@
+# Collector configuration routing to the LGTM stack
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # Batch processor for efficient data transfer
+  batch:
+    timeout: 5s
+    send_batch_size: 512
+
+  # Add resource attributes for better correlation
+  resource:
+    attributes:
+      - key: environment
+        value: local-dev
+        action: upsert
+
+exporters:
+  # Send traces to Tempo via OTLP
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+  # Send metrics to Mimir via Prometheus remote write
+  prometheusremotewrite/mimir:
+    endpoint: http://mimir:9009/api/v1/push
+    tls:
+      insecure: true
+
+  # Send logs to Loki via its native OTLP HTTP endpoint
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
+
+  # Keep debug output for development visibility
+  debug:
+    verbosity: basic
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [resource, batch]
+      exporters: [otlp/tempo, debug]
+    metrics:
+      receivers: [otlp]
+      processors: [resource, batch]
+      exporters: [prometheusremotewrite/mimir, debug]
+    logs:
+      receivers: [otlp]
+      processors: [resource, batch]
+      exporters: [otlphttp/loki, debug]

@@ -10,8 +10,8 @@ set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
 set "COMPOSE_FILE=%~dp0docker-compose.api-dotnet.yml"
 set "PILOT_DOTNET_DIR=%~dp0..\..\PilotApiDotNet"
-set "DOTNET_MSSQL_PORT=55501"
-set "DOTNET_POSTGRES_PORT=55601"
+set "DOTNET_MSSQL_PORT=55101"
+set "DOTNET_POSTGRES_PORT=55201"
 
 REM Resolve host ports so Windows reserved/in-use ports do not break compose startup.
 call :resolve_open_port %DOTNET_MSSQL_PORT% DOTNET_MSSQL_PORT

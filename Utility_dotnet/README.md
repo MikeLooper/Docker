@@ -54,8 +54,8 @@ This script uses:
 
 Before compose startup, the script probes host ports in two separate ranges:
 
-- SQL Server variant: `58501-58599`
-- PostgreSQL variant: `58601-58699`
+- SQL Server variant: `55701-55799`
+- PostgreSQL variant: `55801-55899`
 
 If the preferred start port is blocked/reserved/in-use on Windows, the script picks the first open
 port within that range and prints the replacement.
@@ -67,8 +67,8 @@ Run from this repository folder:
 ```bat
 set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "CURRENT_DATE=2026-08-03 00:00:00Z"
-set "DOTNET_MSSQL_PORT=58501"
-set "DOTNET_POSTGRES_PORT=58601"
+set "DOTNET_MSSQL_PORT=55701"
+set "DOTNET_POSTGRES_PORT=55801"
 docker compose -f docker-compose.utility-dotnet.yml -p utility-api-dotnet up -d --build --force-recreate
 ```
 

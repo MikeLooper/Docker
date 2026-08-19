@@ -5,7 +5,7 @@ REM Docker - Setup - Homepage
 
 set "IMAGE_FILE=ghcr.io/gethomepage/homepage:latest"
 set "COMPOSE_FILE=%~dp0docker-compose.homepage.yml"
-set "HOMEPAGE_PORT=54301"
+set "HOMEPAGE_PORT=56201"
 
 REM 1. Download the image used to serve the Homepage bundle:
 docker pull "%IMAGE_FILE%"

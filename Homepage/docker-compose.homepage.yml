@@ -3,11 +3,11 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: local-homepage
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev,localhost:54301 # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev,localhost:56201 # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
       PUID: 9696 # optional, your user id
       PGID: 9696 # optional, your group id
     ports:
-      - 54301:3000
+      - 56201:3000
     volumes:
       - /path/to/config:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations

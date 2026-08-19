@@ -12,8 +12,8 @@ set "COMPOSE_FILE=%~dp0docker-compose.api-python.yml"
 set "PILOT_PYTHON_DIR=%~dp0..\..\PilotApiPython"
 set "MSSQL_SECRETS_FILE=%~dp0..\secrets\appsettings-api-python-sqlserver.env"
 set "POSTGRES_SECRETS_FILE=%~dp0..\secrets\appsettings-api-python-postgresql.env"
-set "PYTHON_MSSQL_PORT=54501"
-set "PYTHON_POSTGRES_PORT=54601"
+set "PYTHON_MSSQL_PORT=55501"
+set "PYTHON_POSTGRES_PORT=55601"
 
 REM Resolve host ports so Windows reserved/in-use ports do not break compose startup.
 call :resolve_open_port %PYTHON_MSSQL_PORT% PYTHON_MSSQL_PORT

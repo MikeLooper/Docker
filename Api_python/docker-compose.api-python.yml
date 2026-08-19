@@ -7,12 +7,12 @@ services:
       dockerfile: ../../Docker/Api_python/dockerfile_mssql
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
-        APP_PORT: ${PYTHON_MSSQL_PORT:-54501}
+        APP_PORT: ${PYTHON_MSSQL_PORT:-55501}
     environment:
       APP_DEPLOY_DATE: ${CURRENT_DATE}
-      APP_PORT: "${PYTHON_MSSQL_PORT:-54501}"
+      APP_PORT: "${PYTHON_MSSQL_PORT:-55501}"
     ports:
-      - "${PYTHON_MSSQL_PORT:-54501}:${PYTHON_MSSQL_PORT:-54501}"
+      - "${PYTHON_MSSQL_PORT:-55501}:${PYTHON_MSSQL_PORT:-55501}"
     mem_limit: 1g
     networks:
       - pilot-net
@@ -25,12 +25,12 @@ services:
       dockerfile: ../../Docker/Api_python/dockerfile_postgres
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
-        APP_PORT: ${PYTHON_POSTGRES_PORT:-54601}
+        APP_PORT: ${PYTHON_POSTGRES_PORT:-55601}
     environment:
       APP_DEPLOY_DATE: ${CURRENT_DATE}
-      APP_PORT: "${PYTHON_POSTGRES_PORT:-54601}"
+      APP_PORT: "${PYTHON_POSTGRES_PORT:-55601}"
     ports:
-      - "${PYTHON_POSTGRES_PORT:-54601}:${PYTHON_POSTGRES_PORT:-54601}"
+      - "${PYTHON_POSTGRES_PORT:-55601}:${PYTHON_POSTGRES_PORT:-55601}"
     mem_limit: 1g
     networks:
       - pilot-net

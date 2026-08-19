@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Declare the build-time arguments
 ARG DEPLOY_DATE
-ARG APP_PORT=54601
+ARG APP_PORT=55601
 
 # Map them to environment variables so they persist in the image
 ENV APP_DEPLOY_DATE=$DEPLOY_DATE

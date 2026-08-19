@@ -1,0 +1,95 @@
+# Complete LGTM stack for local OpenTelemetry development
+
+services:
+  # OpenTelemetry Collector - receives and routes all telemetry
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    mem_limit: 1g
+    volumes:
+      - ./otel-collector.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    depends_on:
+      - local-tempo
+      - local-mimir
+      - local-loki
+    networks:
+      - pilot-net
+
+  # Grafana Tempo - distributed tracing backend
+  local-tempo:
+    image: grafana/tempo:latest
+    container_name: local-tempo
+    mem_limit: 1g
+    volumes:
+      - ./tempo.yaml:/etc/tempo/config.yaml
+      - tempo-data:/var/tempo
+    command: ["-config.file=/etc/tempo/config.yaml"]
+    ports:
+      - "3200:3200"   # Tempo API
+    networks:
+      - pilot-net
+
+  # Grafana Mimir - long-term metrics storage
+  local-mimir:
+    image: grafana/mimir:latest
+    container_name: local-mimir
+    mem_limit: 1g
+    volumes:
+      - ./mimir.yaml:/etc/mimir/config.yaml
+      - mimir-data:/data
+    command: ["-config.file=/etc/mimir/config.yaml"]
+    ports:
+      - "9009:9009"   # Mimir API
+    networks:
+      - pilot-net
+
+  # Grafana Loki - log aggregation
+  local-loki:
+    image: grafana/loki:latest
+    container_name: local-loki
+    mem_limit: 1g
+    volumes:
+      - ./loki.yaml:/etc/loki/config.yaml
+      - loki-data:/loki
+    command: ["-config.file=/etc/loki/config.yaml"]
+    ports:
+      - "3100:3100"   # Loki API
+    networks:
+      - pilot-net
+
+  # Grafana - visualization and dashboards
+  local-grafana:
+    image: grafana/grafana:latest
+    container_name: local-grafana
+    mem_limit: 1g
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_SECURITY_ADMIN_USER=my_admin
+      - GF_SECURITY_ADMIN_PASSWORD=my_admin_password
+    volumes:
+      - ./grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"   # Grafana UI
+    depends_on:
+      - local-tempo
+      - local-mimir
+      - local-loki
+    networks:
+      - pilot-net
+
+volumes:
+  tempo-data:
+  mimir-data:
+  loki-data:
+  grafana-data:
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net
