@@ -66,7 +66,8 @@ if not exist "%PILOT_JAVA_DIR%\pom.xml" (
 )
 
 pushd "%PILOT_JAVA_DIR%"
-call mvn clean package -DskipTests
+
+call mvn clean package
 if errorlevel 1 (
 	echo Maven build failed.
 	popd

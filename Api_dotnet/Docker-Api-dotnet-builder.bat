@@ -45,6 +45,14 @@ if not exist "%PILOT_DOTNET_DIR%\*.sln" if not exist "%PILOT_DOTNET_DIR%\*.cspro
 )
 
 pushd "%PILOT_DOTNET_DIR%"
+
+dotnet test --configuration Release --verbosity minimal
+if errorlevel 1 (
+	echo Unit tests failed. Aborting Docker build process.
+	popd
+	exit /b 1
+)
+
 dotnet publish --configuration Release --os linux --arch x64 --output "%WORKING_DIR_WIN%\api-dotnet-publish"
 if errorlevel 1 (
 	echo dotnet publish failed.

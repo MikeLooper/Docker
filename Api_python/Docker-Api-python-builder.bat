@@ -65,6 +65,14 @@ if errorlevel 1 (
 )
 
 pushd "%PILOT_PYTHON_DIR%"
+
+python -m pytest
+if errorlevel 1 (
+	echo Unit tests failed. Aborting Docker build process.
+	popd
+	exit /b 1
+)
+
 python -m pip wheel . --no-deps --wheel-dir "%WORKING_DIR_WIN%\api-python-publish"
 if errorlevel 1 (
 	echo Python wheel build failed.
