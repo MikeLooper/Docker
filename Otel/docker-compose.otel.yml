@@ -72,8 +72,12 @@ services:
       - GF_SECURITY_ADMIN_USER=my_admin
       - GF_SECURITY_ADMIN_PASSWORD=my_admin_password
     volumes:
+      # Mount provisioning configuration
       - ./grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
       - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning/dashboards/dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml
+      # Mount JSON dashboard files
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     ports:
       - "3000:3000"   # Grafana UI
     depends_on:
