@@ -1,0 +1,28 @@
+services:
+  local-homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: local-homepage
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev,localhost:56201 # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      PUID: 9696 # optional, your user id
+      PGID: 9696 # optional, your group id
+    ports:
+      - 56201:3000
+    volumes:
+      - /path/to/config:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+      - ./docker.yaml:/app/config/docker.yaml # mount local docker.yaml if you want to customize docker connections
+      - ./services.yaml:/app/config/services.yaml # mount local services.yaml if you want to customize services
+      - ./settings.yaml:/app/config/settings.yaml # mount local settings.yaml if you want to customize settings
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M    # Max RAM allocated to this container
+    networks:
+      - pilot-net
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

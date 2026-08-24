@@ -7,7 +7,7 @@ ARG DEPLOY_DATE
 ARG APP_PORT
 
 # Map it to an environment variable so it persists in the image
-ENV DEPLOY_DATE=$DEPLOY_DATE
+ENV APP_DEPLOY_DATE=$DEPLOY_DATE
 ENV APP_PORT=$APP_PORT
 
 # Copy all the pre-published files from the local directory into the container

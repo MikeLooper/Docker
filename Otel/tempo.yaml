@@ -1,0 +1,38 @@
+  # Grafana Tempo configuration for local development
+
+# Server configuration
+server:
+  http_listen_port: 3200
+
+# Distributor receives traces from the Collector
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+
+# Storage configuration using local filesystem
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/tempo/blocks
+    wal:
+      path: /var/tempo/wal
+
+# Metrics generator creates span metrics for RED dashboards
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://mimir:9009/api/v1/push
+
+# Enable metrics-generator processors for the default tenant
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [span-metrics, service-graphs]

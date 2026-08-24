@@ -5,6 +5,12 @@ This folder contains local-only runtime secrets used by batch scripts.
 ## Files expected by scripts
 
 - `secrets/api-java.env`
+- `secrets/appsettings-api-dotnet-postgresql.env`
+- `secrets/appsettings-api-dotnet-sqlserver.env`
+- `secrets/appsettings-api-python-postgresql.env`
+- `secrets/appsettings-api-python-sqlserver.env`
+- `secrets/appsettings-utility-dotnet-postgresql.env`
+- `secrets/appsettings-utility-dotnet-sqlserver.env`
 - `secrets/postgresql.env`
 - `secrets/sqlserver.env`
 

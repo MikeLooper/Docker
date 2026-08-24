@@ -10,12 +10,12 @@ set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
 set "COMPOSE_FILE=%~dp0docker-compose.utility-dotnet.yml"
 set "UTILITY_DOTNET_DIR=%~dp0..\..\PilotUtilityApi"
-set "DOTNET_MSSQL_PORT=58501"
-set "DOTNET_POSTGRES_PORT=58601"
+set "DOTNET_MSSQL_PORT=55701"
+set "DOTNET_POSTGRES_PORT=55801"
 
 REM Resolve host ports so Windows reserved/in-use ports do not break compose startup.
-call :resolve_open_port %DOTNET_MSSQL_PORT% DOTNET_MSSQL_PORT
-if errorlevel 1 exit /b 1
+REM call :resolve_open_port %DOTNET_MSSQL_PORT% DOTNET_MSSQL_PORT
+REM if errorlevel 1 exit /b 1
 call :resolve_open_port %DOTNET_POSTGRES_PORT% DOTNET_POSTGRES_PORT
 if errorlevel 1 exit /b 1
 
@@ -45,6 +45,14 @@ if not exist "%UTILITY_DOTNET_DIR%\*.sln" if not exist "%UTILITY_DOTNET_DIR%\*.c
 )
 
 pushd "%UTILITY_DOTNET_DIR%"
+
+dotnet test --configuration Release --verbosity minimal
+if errorlevel 1 (
+	echo Unit tests failed. Aborting Docker build process.
+	popd
+	exit /b 1
+)
+
 dotnet publish --configuration Release --os linux --arch x64 --output "%WORKING_DIR_WIN%\utility-dotnet-publish"
 if errorlevel 1 (
 	echo dotnet publish failed.

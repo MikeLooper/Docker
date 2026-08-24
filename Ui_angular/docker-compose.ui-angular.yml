@@ -10,7 +10,7 @@ services:
     environment:
       APP_DEPLOY_DATE: ${CURRENT_DATE}
     ports:
-      - "${UI_ANGULAR_PORT:-55401}:8080"
+      - "${UI_ANGULAR_PORT:-55901}:8080"
     mem_limit: 512m
     networks:
       - pilot-net

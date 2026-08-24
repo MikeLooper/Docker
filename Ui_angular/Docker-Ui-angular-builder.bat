@@ -13,7 +13,7 @@ set "PILOT_ANGULAR_DIR=C:\Working\Storage\Dev\GitHub\PilotUiAngular"
 set "ENVIRONMENT_FILE=%PILOT_ANGULAR_DIR%\src\environments\environment.ts"
 set "ENVIRONMENT_BACKUP=%PILOT_ANGULAR_DIR%\src\environments\environment.ts.docker-backup"
 set "SECRETS_FILE=%~dp0..\secrets\ui-angular.env"
-set "UI_ANGULAR_PORT=55401"
+set "UI_ANGULAR_PORT=55901"
 
 if not exist "%PILOT_ANGULAR_DIR%\package.json" (
 	echo PilotUiAngular project path not found: "%PILOT_ANGULAR_DIR%"

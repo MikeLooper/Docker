@@ -1,0 +1,34 @@
+# Grafana Loki configuration for local development
+
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+# Common configuration shared across components
+common:
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+# Schema configuration defines how data is stored
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+# Limits for local development
+limits_config:
+  allow_structured_metadata: true
+  volume_enabled: true

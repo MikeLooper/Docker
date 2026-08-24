@@ -67,8 +67,8 @@ Then replace values in `secrets\api-java.env`:
 
 Before compose startup, the script probes host ports in two separate ranges:
 
-- SQL Server variant: `56601-56699`
-- PostgreSQL variant: `56701-56799`
+- SQL Server variant: `55301-55399`
+- PostgreSQL variant: `55401-55499`
 
 If the preferred start port is blocked/reserved/in-use on Windows, the script picks the first open
 port within that range and prints the replacement.
@@ -82,8 +82,8 @@ set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "CURRENT_DATE=2026-08-03 00:00:00Z"
 set "MSSQL_DB_PASSWORD=replace-me"
 set "POSTGRES_DB_PASSWORD=replace-me"
-set "JAVA_MSSQL_PORT=56601"
-set "JAVA_POSTGRES_PORT=56701"
+set "JAVA_MSSQL_PORT=55301"
+set "JAVA_POSTGRES_PORT=55401"
 docker compose -f docker-compose.api-java.yml -p pilot-api-java up -d --build --force-recreate
 ```
 
