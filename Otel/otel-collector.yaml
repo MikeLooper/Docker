@@ -8,6 +8,18 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
+  # Self-scrape the collector's own internal telemetry (otelcol_* metrics),
+  # exposed by default on :8888, so the "OpenTelemetry Collector" and
+  # "Opentelemetry Collector Data Flow" Grafana dashboards have data to show.
+  # Without this, those dashboards' otelcol_* queries always return empty.
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otel-collector'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['localhost:8888']
+
 processors:
   # Batch processor for efficient data transfer
   batch:
@@ -27,16 +39,32 @@ exporters:
     endpoint: tempo:4317
     tls:
       insecure: true
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
 
   # Send metrics to Mimir via Prometheus remote write
   prometheusremotewrite/mimir:
     endpoint: http://mimir:9009/api/v1/push
-    tls:
-      insecure: true
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
 
   # Send logs to Loki via its native OTLP HTTP endpoint
   otlphttp/loki:
     endpoint: http://loki:3100/otlp
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
 
   # Keep debug output for development visibility
   debug:
@@ -49,7 +77,7 @@ service:
       processors: [resource, batch]
       exporters: [otlp/tempo, debug]
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, prometheus]
       processors: [resource, batch]
       exporters: [prometheusremotewrite/mimir, debug]
     logs:

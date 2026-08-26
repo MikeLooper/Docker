@@ -78,6 +78,11 @@ Create an internal network that will be shared by the different containers that 
 docker network inspect pilot-net >nul 2>&1 || docker network create pilot-net
 ```
 
+Read details about the new network:
+```
+docker network inspect pilot-net
+```
+
 ## Active Subjects
 
 ### Dozzle
@@ -168,29 +173,25 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 
 ## Docker Containers and Ports
 
-| Status: | Type:                   | Name:                       | Inner Port: | Outer Port: |
-| ------- | ----------------------- | --------------------------- | ----------- | ----------- |
-|         | Angular UI              | pilot-ui                    | 4200        | 55401       |
-|         | ApiDotNet (SQL Server)  | pilot-api-dotnet-mssql      | 8080        | 55101       |
-|         | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 55201       |
-|         | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 55301       |
-|         | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 55401       |
-|         | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 55501       |
-|         | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 55601       |
-|         | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 55701       |
-|         | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 55801       |
-|         | Dozzle                  | local-dozzle                | 8080        | 56101       |
-|         | Homepage                | local-homepage              | 3000        | 56201       |
-|         | PostgreSQL              | local-postgres              | 5432        | 5432        |
-|         | SQL Server              | local-mssql                 | 1433        | 1433        |
-|         | Uptime Kuma             | local-uptimekuma            | 3001        | 3001        |
-| TBD     | Jaeger                  | local-jaeger                | 4317        | 4317        |
-| TBD     | Prometheus              | local-prometheus            | 9464        | 9464        |
-| TBD     | Zipkin                  | local-zipkin                | 9411        | 9411        |
-| TBD     | Grafana                 | local-grafana               | 3000        | 3000        |
-| TBD     | Komodo                  | local-komodo                | 9120        | 9120        |
-| TBD     | Homer                   | local-homer                 | 8080        | ???         |
-| TBD     | Bitwarden               | local-bitwarden             | ???         | ???         |
-| TBD     | Duplicati               | local-duplicati             | 8200        | 8200        |
-| TBD     | Keycloak                | local-keycloak              | ???         | ???         |
-| TBD     | GO Feature Flag         | local-gofeatureflag         | ???         | ???         |
+| Status: | Type:                   | Name:                       | Inner Port: | Outer Port: | URL |
+| ------- | ----------------------- | --------------------------- | ----------- | ----------- | --- |
+|  √      | Angular UI              | pilot-ui                    | 4200        | 55401       | http://localhost:55901/ |
+|  √      | ApiDotNet (SQL Server)  | pilot-api-dotnet-mssql      | 8080        | 55101       | http://localhost:55101/swagger, http://localhost:55101/scalar |
+|  √      | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 55201       | http://localhost:55201/swagger, http://localhost:55201/scalar |
+|  √      | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 55301       | http://localhost:55301/swagger-ui/index.html |
+|  √      | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 55401       | http://localhost:55401/swagger-ui/index.html |
+|  √      | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 55501       | http://localhost:55501/docs, http://localhost:55501/redoc |
+|  √      | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 55601       | http://localhost:55601/docs, http://localhost:55601/redoc |
+|  √      | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 55701       | http://localhost:55701/swagger, http://localhost:55701/scalar |
+|  √      | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 55801       | http://localhost:55801/swagger, http://localhost:55801/scalar |
+|  √      | Dozzle                  | local-dozzle                | 8080        | 56101       | http://localhost:56101  |
+|  √      | Grafana                 | local-grafana               | 3000        | 3000        | http://localhost:3000   |
+|  √      | Homepage                | local-homepage              | 3000        | 56201       | http://localhost:56201  |
+|  √      | PostgreSQL              | local-postgres              | 5432        | 5432        |                         |
+|  √      | SQL Server              | local-mssql                 | 1433        | 1433        |                         |
+|  √      | Uptime Kuma             | local-uptimekuma            | 3001        | 3001        | http://localhost:3001   |
+| TBD     | Komodo                  | local-komodo                | 9120        | 9120        |                         |
+| TBD     | Bitwarden               | local-bitwarden             | ???         | ???         |                         |
+| TBD     | Duplicati               | local-duplicati             | 8200        | 8200        |                         |
+| TBD     | Keycloak                | local-keycloak              | ???         | ???         |                         |
+| TBD     | GO Feature Flag         | local-gofeatureflag         | ???         | ???         |                         |

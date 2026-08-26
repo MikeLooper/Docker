@@ -30,7 +30,9 @@ services:
     ports:
       - "3200:3200"   # Tempo API
     networks:
-      - pilot-net
+      pilot-net:
+        aliases:
+          - tempo
 
   # Grafana Mimir - long-term metrics storage
   local-mimir:
@@ -44,7 +46,9 @@ services:
     ports:
       - "9009:9009"   # Mimir API
     networks:
-      - pilot-net
+      pilot-net:
+        aliases:
+          - mimir
 
   # Grafana Loki - log aggregation
   local-loki:
@@ -58,7 +62,9 @@ services:
     ports:
       - "3100:3100"   # Loki API
     networks:
-      - pilot-net
+      pilot-net:
+        aliases:
+          - loki
 
   # Grafana - visualization and dashboards
   local-grafana:
