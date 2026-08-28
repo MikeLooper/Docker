@@ -30,7 +30,9 @@ services:
     ports:
       - "3200:3200"   # Tempo API
     networks:
-      - pilot-net
+      pilot-net:
+        aliases:
+          - tempo
 
   # Grafana Mimir - long-term metrics storage
   local-mimir:
@@ -44,7 +46,9 @@ services:
     ports:
       - "9009:9009"   # Mimir API
     networks:
-      - pilot-net
+      pilot-net:
+        aliases:
+          - mimir
 
   # Grafana Loki - log aggregation
   local-loki:
@@ -58,7 +62,9 @@ services:
     ports:
       - "3100:3100"   # Loki API
     networks:
-      - pilot-net
+      pilot-net:
+        aliases:
+          - loki
 
   # Grafana - visualization and dashboards
   local-grafana:
@@ -72,8 +78,12 @@ services:
       - GF_SECURITY_ADMIN_USER=my_admin
       - GF_SECURITY_ADMIN_PASSWORD=my_admin_password
     volumes:
+      # Mount provisioning configuration
       - ./grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
       - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning/dashboards/dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml
+      # Mount JSON dashboard files
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     ports:
       - "3000:3000"   # Grafana UI
     depends_on:
