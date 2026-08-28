@@ -74,7 +74,7 @@ Should return a `data` element with an array of labels.
 If that element is missing, there are no records.
 
 ```bash
-curl -G -s http://localhost:3100/loki/api/v1/labels
+curl -G -s --data-urlencode "since=3h" http://localhost:3100/loki/api/v1/labels
 ```
 
 List records:
@@ -82,7 +82,7 @@ List records:
 Replace `docker` with a label.
 
 ```bash
-? curl -G -s http://localhost:3100/loki/api/v1/query_range" --data-urlencode 'query={job="docker"}'
+curl -G -s http://localhost:3100/loki/api/v1/query_range" --data-urlencode 'query={job="service_name"}'
 ```
 
 ### Mimir
@@ -138,7 +138,7 @@ curl http://localhost:3000/api/health
 
 List dashboards:
 ```bash
-?	curl -G -s http://localhost:3000/apis/dashboard.grafana.app/v1/namespaces/:namespace/dashboards
+curl -G -s http://localhost:3000/apis/dashboard.grafana.app/v1/namespaces/default/dashboards
 ```
 
 ## References

@@ -30,7 +30,7 @@
 
 - UIs:
     - pilot-ui:
-        href: http://localhost:55401
+        href: http://localhost:55901
         description: Pilot UI for development and testing.
         icon: sh-fizzy.png
         container: pilot-ui
