@@ -22,7 +22,7 @@ cd ..
 
 - Docker Desktop with Docker Compose V2 (`docker compose`)
 - Java/Maven build environment for `PilotApiJava`
-- Local clone of `PilotApiJava` at a sibling path:
+- Local clone of [PilotApiJava](https://github.com/MikeLooper/PilotApiJava) at a sibling path:
 
 ```
 C:\Working\Storage\Dev\GitHub\PilotApiJava

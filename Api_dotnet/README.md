@@ -22,7 +22,7 @@ cd ..
 
 - Docker Desktop with Docker Compose V2 (`docker compose`)
 - .NET SDK that can publish the `PilotApiDotNet` project
-- Local clone of `PilotApiDotNet` at a sibling path:
+- Local clone of [PilotApiDotNet](https://github.com/MikeLooper/PilotApiDotNet) at a sibling path:
 
 ```
 C:\Working\Storage\Dev\GitHub\PilotApiDotNet

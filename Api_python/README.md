@@ -26,7 +26,7 @@ cd ..
 - Docker Desktop with Docker Compose V2 (`docker compose`)
 - Python 3.12 or later on `PATH` (used to build the wheel)
 - The shared `pilot-net` Docker network, plus the running `local-mssql` and `local-postgres` containers
-- Local clone of `PilotApiPython` at a sibling path:
+- Local clone of [PilotApiPython](https://github.com/MikeLooper/PilotApiPython) at a sibling path:
 
 ```
 C:\Working\Storage\Dev\GitHub\PilotApiPython
