@@ -9,6 +9,7 @@ services:
       POSTGRES_USER: DevUser
       POSTGRES_PASSWORD: ${DEV_USER_PASSWORD}
       POSTGRES_DB: devDb
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql
     networks:
