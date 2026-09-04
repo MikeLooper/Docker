@@ -114,6 +114,7 @@ docker run -d --name %CONTAINER_NAME% ^
 	-m 1g ^
 	-p %KEYCLOAK_PORT%:8080 ^
 	--restart=always ^
+	--network pilot-net ^
 	-v keycloak_data:/opt/keycloak/data ^
 	-e KC_BOOTSTRAP_ADMIN_USERNAME=%ADMIN_USERID% ^
 	-e KC_BOOTSTRAP_ADMIN_PASSWORD=%ADMIN_PASSWORD% %IMAGE_FILE% ^
@@ -353,7 +354,23 @@ if not errorlevel 1 (
 	)
 )
 
-:: 11. Create a client scope
+:: 11. Get client UUID (for use in next step)
+for /f "tokens=*" %%i in ('docker exec -i %CONTAINER_NAME% /opt/keycloak/bin/kcadm.sh get clients -r %REALM_NAME% -q clientId^=%CLIENT_ID% --fields id --format csv --noquotes') do (
+    set "CLIENT_UUID=%%i"
+)
+
+echo Client UUID is: %CLIENT_UUID%
+if "%CLIENT_UUID%"=="" (echo Client not found. & exit /b 1)
+
+:: 12. Assign all web origins
+docker exec -i %CONTAINER_NAME% /opt/keycloak/bin/kcadm.sh update clients/%CLIENT_UUID% -r %REALM_NAME% -s "webOrigins=[\"*\"]"
+
+if errorlevel 1 (
+	echo Assign webOrigins to client failed.
+	exit /b 1
+)
+
+:: 13. Create a client scope
 docker exec -i %CONTAINER_NAME% /opt/keycloak/bin/kcadm.sh get client-scopes ^
 	-r %REALM_NAME%  --fields id,name,protocol 2>nul | findstr /C:"\"name\" : \"%SCOPE_NAME%\"" >nul
 
@@ -374,15 +391,7 @@ if not errorlevel 1 (
 	)
 )
 
-:: 12. Get client UUID (for use in next step)
-for /f "tokens=*" %%i in ('docker exec -i %CONTAINER_NAME% /opt/keycloak/bin/kcadm.sh get clients -r %REALM_NAME% -q clientId^=%CLIENT_ID% --fields id --format csv --noquotes') do (
-    set "CLIENT_UUID=%%i"
-)
-
-echo Client UUID is: %CLIENT_UUID%
-if "%CLIENT_UUID%"=="" (echo Client not found. & exit /b 1)
-
-:: 13. Assign scope to client as a DEFAULT scope (Always evaluated automatically)
+:: 14. Assign scope to client as a DEFAULT scope (Always evaluated automatically)
 docker exec -i %CONTAINER_NAME% /opt/keycloak/bin/kcadm.sh get ^
 	"clients/%CLIENT_UUID%/default-client-scopes" ^
 	-r %REALM_NAME% ^
@@ -401,7 +410,7 @@ if not errorlevel 1 (
 	)
 )
 
-:: 14. Launch admin UI to validate
+:: 15. Launch admin UI to validate
 start http://localhost:%KEYCLOAK_PORT%/admin
 
 goto :eof
