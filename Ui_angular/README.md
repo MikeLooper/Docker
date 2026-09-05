@@ -22,7 +22,7 @@ cd ..
 
 - Docker Desktop with Docker Compose V2 (`docker compose`)
 - Node.js and npm (matching the Angular CLI requirements of the project)
-- Local clone of `PilotUiAngular` at:
+- Local clone of [PilotUiAngular](https://github.com/MikeLooper/PilotUiAngular) at:
 
 ```
 C:\Working\Storage\Dev\GitHub\PilotUiAngular

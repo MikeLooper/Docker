@@ -1,4 +1,4 @@
-# Docker - Setup - API (DotNet)
+# Docker - Setup - Pilot Utility API
 
 Build and run both .NET API containers (SQL Server and PostgreSQL variants) using Docker Compose.
 
@@ -21,11 +21,11 @@ cd ..
 ## Dependencies
 
 - Docker Desktop with Docker Compose V2 (`docker compose`)
-- .NET SDK that can publish the `PilotApiDotNet` project
-- Local clone of `PilotApiDotNet` at a sibling path:
+- .NET SDK that can publish the `PilotUtilityApi` project
+- Local clone of [PilotUtilityApi](https://github.com/MikeLooper/PilotUtilityApi) at a sibling path:
 
 ```
-C:\Working\Storage\Dev\GitHub\PilotApiDotNet
+C:\Working\Storage\Dev\GitHub\PilotUtilityApi
 ```
 
 ## Primary Script

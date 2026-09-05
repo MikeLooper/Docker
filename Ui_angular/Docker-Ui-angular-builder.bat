@@ -13,6 +13,8 @@ set "PILOT_ANGULAR_DIR=C:\Working\Storage\Dev\GitHub\PilotUiAngular"
 set "ENVIRONMENT_FILE=%PILOT_ANGULAR_DIR%\src\environments\environment.ts"
 set "ENVIRONMENT_BACKUP=%PILOT_ANGULAR_DIR%\src\environments\environment.ts.docker-backup"
 set "SECRETS_FILE=%~dp0..\secrets\ui-angular.env"
+set "UI_SECURITY_TOKEN_SECRETS_FILE=%~dp0..\secrets\ui-security-token-secrets.env"
+set "UI_SECURITY_TOKEN_SECRETS_TARGET=%PILOT_ANGULAR_DIR%\public\security-token-secrets.json"
 set "UI_ANGULAR_PORT=55901"
 
 if not exist "%PILOT_ANGULAR_DIR%\package.json" (
@@ -39,6 +41,27 @@ docker rm -f pilot-ui >nul 2>&1
 REM 4. Prepare an isolated build context.
 if exist "%WORKING_DIR_WIN%\ui-angular" rmdir /S /Q "%WORKING_DIR_WIN%\ui-angular"
 mkdir "%WORKING_DIR_WIN%\ui-angular"
+
+REM 5. Verify the UI security token secrets file exists, does not contain placeholder
+REM    values, and publish it into the Angular project so the build picks it up.
+if not exist "%UI_SECURITY_TOKEN_SECRETS_FILE%" (
+	echo Secrets file not found: "%UI_SECURITY_TOKEN_SECRETS_FILE%"
+	echo Copy ".\secrets\ui-security-token-secrets.env.example" to ".\secrets\ui-security-token-secrets.env" and update its contents with the correct secrets.
+	exit /b 1
+)
+
+findstr /C:"<idp-host-user>" /C:"<idp-host-password>" "%UI_SECURITY_TOKEN_SECRETS_FILE%" >nul
+if not errorlevel 1 (
+	echo Placeholder values found in "%UI_SECURITY_TOKEN_SECRETS_FILE%".
+	echo Update the "username" and "password" values with the correct secrets before continuing.
+	exit /b 1
+)
+
+copy /Y "%UI_SECURITY_TOKEN_SECRETS_FILE%" "%UI_SECURITY_TOKEN_SECRETS_TARGET%" >nul
+if errorlevel 1 (
+	echo Failed to copy "%UI_SECURITY_TOKEN_SECRETS_FILE%" to "%UI_SECURITY_TOKEN_SECRETS_TARGET%".
+	exit /b 1
+)
 
 REM 6. Install dependencies and publish the Angular application.
 pushd "%PILOT_ANGULAR_DIR%"

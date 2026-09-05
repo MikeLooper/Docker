@@ -10,6 +10,7 @@ services:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: ${SA_PASSWORD}
       MSSQL_AGENT_ENABLED: "true"
+    restart: unless-stopped
     volumes:
       - mssql_data:/var/opt/mssql
     networks:
