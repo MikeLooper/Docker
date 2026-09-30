@@ -1,0 +1,669 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "Server=local-mssql,1433;Database=NorthWind;User ID=DevUser;Password=@env('DATABASE_PASSWORD');TrustServerCertificate=True;"
+  },
+  "runtime": {
+    "rest": {
+      "enabled": true,
+      "path": "/api",
+      "request-body-strict": false
+    },
+    "graphql": {
+      "enabled": true,
+      "path": "/graphql",
+      "allow-introspection": true
+    },
+    "mcp": {
+      "enabled": true,
+      "path": "/mcp"
+    },
+    "host": {
+      "cors": {
+        "origins": [
+          "*"
+        ],
+        "allow-credentials": false
+      },
+      "authentication": {
+        "provider": "Unauthenticated"
+      },
+      "mode": "development"
+    },
+    "telemetry": {
+      "open-telemetry": {
+        "enabled": true,
+        "endpoint": "@env('OTEL_EXPORTER_OTLP_ENDPOINT')",
+        "headers": "@env('OTEL_EXPORTER_OTLP_HEADERS')",
+        "service-name": "@env('OTEL_SERVICE_NAME')"
+      }
+    },
+    "health": {
+      "enabled": true,
+      "roles": [
+        "anonymous"
+      ]
+    }
+  },
+  "autoentities": {},
+  "entities": {
+    "Categories": {
+      "description": "Product categories.",
+      "source": {
+        "object": "dbo.Categories",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "CategoryID",
+          "alias": "CategoryID",
+          "primary-key": true
+        },
+        {
+          "name": "CategoryName",
+          "alias": "CategoryName",
+          "primary-key": false
+        },
+        {
+          "name": "Description",
+          "alias": "Description",
+          "primary-key": false
+        },
+        {
+          "name": "Picture",
+          "alias": "Picture",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Categories",
+          "plural": "Categories"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Customers": {
+      "description": "Customers who place orders.",
+      "source": {
+        "object": "dbo.Customers",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "CustomerID",
+          "alias": "CustomerID",
+          "primary-key": true
+        },
+        {
+          "name": "CompanyName",
+          "alias": "CompanyName",
+          "primary-key": false
+        },
+        {
+          "name": "ContactName",
+          "alias": "ContactName",
+          "primary-key": false
+        },
+        {
+          "name": "ContactTitle",
+          "alias": "ContactTitle",
+          "primary-key": false
+        },
+        {
+          "name": "Address",
+          "alias": "Address",
+          "primary-key": false
+        },
+        {
+          "name": "City",
+          "alias": "City",
+          "primary-key": false
+        },
+        {
+          "name": "Region",
+          "alias": "Region",
+          "primary-key": false
+        },
+        {
+          "name": "PostalCode",
+          "alias": "PostalCode",
+          "primary-key": false
+        },
+        {
+          "name": "Country",
+          "alias": "Country",
+          "primary-key": false
+        },
+        {
+          "name": "Phone",
+          "alias": "Phone",
+          "primary-key": false
+        },
+        {
+          "name": "Fax",
+          "alias": "Fax",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Customers",
+          "plural": "Customers"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Employees": {
+      "description": "Employees who take orders.",
+      "source": {
+        "object": "dbo.Employees",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "EmployeeID",
+          "alias": "EmployeeID",
+          "primary-key": true
+        },
+        {
+          "name": "LastName",
+          "alias": "LastName",
+          "primary-key": false
+        },
+        {
+          "name": "FirstName",
+          "alias": "FirstName",
+          "primary-key": false
+        },
+        {
+          "name": "Title",
+          "alias": "Title",
+          "primary-key": false
+        },
+        {
+          "name": "TitleOfCourtesy",
+          "alias": "TitleOfCourtesy",
+          "primary-key": false
+        },
+        {
+          "name": "BirthDate",
+          "alias": "BirthDate",
+          "primary-key": false
+        },
+        {
+          "name": "HireDate",
+          "alias": "HireDate",
+          "primary-key": false
+        },
+        {
+          "name": "Address",
+          "alias": "Address",
+          "primary-key": false
+        },
+        {
+          "name": "City",
+          "alias": "City",
+          "primary-key": false
+        },
+        {
+          "name": "Region",
+          "alias": "Region",
+          "primary-key": false
+        },
+        {
+          "name": "PostalCode",
+          "alias": "PostalCode",
+          "primary-key": false
+        },
+        {
+          "name": "Country",
+          "alias": "Country",
+          "primary-key": false
+        },
+        {
+          "name": "HomePhone",
+          "alias": "HomePhone",
+          "primary-key": false
+        },
+        {
+          "name": "Extension",
+          "alias": "Extension",
+          "primary-key": false
+        },
+        {
+          "name": "Photo",
+          "alias": "Photo",
+          "primary-key": false
+        },
+        {
+          "name": "Notes",
+          "alias": "Notes",
+          "primary-key": false
+        },
+        {
+          "name": "ReportsTo",
+          "alias": "ReportsTo",
+          "primary-key": false
+        },
+        {
+          "name": "PhotoPath",
+          "alias": "PhotoPath",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Employees",
+          "plural": "Employees"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "OrderDetails": {
+      "description": "Order line items. Composite key: OrderID and ProductID.",
+      "source": {
+        "object": "dbo.[Order Details]",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "OrderID",
+          "alias": "OrderID",
+          "primary-key": true
+        },
+        {
+          "name": "ProductID",
+          "alias": "ProductID",
+          "primary-key": true
+        },
+        {
+          "name": "UnitPrice",
+          "alias": "UnitPrice",
+          "primary-key": false
+        },
+        {
+          "name": "Quantity",
+          "alias": "Quantity",
+          "primary-key": false
+        },
+        {
+          "name": "Discount",
+          "alias": "Discount",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "OrderDetails",
+          "plural": "OrderDetails"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Orders": {
+      "description": "Customer orders.",
+      "source": {
+        "object": "dbo.Orders",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "OrderID",
+          "alias": "OrderID",
+          "primary-key": true
+        },
+        {
+          "name": "CustomerID",
+          "alias": "CustomerID",
+          "primary-key": false
+        },
+        {
+          "name": "EmployeeID",
+          "alias": "EmployeeID",
+          "primary-key": false
+        },
+        {
+          "name": "OrderDate",
+          "alias": "OrderDate",
+          "primary-key": false
+        },
+        {
+          "name": "RequiredDate",
+          "alias": "RequiredDate",
+          "primary-key": false
+        },
+        {
+          "name": "ShippedDate",
+          "alias": "ShippedDate",
+          "primary-key": false
+        },
+        {
+          "name": "ShipVia",
+          "alias": "ShipVia",
+          "primary-key": false
+        },
+        {
+          "name": "Freight",
+          "alias": "Freight",
+          "primary-key": false
+        },
+        {
+          "name": "ShipName",
+          "alias": "ShipName",
+          "primary-key": false
+        },
+        {
+          "name": "ShipAddress",
+          "alias": "ShipAddress",
+          "primary-key": false
+        },
+        {
+          "name": "ShipCity",
+          "alias": "ShipCity",
+          "primary-key": false
+        },
+        {
+          "name": "ShipRegion",
+          "alias": "ShipRegion",
+          "primary-key": false
+        },
+        {
+          "name": "ShipPostalCode",
+          "alias": "ShipPostalCode",
+          "primary-key": false
+        },
+        {
+          "name": "ShipCountry",
+          "alias": "ShipCountry",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Orders",
+          "plural": "Orders"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Products": {
+      "description": "Products for sale.",
+      "source": {
+        "object": "dbo.Products",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "ProductID",
+          "alias": "ProductID",
+          "primary-key": true
+        },
+        {
+          "name": "ProductName",
+          "alias": "ProductName",
+          "primary-key": false
+        },
+        {
+          "name": "SupplierID",
+          "alias": "SupplierID",
+          "primary-key": false
+        },
+        {
+          "name": "CategoryID",
+          "alias": "CategoryID",
+          "primary-key": false
+        },
+        {
+          "name": "QuantityPerUnit",
+          "alias": "QuantityPerUnit",
+          "primary-key": false
+        },
+        {
+          "name": "UnitPrice",
+          "alias": "UnitPrice",
+          "primary-key": false
+        },
+        {
+          "name": "UnitsInStock",
+          "alias": "UnitsInStock",
+          "primary-key": false
+        },
+        {
+          "name": "UnitsOnOrder",
+          "alias": "UnitsOnOrder",
+          "primary-key": false
+        },
+        {
+          "name": "ReorderLevel",
+          "alias": "ReorderLevel",
+          "primary-key": false
+        },
+        {
+          "name": "Discontinued",
+          "alias": "Discontinued",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Products",
+          "plural": "Products"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Shippers": {
+      "description": "Companies that ship orders.",
+      "source": {
+        "object": "dbo.Shippers",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "ShipperID",
+          "alias": "ShipperID",
+          "primary-key": true
+        },
+        {
+          "name": "CompanyName",
+          "alias": "CompanyName",
+          "primary-key": false
+        },
+        {
+          "name": "Phone",
+          "alias": "Phone",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Shippers",
+          "plural": "Shippers"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Suppliers": {
+      "description": "Companies that supply products.",
+      "source": {
+        "object": "dbo.Suppliers",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "SupplierID",
+          "alias": "SupplierID",
+          "primary-key": true
+        },
+        {
+          "name": "CompanyName",
+          "alias": "CompanyName",
+          "primary-key": false
+        },
+        {
+          "name": "ContactName",
+          "alias": "ContactName",
+          "primary-key": false
+        },
+        {
+          "name": "ContactTitle",
+          "alias": "ContactTitle",
+          "primary-key": false
+        },
+        {
+          "name": "Address",
+          "alias": "Address",
+          "primary-key": false
+        },
+        {
+          "name": "City",
+          "alias": "City",
+          "primary-key": false
+        },
+        {
+          "name": "Region",
+          "alias": "Region",
+          "primary-key": false
+        },
+        {
+          "name": "PostalCode",
+          "alias": "PostalCode",
+          "primary-key": false
+        },
+        {
+          "name": "Country",
+          "alias": "Country",
+          "primary-key": false
+        },
+        {
+          "name": "Phone",
+          "alias": "Phone",
+          "primary-key": false
+        },
+        {
+          "name": "Fax",
+          "alias": "Fax",
+          "primary-key": false
+        },
+        {
+          "name": "HomePage",
+          "alias": "HomePage",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Suppliers",
+          "plural": "Suppliers"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

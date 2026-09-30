@@ -66,6 +66,7 @@ call :RunCollection "PilotApiDotNet"  "%GITHUB_ROOT%\PilotApiDotNet\test\Bruno\P
 call :RunCollection "PilotApiJava"    "%GITHUB_ROOT%\PilotApiJava\test\Bruno\PilotApiJava"
 call :RunCollection "PilotApiPython"  "%GITHUB_ROOT%\PilotApiPython\tests\Bruno\PilotApiPython"
 call :RunCollection "PilotUtilityApi" "%GITHUB_ROOT%\PilotUtilityApi\test\Bruno\PilotUtilityApi"
+call :RunCollection "PilotApiMsDab"   "%~dp0MsDab\PilotApiMsDab"
 goto :eof
 
 rem ---------------------------------------------------------------------------

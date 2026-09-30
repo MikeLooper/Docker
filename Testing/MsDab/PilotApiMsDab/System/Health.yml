@@ -1,0 +1,32 @@
+info:
+  name: Health
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{Host}}health"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return success", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("should report healthy", function () {
+          const resBody = res.getBody();
+
+          expect(resBody.status).to.equal("Healthy");
+          expect(resBody.configuration.rest).to.equal(true);
+          expect(resBody.configuration.graphql).to.equal(true);
+          expect(resBody.configuration.mcp).to.equal(true);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

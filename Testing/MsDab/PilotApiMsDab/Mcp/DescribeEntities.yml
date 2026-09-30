@@ -1,0 +1,61 @@
+info:
+  name: DescribeEntities
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{Host}}mcp"
+  headers:
+    - name: Content-Type
+      value: "application/json"
+    - name: Accept
+      value: "application/json, text/event-stream"
+    - name: Mcp-Session-Id
+      value: "{{mcpSessionId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "tools/call",
+        "params": {
+          "name": "describe_entities",
+          "arguments": {}
+        }
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        // Streamable HTTP may answer with a server-sent event: "event: message\ndata: {...}".
+        function parseMcp(body) {
+          if (typeof body !== "string") return body;
+          const line = body.split(/\r?\n/).find(function (l) { return l.indexOf("data:") === 0; });
+          return JSON.parse(line ? line.substring(5) : body);
+        }
+
+        test("should return success", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("should describe the exposed entities", function () {
+          const message = parseMcp(res.getBody());
+
+          expect(message.error).to.be.undefined;
+          expect(message.result.isError).to.not.equal(true);
+
+          const text = message.result.content.map(function (c) { return c.text || ""; }).join("\n");
+          ["Categories", "Customers", "Employees", "OrderDetails", "Orders", "Products", "Shippers", "Suppliers"].forEach(function (name) {
+            expect(text).to.contain(name);
+          });
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

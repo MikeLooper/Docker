@@ -1,0 +1,10 @@
+info:
+  name: Suppliers
+  type: folder
+  seq: 8
+
+request:
+  auth: inherit
+  variables:
+    - name: entity
+      value: Suppliers

@@ -36,6 +36,7 @@ Then, execute the networking command listed in the *Network* section below.
 
 - `Api_dotnet\docker-compose.api-dotnet.yml`
 - `Api_java\docker-compose.api-java.yml`
+- `Api_MsDab\docker-compose.api-msdab.yml`
 - `Api_python\docker-compose.api-python.yml`
 - `Homepage\docker-compose.homepage.yml`
 - `PostgreSQL\docker-compose.postgresql.yml`
@@ -47,6 +48,7 @@ Then, execute the networking command listed in the *Network* section below.
 
 - `Api_dotnet\Docker-Api-dotnet-builder.bat`
 - `Api_java\Docker-Api-java-builder.bat`
+- `Api_MsDab\Docker-Api-msdab-builder.bat`
 - `Api_python\Docker-Api-python-builder.bat`
 - `Dozzle\Docker-Dozzle-builder.bat`
 - `Homepage\Docker-Homepage-builder.bat`
@@ -58,7 +60,7 @@ Then, execute the networking command listed in the *Network* section below.
 
 Each script is the primary entry point for its stack and is kept aligned with its corresponding README.
 
-On Windows, the API builder scripts for .NET, Java, and Python automatically probe and select open
+On Windows, the API builder scripts for .NET, Java, Python, and Data API builder automatically probe and select open
 host ports within predefined ranges when preferred ports are reserved or in use.
 
 ## Secrets
@@ -108,6 +110,12 @@ Follow the directions in the [API (DotNet) README](./Api_dotnet/README.md).
 A Java Spring Boot API that presents data from the Northwind database (MS SQL Server or PostgreSQL)
 
 Follow the directions in the [API (Java) README](./Api_java/README.md).
+
+### Pilot API (Data API builder)
+
+Microsoft Data API builder (DAB) serving REST, GraphQL, and MCP endpoints over the Northwind database (MS SQL Server or PostgreSQL), plus MCP Inspector.
+
+Follow the directions in the [API (Data API builder) README](./Api_MsDab/README.md).
 
 ### Pilot API (Python)
 
@@ -180,6 +188,9 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |  √      | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 55201       | http://localhost:55201/swagger, http://localhost:55201/scalar |
 |  √      | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 55301       | http://localhost:55301/swagger-ui/index.html |
 |  √      | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 55401       | http://localhost:55401/swagger-ui/index.html |
+|  √      | ApiMsDab (SQL Server)   | pilot-api-msdab-mssql       | 5000        | 56301       | http://localhost:56301/swagger, http://localhost:56301/graphql |
+|  √      | ApiMsDab (PostgreSQL)   | pilot-api-msdab-postgres    | 5000        | 56401       | http://localhost:56401/swagger, http://localhost:56401/graphql |
+|  √      | MCP Inspector (DAB)     | pilot-msdab-mcp-inspector   | 6274        | 56501       | http://localhost:56501/ |
 |  √      | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 55501       | http://localhost:55501/docs, http://localhost:55501/redoc |
 |  √      | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 55601       | http://localhost:55601/docs, http://localhost:55601/redoc |
 |  √      | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 55701       | http://localhost:55701/swagger, http://localhost:55701/scalar |

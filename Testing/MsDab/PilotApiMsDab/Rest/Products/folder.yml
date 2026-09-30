@@ -1,0 +1,10 @@
+info:
+  name: Products
+  type: folder
+  seq: 6
+
+request:
+  auth: inherit
+  variables:
+    - name: entity
+      value: Products

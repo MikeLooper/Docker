@@ -1,0 +1,30 @@
+opencollection: 1.0.0
+
+info:
+  name: PilotApiMsDab
+  version: v1.0.0
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  headers:
+    - name: Accept
+      value: application/json
+  # DAB runs with anonymous permissions, so no bearer token is needed.
+  auth:
+    type: none
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

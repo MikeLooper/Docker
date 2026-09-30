@@ -1,0 +1,32 @@
+info:
+  name: GetById
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{Host}}api/{{entity}}/ShipperID/1"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return success", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("should return the requested row", function () {
+          const resBody = res.getBody();
+
+          expect(resBody.value).to.have.lengthOf(1);
+
+          const item = resBody.value[0];
+          expect(item.ShipperID).to.equal(1);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

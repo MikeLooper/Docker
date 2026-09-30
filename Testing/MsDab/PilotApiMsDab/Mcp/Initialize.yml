@@ -1,0 +1,63 @@
+info:
+  name: Initialize
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{Host}}mcp"
+  headers:
+    - name: Content-Type
+      value: "application/json"
+    - name: Accept
+      value: "application/json, text/event-stream"
+  body:
+    type: json
+    data: |-
+      {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-06-18",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "bruno",
+            "version": "1.0.0"
+          }
+        }
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        // Later MCP requests must send the session id returned here.
+        bru.setVar("mcpSessionId", res.getHeader("mcp-session-id"));
+    - type: tests
+      code: |-
+        // Streamable HTTP may answer with a server-sent event: "event: message\ndata: {...}".
+        function parseMcp(body) {
+          if (typeof body !== "string") return body;
+          const line = body.split(/\r?\n/).find(function (l) { return l.indexOf("data:") === 0; });
+          return JSON.parse(line ? line.substring(5) : body);
+        }
+
+        test("should return success", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("should return server info and a session id", function () {
+          const message = parseMcp(res.getBody());
+
+          expect(message.result.serverInfo).to.have.property("name");
+          expect(message.result.capabilities).to.have.property("tools");
+          expect(res.getHeader("mcp-session-id")).to.be.a("string");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

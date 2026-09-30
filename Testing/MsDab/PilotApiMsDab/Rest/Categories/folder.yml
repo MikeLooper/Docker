@@ -1,0 +1,10 @@
+info:
+  name: Categories
+  type: folder
+  seq: 1
+
+request:
+  auth: inherit
+  variables:
+    - name: entity
+      value: Categories

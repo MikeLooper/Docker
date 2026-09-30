@@ -1,0 +1,44 @@
+info:
+  name: Employees
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{Host}}graphql"
+  headers:
+    - name: Content-Type
+      value: "application/json"
+  body:
+    type: json
+    data: |-
+      {
+        "query": "query { employees(first: 2) { items { EmployeeID LastName } hasNextPage endCursor } }"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return success", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("should return items without errors", function () {
+          const resBody = res.getBody();
+
+          expect(resBody.errors).to.be.undefined;
+
+          const items = resBody.data.employees.items;
+          expect(items).to.have.lengthOf(2);
+          expect(items[0]).to.have.property("EmployeeID");
+          expect(items[0]).to.have.property("LastName");
+          expect(resBody.data.employees.hasNextPage).to.equal(true);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
