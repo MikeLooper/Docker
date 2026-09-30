@@ -1,0 +1,669 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "postgresql",
+    "connection-string": "Host=local-postgres;Port=5432;Database=northwind;Username=DevUser;Password=@env('DATABASE_PASSWORD');"
+  },
+  "runtime": {
+    "rest": {
+      "enabled": true,
+      "path": "/api",
+      "request-body-strict": false
+    },
+    "graphql": {
+      "enabled": true,
+      "path": "/graphql",
+      "allow-introspection": true
+    },
+    "mcp": {
+      "enabled": true,
+      "path": "/mcp"
+    },
+    "host": {
+      "cors": {
+        "origins": [
+          "*"
+        ],
+        "allow-credentials": false
+      },
+      "authentication": {
+        "provider": "Unauthenticated"
+      },
+      "mode": "development"
+    },
+    "telemetry": {
+      "open-telemetry": {
+        "enabled": true,
+        "endpoint": "@env('OTEL_EXPORTER_OTLP_ENDPOINT')",
+        "headers": "@env('OTEL_EXPORTER_OTLP_HEADERS')",
+        "service-name": "@env('OTEL_SERVICE_NAME')"
+      }
+    },
+    "health": {
+      "enabled": true,
+      "roles": [
+        "anonymous"
+      ]
+    }
+  },
+  "autoentities": {},
+  "entities": {
+    "Categories": {
+      "description": "Product categories.",
+      "source": {
+        "object": "pilot.categories",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "categoryid",
+          "alias": "CategoryID",
+          "primary-key": true
+        },
+        {
+          "name": "categoryname",
+          "alias": "CategoryName",
+          "primary-key": false
+        },
+        {
+          "name": "description",
+          "alias": "Description",
+          "primary-key": false
+        },
+        {
+          "name": "picture",
+          "alias": "Picture",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Categories",
+          "plural": "Categories"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Customers": {
+      "description": "Customers who place orders.",
+      "source": {
+        "object": "pilot.customers",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "customerid",
+          "alias": "CustomerID",
+          "primary-key": true
+        },
+        {
+          "name": "companyname",
+          "alias": "CompanyName",
+          "primary-key": false
+        },
+        {
+          "name": "contactname",
+          "alias": "ContactName",
+          "primary-key": false
+        },
+        {
+          "name": "contacttitle",
+          "alias": "ContactTitle",
+          "primary-key": false
+        },
+        {
+          "name": "address",
+          "alias": "Address",
+          "primary-key": false
+        },
+        {
+          "name": "city",
+          "alias": "City",
+          "primary-key": false
+        },
+        {
+          "name": "region",
+          "alias": "Region",
+          "primary-key": false
+        },
+        {
+          "name": "postalcode",
+          "alias": "PostalCode",
+          "primary-key": false
+        },
+        {
+          "name": "country",
+          "alias": "Country",
+          "primary-key": false
+        },
+        {
+          "name": "phone",
+          "alias": "Phone",
+          "primary-key": false
+        },
+        {
+          "name": "fax",
+          "alias": "Fax",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Customers",
+          "plural": "Customers"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Employees": {
+      "description": "Employees who take orders.",
+      "source": {
+        "object": "pilot.employees",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "employeeid",
+          "alias": "EmployeeID",
+          "primary-key": true
+        },
+        {
+          "name": "lastname",
+          "alias": "LastName",
+          "primary-key": false
+        },
+        {
+          "name": "firstname",
+          "alias": "FirstName",
+          "primary-key": false
+        },
+        {
+          "name": "title",
+          "alias": "Title",
+          "primary-key": false
+        },
+        {
+          "name": "titleofcourtesy",
+          "alias": "TitleOfCourtesy",
+          "primary-key": false
+        },
+        {
+          "name": "birthdate",
+          "alias": "BirthDate",
+          "primary-key": false
+        },
+        {
+          "name": "hiredate",
+          "alias": "HireDate",
+          "primary-key": false
+        },
+        {
+          "name": "address",
+          "alias": "Address",
+          "primary-key": false
+        },
+        {
+          "name": "city",
+          "alias": "City",
+          "primary-key": false
+        },
+        {
+          "name": "region",
+          "alias": "Region",
+          "primary-key": false
+        },
+        {
+          "name": "postalcode",
+          "alias": "PostalCode",
+          "primary-key": false
+        },
+        {
+          "name": "country",
+          "alias": "Country",
+          "primary-key": false
+        },
+        {
+          "name": "homephone",
+          "alias": "HomePhone",
+          "primary-key": false
+        },
+        {
+          "name": "extension",
+          "alias": "Extension",
+          "primary-key": false
+        },
+        {
+          "name": "photo",
+          "alias": "Photo",
+          "primary-key": false
+        },
+        {
+          "name": "notes",
+          "alias": "Notes",
+          "primary-key": false
+        },
+        {
+          "name": "reportsto",
+          "alias": "ReportsTo",
+          "primary-key": false
+        },
+        {
+          "name": "photopath",
+          "alias": "PhotoPath",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Employees",
+          "plural": "Employees"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "OrderDetails": {
+      "description": "Order line items. Composite key: OrderID and ProductID.",
+      "source": {
+        "object": "pilot.orderdetails",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "orderid",
+          "alias": "OrderID",
+          "primary-key": true
+        },
+        {
+          "name": "productid",
+          "alias": "ProductID",
+          "primary-key": true
+        },
+        {
+          "name": "unitprice",
+          "alias": "UnitPrice",
+          "primary-key": false
+        },
+        {
+          "name": "quantity",
+          "alias": "Quantity",
+          "primary-key": false
+        },
+        {
+          "name": "discount",
+          "alias": "Discount",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "OrderDetails",
+          "plural": "OrderDetails"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Orders": {
+      "description": "Customer orders.",
+      "source": {
+        "object": "pilot.orders",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "orderid",
+          "alias": "OrderID",
+          "primary-key": true
+        },
+        {
+          "name": "customerid",
+          "alias": "CustomerID",
+          "primary-key": false
+        },
+        {
+          "name": "employeeid",
+          "alias": "EmployeeID",
+          "primary-key": false
+        },
+        {
+          "name": "orderdate",
+          "alias": "OrderDate",
+          "primary-key": false
+        },
+        {
+          "name": "requireddate",
+          "alias": "RequiredDate",
+          "primary-key": false
+        },
+        {
+          "name": "shippeddate",
+          "alias": "ShippedDate",
+          "primary-key": false
+        },
+        {
+          "name": "shipvia",
+          "alias": "ShipVia",
+          "primary-key": false
+        },
+        {
+          "name": "freight",
+          "alias": "Freight",
+          "primary-key": false
+        },
+        {
+          "name": "shipname",
+          "alias": "ShipName",
+          "primary-key": false
+        },
+        {
+          "name": "shipaddress",
+          "alias": "ShipAddress",
+          "primary-key": false
+        },
+        {
+          "name": "shipcity",
+          "alias": "ShipCity",
+          "primary-key": false
+        },
+        {
+          "name": "shipregion",
+          "alias": "ShipRegion",
+          "primary-key": false
+        },
+        {
+          "name": "shippostalcode",
+          "alias": "ShipPostalCode",
+          "primary-key": false
+        },
+        {
+          "name": "shipcountry",
+          "alias": "ShipCountry",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Orders",
+          "plural": "Orders"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Products": {
+      "description": "Products for sale.",
+      "source": {
+        "object": "pilot.products",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "productid",
+          "alias": "ProductID",
+          "primary-key": true
+        },
+        {
+          "name": "productname",
+          "alias": "ProductName",
+          "primary-key": false
+        },
+        {
+          "name": "supplierid",
+          "alias": "SupplierID",
+          "primary-key": false
+        },
+        {
+          "name": "categoryid",
+          "alias": "CategoryID",
+          "primary-key": false
+        },
+        {
+          "name": "quantityperunit",
+          "alias": "QuantityPerUnit",
+          "primary-key": false
+        },
+        {
+          "name": "unitprice",
+          "alias": "UnitPrice",
+          "primary-key": false
+        },
+        {
+          "name": "unitsinstock",
+          "alias": "UnitsInStock",
+          "primary-key": false
+        },
+        {
+          "name": "unitsonorder",
+          "alias": "UnitsOnOrder",
+          "primary-key": false
+        },
+        {
+          "name": "reorderlevel",
+          "alias": "ReorderLevel",
+          "primary-key": false
+        },
+        {
+          "name": "discontinued",
+          "alias": "Discontinued",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Products",
+          "plural": "Products"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Shippers": {
+      "description": "Companies that ship orders.",
+      "source": {
+        "object": "pilot.shippers",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "shipperid",
+          "alias": "ShipperID",
+          "primary-key": true
+        },
+        {
+          "name": "companyname",
+          "alias": "CompanyName",
+          "primary-key": false
+        },
+        {
+          "name": "phone",
+          "alias": "Phone",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Shippers",
+          "plural": "Shippers"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Suppliers": {
+      "description": "Companies that supply products.",
+      "source": {
+        "object": "pilot.suppliers",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "supplierid",
+          "alias": "SupplierID",
+          "primary-key": true
+        },
+        {
+          "name": "companyname",
+          "alias": "CompanyName",
+          "primary-key": false
+        },
+        {
+          "name": "contactname",
+          "alias": "ContactName",
+          "primary-key": false
+        },
+        {
+          "name": "contacttitle",
+          "alias": "ContactTitle",
+          "primary-key": false
+        },
+        {
+          "name": "address",
+          "alias": "Address",
+          "primary-key": false
+        },
+        {
+          "name": "city",
+          "alias": "City",
+          "primary-key": false
+        },
+        {
+          "name": "region",
+          "alias": "Region",
+          "primary-key": false
+        },
+        {
+          "name": "postalcode",
+          "alias": "PostalCode",
+          "primary-key": false
+        },
+        {
+          "name": "country",
+          "alias": "Country",
+          "primary-key": false
+        },
+        {
+          "name": "phone",
+          "alias": "Phone",
+          "primary-key": false
+        },
+        {
+          "name": "fax",
+          "alias": "Fax",
+          "primary-key": false
+        },
+        {
+          "name": "homepage",
+          "alias": "HomePage",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Suppliers",
+          "plural": "Suppliers"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,64 @@
+# Microsoft Data API builder (DAB) for the Pilot NorthWind databases, plus MCP Inspector.
+# Run with the secrets file so passwords and the Inspector token can be interpolated:
+#   docker compose -f docker-compose.api-msdab.yml -p pilot-api-msdab --env-file ../secrets/ms-dab.env up -d
+
+x-dab-common: &dab-common
+  image: ${DAB_IMAGE:-mcr.microsoft.com/azure-databases/data-api-builder:2.0.12}
+  mem_limit: 1g
+  networks:
+    - pilot-net
+  healthcheck:
+    test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost:5000/health"]
+    interval: 15s
+    timeout: 10s
+    retries: 5
+    start_period: 20s
+
+services:
+  pilot-api-msdab-mssql:
+    <<: *dab-common
+    container_name: pilot-api-msdab-mssql
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      DATABASE_PASSWORD: ${MSSQL_DATABASE_PASSWORD:?MSSQL_DATABASE_PASSWORD must be set in secrets/ms-dab.env}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_HEADERS: ""
+      OTEL_SERVICE_NAME: pilot-api-msdab-mssql
+    volumes:
+      - ./data-api/dab-config.mssql.json:/App/dab-config.json:ro
+    ports:
+      - "${MSDAB_MSSQL_PORT:-56301}:5000"
+
+  pilot-api-msdab-postgres:
+    <<: *dab-common
+    container_name: pilot-api-msdab-postgres
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      DATABASE_PASSWORD: ${POSTGRES_DATABASE_PASSWORD:?POSTGRES_DATABASE_PASSWORD must be set in secrets/ms-dab.env}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_HEADERS: ""
+      OTEL_SERVICE_NAME: pilot-api-msdab-postgres
+    volumes:
+      - ./data-api/dab-config.postgres.json:/App/dab-config.json:ro
+    ports:
+      - "${MSDAB_POSTGRES_PORT:-56401}:5000"
+
+  pilot-msdab-mcp-inspector:
+    image: ${INSPECTOR_IMAGE:-ghcr.io/modelcontextprotocol/inspector:2.8.0}
+    container_name: pilot-msdab-mcp-inspector
+    environment:
+      # Auth stays on: the token guards the Inspector API and its auto-connect links.
+      MCP_INSPECTOR_API_TOKEN: ${MCP_INSPECTOR_API_TOKEN:?MCP_INSPECTOR_API_TOKEN must be set in secrets/ms-dab.env}
+      # The host port differs from the container port, so the browser origin must be allowed explicitly.
+      ALLOWED_ORIGINS: http://localhost:${MSDAB_INSPECTOR_PORT:-56501},http://127.0.0.1:${MSDAB_INSPECTOR_PORT:-56501}
+    ports:
+      # Loopback only: the Inspector backend can spawn processes on request.
+      - "127.0.0.1:${MSDAB_INSPECTOR_PORT:-56501}:6274"
+    mem_limit: 512m
+    networks:
+      - pilot-net
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

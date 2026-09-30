@@ -1,0 +1,5 @@
+name: Docker - PostgreSQL
+variables:
+  - name: Host
+    value: http://localhost:56401/
+    description: "The base URL for the Data API builder instance under test"

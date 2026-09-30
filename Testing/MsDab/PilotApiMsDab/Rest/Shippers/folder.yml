@@ -1,0 +1,10 @@
+info:
+  name: Shippers
+  type: folder
+  seq: 7
+
+request:
+  auth: inherit
+  variables:
+    - name: entity
+      value: Shippers

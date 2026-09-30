@@ -57,6 +57,18 @@ ECHO Start Pilot API Python SQL Server ...
 docker start pilot-api-python-mssql
 
 ECHO .
+ECHO Start Pilot API DAB PostGreSQL ...
+docker start pilot-api-msdab-postgres
+
+ECHO .
+ECHO Start Pilot API DAB SQL Server ...
+docker start pilot-api-msdab-mssql
+
+ECHO .
+ECHO Start MCP Inspector (DAB) ...
+docker start pilot-msdab-mcp-inspector
+
+ECHO .
 ECHO Start Utility API .NET PostGreSQL ...
 docker start utility-api-dotnet-postgres
 

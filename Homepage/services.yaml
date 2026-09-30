@@ -167,6 +167,43 @@
                     - field: deployDate
                       label: Deploy Date
 
+    - pilot-api-msdab:
+        - pilot-api-msdab (SQL Server):
+            href: http://localhost:56301/swagger
+            description: Microsoft Data API builder (REST, GraphQL, MCP) for SQL Server.
+            icon: mdi-database-cog
+            container: pilot-api-msdab-mssql
+            widget:
+                type: customapi
+                url: http://pilot-api-msdab-mssql:5000/health
+                method: GET
+                mappings:
+                    - field: status
+                      label: Status
+                    - field: version
+                      label: DAB Version
+
+        - pilot-api-msdab (PostgreSQL):
+            href: http://localhost:56401/swagger
+            description: Microsoft Data API builder (REST, GraphQL, MCP) for PostgreSQL.
+            icon: mdi-database-cog
+            container: pilot-api-msdab-postgres
+            widget:
+                type: customapi
+                url: http://pilot-api-msdab-postgres:5000/health
+                method: GET
+                mappings:
+                    - field: status
+                      label: Status
+                    - field: version
+                      label: DAB Version
+
+        - MCP Inspector (DAB):
+            href: http://localhost:56501/
+            description: MCP Inspector for the Data API builder MCP endpoints.
+            icon: mdi-magnify-scan
+            container: pilot-msdab-mcp-inspector
+
     - utility-api-dotnet:
         - utility-api-dotnet (SQL Server):
             href: http://localhost:55701/swagger

@@ -1,0 +1,37 @@
+info:
+  name: FilterCompositeKey
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{Host}}api/OrderDetails?$filter=OrderID eq 10248&$orderby=ProductID"
+  params:
+    - name: $filter
+      value: "OrderID eq 10248"
+      type: query
+    - name: $orderby
+      value: "ProductID"
+      type: query
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return success", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("should return the order's line items", function () {
+          const rows = res.getBody().value;
+
+          expect(rows).to.have.lengthOf(3);
+          expect(rows.map(function (row) { return row.ProductID; })).to.deep.equal([11, 42, 72]);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

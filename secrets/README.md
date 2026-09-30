@@ -4,6 +4,8 @@ This folder contains local-only runtime secrets used by batch scripts.
 
 ## Files expected by scripts
 
+For each of the following files, there is a related template file that is named the same with `.example` appended.
+
 - `secrets/api-java.env`
 - `secrets/appsettings-api-dotnet-postgresql.env`
 - `secrets/appsettings-api-dotnet-sqlserver.env`
@@ -11,6 +13,7 @@ This folder contains local-only runtime secrets used by batch scripts.
 - `secrets/appsettings-api-python-sqlserver.env`
 - `secrets/appsettings-utility-dotnet-postgresql.env`
 - `secrets/appsettings-utility-dotnet-sqlserver.env`
+- `secrets/ms-dab.env`
 - `secrets/postgresql.env`
 - `secrets/sqlserver.env`
 
