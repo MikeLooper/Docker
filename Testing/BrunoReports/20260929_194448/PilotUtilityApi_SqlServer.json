@@ -1,0 +1,288 @@
+[
+  {
+    "iterationIndex": 0,
+    "results": [
+      {
+        "test": {
+          "filename": "System\\HealthCheck.yml"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:55701/healthcheck",
+          "headers": {
+            "User-Agent": "bruno-runtime/4.2.0",
+            "Accept-Encoding": "gzip, compress, deflate, br",
+            "Host": "localhost:55701",
+            "Connection": "keep-alive",
+            "Accept": "application/json",
+            "ApiVersion": "1",
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "date": "Wed, 30 Sep 2026 01:45:54 GMT",
+            "server": "Kestrel",
+            "transfer-encoding": "chunked"
+          },
+          "data": "OK",
+          "url": "http://localhost/healthcheck",
+          "responseTime": 16,
+          "duration": 16,
+          "size": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "should return success",
+            "status": "pass",
+            "uid": "TdM2tXtfD-nOvZXDeVpk_"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.1999208,
+        "name": "HealthCheck",
+        "suitename": "C:\\Working\\Storage\\Dev\\GitHub\\PilotUtilityApi\\test\\Bruno\\PilotUtilityApi\\System\\HealthCheck",
+        "path": "System\\HealthCheck.yml",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "System\\About_NoDetails.yml"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:55701/about?show-details=false",
+          "headers": {
+            "User-Agent": "bruno-runtime/4.2.0",
+            "Accept-Encoding": "gzip, compress, deflate, br",
+            "Host": "localhost:55701",
+            "Connection": "keep-alive",
+            "Accept": "application/json",
+            "ApiVersion": "1",
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "date": "Wed, 30 Sep 2026 01:45:54 GMT",
+            "server": "Kestrel",
+            "transfer-encoding": "chunked"
+          },
+          "data": {
+            "apiVersion": "1.0.0",
+            "buildVersion": "1.0.0+1ac13d47b4fc6d6ba6755f6fe56b08516cd0699c",
+            "deployDate": "2026-08-29 16:30:29Z",
+            "name": "PilotUtilityApiDotNet (SQL Server)"
+          },
+          "url": "http://localhost/about?show-details=false",
+          "responseTime": 6,
+          "duration": 6,
+          "size": 166
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "should return success",
+            "status": "pass",
+            "uid": "2cMLeOtmZO8nJK12daXM3"
+          },
+          {
+            "description": "should return object",
+            "status": "pass",
+            "uid": "DG4CAm0WMCV0S4O5cOh1Y"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.1023591,
+        "name": "About_NoDetails",
+        "suitename": "C:\\Working\\Storage\\Dev\\GitHub\\PilotUtilityApi\\test\\Bruno\\PilotUtilityApi\\System\\About_NoDetails",
+        "path": "System\\About_NoDetails.yml",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "System\\About_WithDetails.yml"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:55701/about?show-details=true",
+          "headers": {
+            "User-Agent": "bruno-runtime/4.2.0",
+            "Accept-Encoding": "gzip, compress, deflate, br",
+            "Host": "localhost:55701",
+            "Connection": "keep-alive",
+            "Accept": "application/json",
+            "ApiVersion": "1",
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "date": "Wed, 30 Sep 2026 01:45:54 GMT",
+            "server": "Kestrel",
+            "transfer-encoding": "chunked"
+          },
+          "data": {
+            "apiVersion": "1.0.0",
+            "applicationConfiguration": {
+              "dataSources": [
+                {
+                  "active": true,
+                  "connectTimeout": 30,
+                  "dataSource": "NorthWind",
+                  "dataSourceType": "SqlServer",
+                  "host": "local-mssql",
+                  "password": "[Redacted]",
+                  "port": 1433,
+                  "schema": "dbo",
+                  "userName": "DevUser"
+                },
+                {
+                  "active": false,
+                  "connectTimeout": 30,
+                  "dataSource": "northwind",
+                  "dataSourceType": "PostgreSQL",
+                  "host": "localhost",
+                  "password": "[Redacted]",
+                  "port": 5432,
+                  "schema": "pilot",
+                  "userName": "DevUser"
+                }
+              ],
+              "openApi": {
+                "contact": {
+                  "email": "MikelLooper@gmail.com",
+                  "name": "Michael Looper",
+                  "url": "https://github.com/MikeLooper/PilotUtilityApiDotNet"
+                },
+                "description": "A proof of concept API to explore best-practices and new ideas (.NET/C#) - for utility usages",
+                "license": "MIT",
+                "summary": "Proof of concept Utility API",
+                "title": "PilotUtilityApiDotNet",
+                "version": "1.0.0"
+              },
+              "openTelemetry": {
+                "active": false,
+                "port": 4318,
+                "server": "otel-collector"
+              }
+            },
+            "buildVersion": "1.0.0+1ac13d47b4fc6d6ba6755f6fe56b08516cd0699c",
+            "deployDate": "2026-08-29 16:30:29Z",
+            "name": "PilotUtilityApiDotNet (SQL Server)"
+          },
+          "url": "http://localhost/about?show-details=true",
+          "responseTime": 5,
+          "duration": 5,
+          "size": 1007
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "should return success",
+            "status": "pass",
+            "uid": "oc-ONH4uKnlXwZvwEE5E1"
+          },
+          {
+            "description": "should return object",
+            "status": "pass",
+            "uid": "XFGoQrZUVPkjJjSzjAD50"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.0935678,
+        "name": "About_WithDetails",
+        "suitename": "C:\\Working\\Storage\\Dev\\GitHub\\PilotUtilityApi\\test\\Bruno\\PilotUtilityApi\\System\\About_WithDetails",
+        "path": "System\\About_WithDetails.yml",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "v1\\Testing\\TestingReset.yml"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:55701/v1/testing/reset",
+          "headers": {
+            "User-Agent": "bruno-runtime/4.2.0",
+            "Accept-Encoding": "gzip, compress, deflate, br",
+            "Host": "localhost:55701",
+            "Connection": "keep-alive",
+            "Content-Length": "0",
+            "Accept": "application/json",
+            "ApiVersion": "1",
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 204,
+          "statusText": "No Content",
+          "headers": {
+            "date": "Wed, 30 Sep 2026 01:45:53 GMT",
+            "server": "Kestrel",
+            "api-supported-versions": "1.0"
+          },
+          "data": "",
+          "url": "http://localhost/v1/testing/reset",
+          "responseTime": 129,
+          "duration": 129,
+          "size": 0
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.1314464,
+        "name": "TestingReset",
+        "suitename": "C:\\Working\\Storage\\Dev\\GitHub\\PilotUtilityApi\\test\\Bruno\\PilotUtilityApi\\v1\\Testing\\TestingReset",
+        "path": "v1\\Testing\\TestingReset.yml",
+        "iterationIndex": 0
+      }
+    ],
+    "summary": {
+      "totalRequests": 4,
+      "passedRequests": 4,
+      "failedRequests": 0,
+      "errorRequests": 0,
+      "skippedRequests": 0,
+      "skippedByBail": 0,
+      "totalAssertions": 0,
+      "passedAssertions": 0,
+      "failedAssertions": 0,
+      "totalTests": 5,
+      "passedTests": 5,
+      "failedTests": 0,
+      "totalPreRequestTests": 0,
+      "passedPreRequestTests": 0,
+      "failedPreRequestTests": 0,
+      "totalPostResponseTests": 0,
+      "passedPostResponseTests": 0,
+      "failedPostResponseTests": 0
+    }
+  }
+]

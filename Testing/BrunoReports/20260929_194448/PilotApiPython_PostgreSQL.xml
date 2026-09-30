@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<testsuites>
+  <testsuite name="HealthCheck" file="System\HealthCheck.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.317" hostname="Hobbes" time="0.168">
+    <testcase name="should return success" status="pass" classname="System\HealthCheck" time="0.168"/>
+  </testsuite>
+  <testsuite name="About_NoDetails" file="System\About_NoDetails.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.085">
+    <testcase name="should return success" status="pass" classname="System\About_NoDetails" time="0.043"/>
+    <testcase name="should return object" status="pass" classname="System\About_NoDetails" time="0.043"/>
+  </testsuite>
+  <testsuite name="About_WithDetails" file="System\About_WithDetails.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.079">
+    <testcase name="should return success" status="pass" classname="System\About_WithDetails" time="0.040"/>
+    <testcase name="should return object" status="pass" classname="System\About_WithDetails" time="0.040"/>
+  </testsuite>
+  <testsuite name="GetAll" file="v1\Categories\GetAll.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.128">
+    <testcase name="should return success" status="pass" classname="v1\Categories\GetAll" time="0.064"/>
+    <testcase name="should return array" status="pass" classname="v1\Categories\GetAll" time="0.064"/>
+  </testsuite>
+  <testsuite name="GetAll_Paged" file="v1\Categories\GetAll_Paged.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.078">
+    <testcase name="should return success" status="pass" classname="v1\Categories\GetAll_Paged" time="0.039"/>
+    <testcase name="should return array" status="pass" classname="v1\Categories\GetAll_Paged" time="0.039"/>
+  </testsuite>
+  <testsuite name="GetById" file="v1\Categories\GetById.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.080">
+    <testcase name="should return success" status="pass" classname="v1\Categories\GetById" time="0.040"/>
+    <testcase name="should return array" status="pass" classname="v1\Categories\GetById" time="0.040"/>
+  </testsuite>
+  <testsuite name="Add" file="v1\Categories\Add.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.157">
+    <testcase name="should return success" status="pass" classname="v1\Categories\Add" time="0.078"/>
+    <testcase name="should return id" status="pass" classname="v1\Categories\Add" time="0.078"/>
+  </testsuite>
+  <testsuite name="Update" file="v1\Categories\Update.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.200">
+    <testcase name="should return success" status="pass" classname="v1\Categories\Update" time="0.200"/>
+  </testsuite>
+  <testsuite name="Delete" file="v1\Categories\Delete.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.143">
+    <testcase name="should return success" status="pass" classname="v1\Categories\Delete" time="0.143"/>
+  </testsuite>
+  <testsuite name="GetAll" file="v1\Customers\GetAll.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.081">
+    <testcase name="should return success" status="pass" classname="v1\Customers\GetAll" time="0.041"/>
+    <testcase name="should return array" status="pass" classname="v1\Customers\GetAll" time="0.041"/>
+  </testsuite>
+  <testsuite name="GetAll_Paged" file="v1\Customers\GetAll_Paged.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.078">
+    <testcase name="should return success" status="pass" classname="v1\Customers\GetAll_Paged" time="0.039"/>
+    <testcase name="should return array" status="pass" classname="v1\Customers\GetAll_Paged" time="0.039"/>
+  </testsuite>
+  <testsuite name="GetById" file="v1\Customers\GetById.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.079">
+    <testcase name="should return success" status="pass" classname="v1\Customers\GetById" time="0.040"/>
+    <testcase name="should return object" status="pass" classname="v1\Customers\GetById" time="0.040"/>
+  </testsuite>
+  <testsuite name="Add" file="v1\Customers\Add.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.079">
+    <testcase name="should return success" status="pass" classname="v1\Customers\Add" time="0.040"/>
+    <testcase name="should return id" status="pass" classname="v1\Customers\Add" time="0.040"/>
+  </testsuite>
+  <testsuite name="Update" file="v1\Customers\Update.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.318" hostname="Hobbes" time="0.078">
+    <testcase name="should return success" status="pass" classname="v1\Customers\Update" time="0.078"/>
+  </testsuite>
+  <testsuite name="Delete" file="v1\Customers\Delete.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.080">
+    <testcase name="should return success" status="pass" classname="v1\Customers\Delete" time="0.080"/>
+  </testsuite>
+  <testsuite name="GetAll" file="v1\Employees\GetAll.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.093">
+    <testcase name="should return success" status="pass" classname="v1\Employees\GetAll" time="0.047"/>
+    <testcase name="should return array" status="pass" classname="v1\Employees\GetAll" time="0.047"/>
+  </testsuite>
+  <testsuite name="GetAll_Paged" file="v1\Employees\GetAll_Paged.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.077">
+    <testcase name="should return success" status="pass" classname="v1\Employees\GetAll_Paged" time="0.038"/>
+    <testcase name="should return array" status="pass" classname="v1\Employees\GetAll_Paged" time="0.038"/>
+  </testsuite>
+  <testsuite name="GetById" file="v1\Employees\GetById.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.084">
+    <testcase name="should return success" status="pass" classname="v1\Employees\GetById" time="0.042"/>
+    <testcase name="should return object" status="pass" classname="v1\Employees\GetById" time="0.042"/>
+  </testsuite>
+  <testsuite name="Add" file="v1\Employees\Add.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.173">
+    <testcase name="should return success" status="pass" classname="v1\Employees\Add" time="0.086"/>
+    <testcase name="should return id" status="pass" classname="v1\Employees\Add" time="0.086"/>
+  </testsuite>
+  <testsuite name="Update" file="v1\Employees\Update.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.161">
+    <testcase name="should return success" status="pass" classname="v1\Employees\Update" time="0.161"/>
+  </testsuite>
+  <testsuite name="Delete" file="v1\Employees\Delete.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.173">
+    <testcase name="should return success" status="pass" classname="v1\Employees\Delete" time="0.173"/>
+  </testsuite>
+  <testsuite name="GetAll" file="v1\OrderDetails\GetAll.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.121">
+    <testcase name="should return success" status="pass" classname="v1\OrderDetails\GetAll" time="0.061"/>
+    <testcase name="should return array" status="pass" classname="v1\OrderDetails\GetAll" time="0.061"/>
+  </testsuite>
+  <testsuite name="GetAll_Paged" file="v1\OrderDetails\GetAll_Paged.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.116">
+    <testcase name="should return success" status="pass" classname="v1\OrderDetails\GetAll_Paged" time="0.058"/>
+    <testcase name="should return array" status="pass" classname="v1\OrderDetails\GetAll_Paged" time="0.058"/>
+  </testsuite>
+  <testsuite name="GetById" file="v1\OrderDetails\GetById.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.109">
+    <testcase name="should return success" status="pass" classname="v1\OrderDetails\GetById" time="0.054"/>
+    <testcase name="should return object" status="pass" classname="v1\OrderDetails\GetById" time="0.054"/>
+  </testsuite>
+  <testsuite name="Add" file="v1\OrderDetails\Add.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.159">
+    <testcase name="should return success" status="pass" classname="v1\OrderDetails\Add" time="0.079"/>
+    <testcase name="should return id" status="pass" classname="v1\OrderDetails\Add" time="0.079"/>
+  </testsuite>
+  <testsuite name="Update" file="v1\OrderDetails\Update.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.157">
+    <testcase name="should return success" status="pass" classname="v1\OrderDetails\Update" time="0.157"/>
+  </testsuite>
+  <testsuite name="Delete" file="v1\OrderDetails\Delete.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.158">
+    <testcase name="should return success" status="pass" classname="v1\OrderDetails\Delete" time="0.158"/>
+  </testsuite>
+  <testsuite name="GetAll" file="v1\Orders\GetAll.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.137">
+    <testcase name="should return success" status="pass" classname="v1\Orders\GetAll" time="0.068"/>
+    <testcase name="should return array" status="pass" classname="v1\Orders\GetAll" time="0.068"/>
+  </testsuite>
+  <testsuite name="GetAll_Paged" file="v1\Orders\GetAll_Paged.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.087">
+    <testcase name="should return success" status="pass" classname="v1\Orders\GetAll_Paged" time="0.044"/>
+    <testcase name="should return array" status="pass" classname="v1\Orders\GetAll_Paged" time="0.044"/>
+  </testsuite>
+  <testsuite name="GetById" file="v1\Orders\GetById.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.079">
+    <testcase name="should return success" status="pass" classname="v1\Orders\GetById" time="0.039"/>
+    <testcase name="should return object" status="pass" classname="v1\Orders\GetById" time="0.039"/>
+  </testsuite>
+  <testsuite name="Add" file="v1\Orders\Add.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.319" hostname="Hobbes" time="0.177">
+    <testcase name="should return success" status="pass" classname="v1\Orders\Add" time="0.088"/>
+    <testcase name="should return id" status="pass" classname="v1\Orders\Add" time="0.088"/>
+  </testsuite>
+  <testsuite name="Update" file="v1\Orders\Update.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.157">
+    <testcase name="should return success" status="pass" classname="v1\Orders\Update" time="0.157"/>
+  </testsuite>
+  <testsuite name="Delete" file="v1\Orders\Delete.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.146">
+    <testcase name="should return success" status="pass" classname="v1\Orders\Delete" time="0.146"/>
+  </testsuite>
+  <testsuite name="GetAll" file="v1\Products\GetAll.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.077">
+    <testcase name="should return success" status="pass" classname="v1\Products\GetAll" time="0.039"/>
+    <testcase name="should return array" status="pass" classname="v1\Products\GetAll" time="0.039"/>
+  </testsuite>
+  <testsuite name="GetAll_Paged" file="v1\Products\GetAll_Paged.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.079">
+    <testcase name="should return success" status="pass" classname="v1\Products\GetAll_Paged" time="0.040"/>
+    <testcase name="should return array" status="pass" classname="v1\Products\GetAll_Paged" time="0.040"/>
+  </testsuite>
+  <testsuite name="GetById" file="v1\Products\GetById.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.098">
+    <testcase name="should return success" status="pass" classname="v1\Products\GetById" time="0.049"/>
+    <testcase name="should return object" status="pass" classname="v1\Products\GetById" time="0.049"/>
+  </testsuite>
+  <testsuite name="Add" file="v1\Products\Add.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.205">
+    <testcase name="should return success" status="pass" classname="v1\Products\Add" time="0.102"/>
+    <testcase name="should return id" status="pass" classname="v1\Products\Add" time="0.102"/>
+  </testsuite>
+  <testsuite name="Update" file="v1\Products\Update.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.181">
+    <testcase name="should return success" status="pass" classname="v1\Products\Update" time="0.181"/>
+  </testsuite>
+  <testsuite name="Delete" file="v1\Products\Delete.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.189">
+    <testcase name="should return success" status="pass" classname="v1\Products\Delete" time="0.189"/>
+  </testsuite>
+  <testsuite name="GetAll" file="v1\Shippers\GetAll.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.080">
+    <testcase name="should return success" status="pass" classname="v1\Shippers\GetAll" time="0.040"/>
+    <testcase name="should return array" status="pass" classname="v1\Shippers\GetAll" time="0.040"/>
+  </testsuite>
+  <testsuite name="GetAll_Paged" file="v1\Shippers\GetAll_Paged.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.080">
+    <testcase name="should return success" status="pass" classname="v1\Shippers\GetAll_Paged" time="0.040"/>
+    <testcase name="should return array" status="pass" classname="v1\Shippers\GetAll_Paged" time="0.040"/>
+  </testsuite>
+  <testsuite name="GetById" file="v1\Shippers\GetById.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.078">
+    <testcase name="should return success" status="pass" classname="v1\Shippers\GetById" time="0.039"/>
+    <testcase name="should return object" status="pass" classname="v1\Shippers\GetById" time="0.039"/>
+  </testsuite>
+  <testsuite name="Add" file="v1\Shippers\Add.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.160">
+    <testcase name="should return success" status="pass" classname="v1\Shippers\Add" time="0.080"/>
+    <testcase name="should return id" status="pass" classname="v1\Shippers\Add" time="0.080"/>
+  </testsuite>
+  <testsuite name="Update" file="v1\Shippers\Update.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.176">
+    <testcase name="should return success" status="pass" classname="v1\Shippers\Update" time="0.176"/>
+  </testsuite>
+  <testsuite name="Delete" file="v1\Shippers\Delete.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.174">
+    <testcase name="should return success" status="pass" classname="v1\Shippers\Delete" time="0.174"/>
+  </testsuite>
+  <testsuite name="GetAll" file="v1\Suppliers\GetAll.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.080">
+    <testcase name="should return success" status="pass" classname="v1\Suppliers\GetAll" time="0.040"/>
+    <testcase name="should return array" status="pass" classname="v1\Suppliers\GetAll" time="0.040"/>
+  </testsuite>
+  <testsuite name="GetAll_Paged" file="v1\Suppliers\GetAll_Paged.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.079">
+    <testcase name="should return success" status="pass" classname="v1\Suppliers\GetAll_Paged" time="0.040"/>
+    <testcase name="should return array" status="pass" classname="v1\Suppliers\GetAll_Paged" time="0.040"/>
+  </testsuite>
+  <testsuite name="GetById" file="v1\Suppliers\GetById.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.095">
+    <testcase name="should return success" status="pass" classname="v1\Suppliers\GetById" time="0.047"/>
+    <testcase name="should return object" status="pass" classname="v1\Suppliers\GetById" time="0.047"/>
+  </testsuite>
+  <testsuite name="Add" file="v1\Suppliers\Add.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.146">
+    <testcase name="should return success" status="pass" classname="v1\Suppliers\Add" time="0.073"/>
+    <testcase name="should return id" status="pass" classname="v1\Suppliers\Add" time="0.073"/>
+  </testsuite>
+  <testsuite name="Update" file="v1\Suppliers\Update.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.320" hostname="Hobbes" time="0.158">
+    <testcase name="should return success" status="pass" classname="v1\Suppliers\Update" time="0.158"/>
+  </testsuite>
+  <testsuite name="Delete" file="v1\Suppliers\Delete.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:16.321" hostname="Hobbes" time="0.160">
+    <testcase name="should return success" status="pass" classname="v1\Suppliers\Delete" time="0.160"/>
+  </testsuite>
+</testsuites>

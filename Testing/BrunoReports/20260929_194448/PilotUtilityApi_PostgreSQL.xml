@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<testsuites>
+  <testsuite name="HealthCheck" file="System\HealthCheck.yml" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-09-30T01:45:19.561" hostname="Hobbes" time="0.191">
+    <testcase name="should return success" status="pass" classname="System\HealthCheck" time="0.191"/>
+  </testsuite>
+  <testsuite name="About_NoDetails" file="System\About_NoDetails.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:19.561" hostname="Hobbes" time="0.097">
+    <testcase name="should return success" status="pass" classname="System\About_NoDetails" time="0.048"/>
+    <testcase name="should return object" status="pass" classname="System\About_NoDetails" time="0.048"/>
+  </testsuite>
+  <testsuite name="About_WithDetails" file="System\About_WithDetails.yml" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-09-30T01:45:19.561" hostname="Hobbes" time="0.083">
+    <testcase name="should return success" status="pass" classname="System\About_WithDetails" time="0.042"/>
+    <testcase name="should return object" status="pass" classname="System\About_WithDetails" time="0.042"/>
+  </testsuite>
+  <testsuite name="TestingReset" file="v1\Testing\TestingReset.yml" errors="0" failures="0" skipped="0" tests="0" timestamp="2026-09-30T01:45:19.561" hostname="Hobbes" time="0.016"/>
+</testsuites>
