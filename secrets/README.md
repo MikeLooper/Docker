@@ -7,6 +7,7 @@ This folder contains local-only runtime secrets used by batch scripts.
 For each of the following files, there is a related template file that is named the same with `.example` appended.
 
 - `secrets/api-java.env`
+- `secrets/api-python-with-claude.env`
 - `secrets/appsettings-api-dotnet-postgresql.env`
 - `secrets/appsettings-api-dotnet-sqlserver.env`
 - `secrets/appsettings-api-python-postgresql.env`

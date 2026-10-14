@@ -193,6 +193,7 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |  √      | MCP Inspector (DAB)     | pilot-msdab-mcp-inspector   | 6274        | 56501       | http://localhost:56501/ |
 |  √      | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 55501       | http://localhost:55501/docs, http://localhost:55501/redoc |
 |  √      | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 55601       | http://localhost:55601/docs, http://localhost:55601/redoc |
+|  √      | ApiPythonWithClaude     | python-api-with-claude | 56601      | 56601       | http://localhost:56601/docs, http://localhost:56601/redoc |
 |  √      | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 55701       | http://localhost:55701/swagger, http://localhost:55701/scalar |
 |  √      | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 55801       | http://localhost:55801/swagger, http://localhost:55801/scalar |
 |  √      | Dozzle                  | local-dozzle                | 8080        | 56101       | http://localhost:56101  |

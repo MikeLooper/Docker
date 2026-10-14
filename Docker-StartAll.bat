@@ -57,6 +57,10 @@ ECHO Start Pilot API Python SQL Server ...
 docker start pilot-api-python-mssql
 
 ECHO .
+ECHO Start Pilot API Python with Claude ...
+docker start python-api-with-claude
+
+ECHO .
 ECHO Start Pilot API DAB PostGreSQL ...
 docker start pilot-api-msdab-postgres
 
