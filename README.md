@@ -38,6 +38,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `Api_java\docker-compose.api-java.yml`
 - `Api_MsDab\docker-compose.api-msdab.yml`
 - `Api_python\docker-compose.api-python.yml`
+- `Api_python_with_claude\docker-compose.api-python-with-claude.yml`
 - `Homepage\docker-compose.homepage.yml`
 - `PostgreSQL\docker-compose.postgresql.yml`
 - `SqlServer\docker-compose.sqlserver.yml`
@@ -50,6 +51,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `Api_java\Docker-Api-java-builder.bat`
 - `Api_MsDab\Docker-Api-msdab-builder.bat`
 - `Api_python\Docker-Api-python-builder.bat`
+- `Api_python_with_claude\Docker-pythonapi-with-claude-builder.bat`
 - `Dozzle\Docker-Dozzle-builder.bat`
 - `Homepage\Docker-Homepage-builder.bat`
 - `PostgreSQL\Docker-PostgreSQL-builder.bat`
@@ -60,7 +62,7 @@ Then, execute the networking command listed in the *Network* section below.
 
 Each script is the primary entry point for its stack and is kept aligned with its corresponding README.
 
-On Windows, the API builder scripts for .NET, Java, Python, and Data API builder automatically probe and select open
+On Windows, the API builder scripts for .NET, Java, Python, Python with Claude, and Data API builder automatically probe and select open
 host ports within predefined ranges when preferred ports are reserved or in use.
 
 ## Secrets
@@ -122,6 +124,12 @@ Follow the directions in the [API (Data API builder) README](./Api_MsDab/README.
 A Python FastAPI application that presents data from the Northwind database (MS SQL Server or PostgreSQL)
 
 Follow the directions in the [API (Python) README](./Api_python/README.md).
+
+### Python API with Claude
+
+A Python FastAPI application (`PythonAPIWithClaude`) that answers questions by calling the Claude API. It does not use a database; it requires an `ANTHROPIC_API_KEY` in `secrets/api-python-with-claude.env` and sends telemetry to the OTEL collector. Its Bruno collection is included in `Testing\RunBrunoTests.bat`.
+
+Follow the directions in the [API (Python with Claude) README](./Api_python_with_claude/README.md).
 
 ### Pilot UI (Angular)
 
@@ -193,7 +201,7 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |  √      | MCP Inspector (DAB)     | pilot-msdab-mcp-inspector   | 6274        | 56501       | http://localhost:56501/ |
 |  √      | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 55501       | http://localhost:55501/docs, http://localhost:55501/redoc |
 |  √      | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 55601       | http://localhost:55601/docs, http://localhost:55601/redoc |
-|  √      | ApiPythonWithClaude     | python-api-with-claude | 56601      | 56601       | http://localhost:56601/docs, http://localhost:56601/redoc |
+|  √      | ApiPythonWithClaude     | python-api-with-claude      | 56601       | 56601       | http://localhost:56601/docs, http://localhost:56601/health |
 |  √      | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 55701       | http://localhost:55701/swagger, http://localhost:55701/scalar |
 |  √      | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 55801       | http://localhost:55801/swagger, http://localhost:55801/scalar |
 |  √      | Dozzle                  | local-dozzle                | 8080        | 56101       | http://localhost:56101  |
