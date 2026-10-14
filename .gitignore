@@ -2,3 +2,4 @@ secrets/*.env
 !secrets/*.env.example
 /*.lnk
 /.vscode
+/Testing/BrunoReports

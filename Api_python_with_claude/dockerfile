@@ -1,0 +1,31 @@
+# Python runtime image for the PythonAPIWithClaude API
+FROM python:3.14-slim
+WORKDIR /app
+
+# Declare the build-time arguments
+ARG DEPLOY_DATE
+ARG APP_PORT=56601
+
+# Map them to environment variables so they persist in the image
+ENV APP_DEPLOY_DATE=$DEPLOY_DATE
+ENV APP_PORT=$APP_PORT
+ENV APP_HOST=0.0.0.0
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Copy the pre-built wheel from the build context
+COPY . .
+
+# Install the application and its dependencies from the wheel
+RUN python -m pip install --no-cache-dir --upgrade pip \
+    && python -m pip install --no-cache-dir /app/*.whl \
+    && rm -f /app/*.whl
+
+# Run as a non-root user
+RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE $APP_PORT
+
+# app.main reads APP_HOST / APP_PORT from the environment
+CMD ["python", "-m", "app.main"]

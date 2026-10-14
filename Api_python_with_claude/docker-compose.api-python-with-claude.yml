@@ -1,0 +1,31 @@
+services:
+  python-api-with-claude:
+    container_name: python-api-with-claude
+    image: python-api-with-claude
+    build:
+      context: ${WORKING_DIR}/api-python-with-claude
+      dockerfile: ../../Docker/Api_python_with_claude/dockerfile
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE}
+        APP_PORT: ${PYTHON_CLAUDE_PORT:-56601}
+    # ANTHROPIC_API_KEY (and any optional CLAUDE_* overrides) are read at runtime, not baked into the image.
+    env_file:
+      - ../secrets/api-python-with-claude.env
+    # Container-specific settings; these take precedence over values in the env_file.
+    environment:
+      APP_DEPLOY_DATE: ${CURRENT_DATE}
+      APP_HOST: 0.0.0.0
+      APP_PORT: "${PYTHON_CLAUDE_PORT:-56601}"
+      OTEL_SERVICE_NAME: python-api-with-claude
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    ports:
+      - "${PYTHON_CLAUDE_PORT:-56601}:${PYTHON_CLAUDE_PORT:-56601}"
+    mem_limit: 1g
+    networks:
+      - pilot-net
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

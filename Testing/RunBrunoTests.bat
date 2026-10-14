@@ -9,6 +9,7 @@ rem
 rem  Environments (run in this order):
 rem    1. Docker - PostgreSQL
 rem    2. Docker - SQL Server
+rem    3. Docker              (database-independent APIs, e.g. PythonAPIWithClaude)
 rem
 rem  Requires Node.js. Uses the Bruno CLI ("bru") if installed globally,
 rem  otherwise runs it through npx (@usebruno/cli).
@@ -41,6 +42,7 @@ echo.
 set "OVERALL=0"
 call :RunEnvironment "Docker - PostgreSQL" "PostgreSQL"
 call :RunEnvironment "Docker - SQL Server" "SqlServer"
+call :RunStandalone   "Docker"              "Docker"
 
 echo.
 echo Building summary report...
@@ -67,6 +69,19 @@ call :RunCollection "PilotApiJava"    "%GITHUB_ROOT%\PilotApiJava\test\Bruno\Pil
 call :RunCollection "PilotApiPython"  "%GITHUB_ROOT%\PilotApiPython\tests\Bruno\PilotApiPython"
 call :RunCollection "PilotUtilityApi" "%GITHUB_ROOT%\PilotUtilityApi\test\Bruno\PilotUtilityApi"
 call :RunCollection "PilotApiMsDab"   "%~dp0MsDab\PilotApiMsDab"
+goto :eof
+
+rem ---------------------------------------------------------------------------
+rem  :RunStandalone <BrunoEnvironmentName> <ShortTag>
+rem  Collections that do not use a database; run once rather than per database.
+rem ---------------------------------------------------------------------------
+:RunStandalone
+set "BRU_ENV=%~1"
+set "TAG=%~2"
+echo ###########################################################################
+echo  Environment: %BRU_ENV%
+echo ###########################################################################
+call :RunCollection "PythonAPIWithClaude" "%GITHUB_ROOT%\PythonAPIWithClaude\tests\Bruno\PythonAPIWithClaude"
 goto :eof
 
 rem ---------------------------------------------------------------------------
