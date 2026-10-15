@@ -24,6 +24,8 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_HEADERS: ""
       OTEL_SERVICE_NAME: pilot-api-msdab-mssql
+      # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
+      OTEL_RESOURCE_ATTRIBUTES: service.instance.id=pilot-api-msdab-mssql,db.variant=mssql
     volumes:
       - ./data-api/dab-config.mssql.json:/App/dab-config.json:ro
     ports:
@@ -38,6 +40,8 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_HEADERS: ""
       OTEL_SERVICE_NAME: pilot-api-msdab-postgres
+      # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
+      OTEL_RESOURCE_ATTRIBUTES: service.instance.id=pilot-api-msdab-postgres,db.variant=postgres
     volumes:
       - ./data-api/dab-config.postgres.json:/App/dab-config.json:ro
     ports:

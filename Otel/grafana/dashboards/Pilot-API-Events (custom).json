@@ -77,6 +77,18 @@
         }
       },
       {
+        "type": "textbox",
+        "name": "trace_id",
+        "label": "TraceId",
+        "description": "Filter by trace ID. Leave empty for all. Click a TraceId in 'Requests by TraceId' to set it.",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "hide": 0
+      },
+      {
         "name": "search",
         "label": "Search logs",
         "type": "textbox",
@@ -152,7 +164,7 @@
         },
         "enable": true,
         "iconColor": "purple",
-        "expr": "{service_name=~\"$service\"} |~ \"Application started|Started PilotApiApplication|Application startup complete\"",
+        "expr": "{service_name=~\"$service\", service_instance_id=~\"$instance\"} |~ \"Application started|Started PilotApiApplication|Application startup complete\"",
         "titleFormat": "{{service_name}} started",
         "textFormat": "{{service_instance_id}}",
         "instant": false
@@ -578,7 +590,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({service_name=~\"$service\", service_instance_id=~\"$instance\"} | detected_level=~\"warn|error|critical|fatal\" [$__range]))",
+          "expr": "sum(count_over_time({service_name=~\"$service\", service_instance_id=~\"$instance\"} |~ \"(?i)$search\" | trace_id=~\"(?i)0*${trace_id}.*\" | detected_level=~\"warn|error|critical|fatal\" [$__range]))",
           "legendFormat": "",
           "queryType": "instant"
         }
@@ -923,7 +935,7 @@
             "uid": "tempo"
           },
           "queryType": "traceql",
-          "query": "{resource.service.name=~\"${service:regex}\" && (span.db.system != nil || span.db.system.name != nil)} | count_over_time() by (resource.service.name, resource.service.instance.id, span.db.system, span.db.system.name)",
+          "query": "{resource.service.name=~\"${service:regex}\" && resource.service.instance.id=~\"${instance:regex}\" && (span.db.system != nil || span.db.system.name != nil) && (trace:id = \"${trace_id}\" || \"${trace_id}\" = \"\")} | count_over_time() by (resource.service.name, resource.service.instance.id, span.db.system, span.db.system.name)",
           "metricsQueryType": "instant",
           "tableType": "traces",
           "limit": 20
@@ -1045,6 +1057,215 @@
       ]
     },
     {
+      "type": "table",
+      "id": 43,
+      "title": "Requests by TraceId",
+      "description": "Per-request companion to 'Requests by API instance' (one row per server span, from Tempo). Click a TraceId and choose 'Filter dashboard by this TraceId' to set the page TraceId filter, or 'Open trace' to view it in Explore.",
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "queryType": "traceql",
+          "tableType": "spans",
+          "limit": 100,
+          "spss": 1,
+          "query": "{resource.service.name=~\"${service:regex}\" && resource.service.instance.id=~\"${instance:regex}\" && kind=server && (trace:id = \"${trace_id}\" || \"${trace_id}\" = \"\")} | select(resource.service.name, resource.service.instance.id, span.http.request.method, span.http.route, span.http.response.status_code)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true,
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TraceId"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": false
+              },
+              {
+                "id": "custom.width",
+                "value": 290
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Filter dashboard by this TraceId",
+                    "url": "/d/pilot-api-events/pilot-api-events?${__url_time_range}&${service:queryparam}&${instance:queryparam}&${search:queryparam}&${slow_ms:queryparam}&var-trace_id=${__value.raw}"
+                  },
+                  {
+                    "title": "Open trace",
+                    "url": "/explore?left={\"datasource\":\"tempo\",\"queries\":[{\"refId\":\"A\",\"datasource\":{\"type\":\"tempo\",\"uid\":\"tempo\"},\"queryType\":\"traceql\",\"query\":\"${__value.raw}\"}],\"range\":{\"from\":\"${__from}\",\"to\":\"${__to}\"}}",
+                    "targetBlank": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ns"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 250000000
+                    },
+                    {
+                      "color": "red",
+                      "value": 1000000000
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 400
+                    },
+                    {
+                      "color": "red",
+                      "value": 500
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": "",
+          "countRows": false
+        },
+        "sortBy": [
+          {
+            "displayName": "Start time",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "traceService": true,
+              "Trace Service": true,
+              "traceName": true,
+              "Trace Name": true,
+              "spanID": true,
+              "Span ID": true,
+              "name": true,
+              "Name": true,
+              "kind": true
+            },
+            "indexByName": {
+              "time": 0,
+              "Start time": 0,
+              "service.name": 1,
+              "service.instance.id": 2,
+              "traceIdHidden": 3,
+              "http.request.method": 4,
+              "http.route": 5,
+              "http.response.status_code": 6,
+              "duration": 7,
+              "Duration": 7
+            },
+            "renameByName": {
+              "traceIdHidden": "TraceId",
+              "time": "Start time",
+              "Start time": "Start time",
+              "service.name": "API",
+              "service.instance.id": "Instance",
+              "http.request.method": "Method",
+              "http.route": "Route",
+              "http.response.status_code": "Status",
+              "duration": "Duration",
+              "Duration": "Duration"
+            }
+          }
+        }
+      ]
+    },
+    {
       "type": "row",
       "id": 11,
       "title": "HTTP traffic & performance",
@@ -1053,7 +1274,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 24
       },
       "panels": []
     },
@@ -1084,7 +1305,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 25
       },
       "fieldConfig": {
         "defaults": {
@@ -1157,7 +1378,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 25
       },
       "fieldConfig": {
         "defaults": {
@@ -1267,7 +1488,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 33
       },
       "fieldConfig": {
         "defaults": {
@@ -1364,7 +1585,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 33
       },
       "fieldConfig": {
         "defaults": {
@@ -1490,7 +1711,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 41
       },
       "fieldConfig": {
         "defaults": {
@@ -1717,7 +1938,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 53
       },
       "panels": []
     },
@@ -1748,7 +1969,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 45
+        "y": 54
       },
       "fieldConfig": {
         "defaults": {
@@ -1813,7 +2034,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 45
+        "y": 54
       },
       "fieldConfig": {
         "defaults": {
@@ -1878,7 +2099,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 45
+        "y": 54
       },
       "fieldConfig": {
         "defaults": {
@@ -1983,7 +2204,7 @@
         "h": 9,
         "w": 16,
         "x": 0,
-        "y": 53
+        "y": 62
       },
       "fieldConfig": {
         "defaults": {
@@ -2172,7 +2393,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 53
+        "y": 62
       },
       "fieldConfig": {
         "defaults": {
@@ -2226,7 +2447,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 71
       },
       "panels": []
     },
@@ -2257,7 +2478,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 63
+        "y": 72
       },
       "fieldConfig": {
         "defaults": {
@@ -2342,7 +2563,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 63
+        "y": 72
       },
       "fieldConfig": {
         "defaults": {
@@ -2415,7 +2636,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 63
+        "y": 72
       },
       "fieldConfig": {
         "defaults": {
@@ -2496,7 +2717,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 71
+        "y": 80
       },
       "fieldConfig": {
         "defaults": {
@@ -2569,7 +2790,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 71
+        "y": 80
       },
       "fieldConfig": {
         "defaults": {
@@ -2654,7 +2875,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 71
+        "y": 80
       },
       "fieldConfig": {
         "defaults": {
@@ -2709,7 +2930,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 88
       },
       "panels": []
     },
@@ -2729,7 +2950,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (service_name, detected_level) (count_over_time({service_name=~\"$service\", service_instance_id=~\"$instance\"} [$__auto]))",
+          "expr": "sum by (service_name, detected_level) (count_over_time({service_name=~\"$service\", service_instance_id=~\"$instance\"} |~ \"(?i)$search\" | trace_id=~\"(?i)0*${trace_id}.*\" [$__auto]))",
           "legendFormat": "{{service_name}} \u00b7 {{detected_level}}",
           "queryType": "range"
         }
@@ -2738,7 +2959,7 @@
         "h": 7,
         "w": 16,
         "x": 0,
-        "y": 80
+        "y": 89
       },
       "fieldConfig": {
         "defaults": {
@@ -2822,7 +3043,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "topk(15, sum by (service_name, scope_name) (count_over_time({service_name=~\"$service\", service_instance_id=~\"$instance\"} [$__range])))",
+          "expr": "topk(15, sum by (service_name, scope_name) (count_over_time({service_name=~\"$service\", service_instance_id=~\"$instance\"} |~ \"(?i)$search\" | trace_id=~\"(?i)0*${trace_id}.*\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant"
         }
@@ -2831,7 +3052,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 80
+        "y": 89
       },
       "fieldConfig": {
         "defaults": {
@@ -2895,7 +3116,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service_name=~\"$service\", service_instance_id=~\"$instance\"} | detected_level=~\"warn|error|critical|fatal\" | line_format `{{ regexReplaceAll \"(token|jwt)=[A-Za-z0-9._-]+\" __line__ \"${1}=***\" }}`",
+          "expr": "{service_name=~\"$service\", service_instance_id=~\"$instance\"} |~ \"(?i)$search\" | trace_id=~\"(?i)0*${trace_id}.*\" | detected_level=~\"warn|error|critical|fatal\" | line_format `{{ regexReplaceAll \"(token|jwt)=[A-Za-z0-9._-]+\" __line__ \"${1}=***\" }}`",
           "legendFormat": "",
           "queryType": "range"
         }
@@ -2904,7 +3125,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 87
+        "y": 96
       },
       "options": {
         "showTime": true,
@@ -2934,7 +3155,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service_name=~\"$service\", service_instance_id=~\"$instance\"} |~ \"(?i)$search\" | line_format `{{ regexReplaceAll \"(token|jwt)=[A-Za-z0-9._-]+\" __line__ \"${1}=***\" }}`",
+          "expr": "{service_name=~\"$service\", service_instance_id=~\"$instance\"} | trace_id=~\"(?i)0*${trace_id}.*\" |~ \"(?i)$search\" | line_format `{{ regexReplaceAll \"(token|jwt)=[A-Za-z0-9._-]+\" __line__ \"${1}=***\" }}`",
           "legendFormat": "",
           "queryType": "range"
         }
@@ -2943,7 +3164,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 95
+        "y": 104
       },
       "options": {
         "showTime": true,
@@ -2966,7 +3187,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 109
+        "y": 118
       },
       "panels": []
     },
@@ -2987,7 +3208,7 @@
             "uid": "tempo"
           },
           "queryType": "traceql",
-          "query": "{resource.service.name=~\"${service:regex}\" && kind=server}",
+          "query": "{resource.service.name=~\"${service:regex}\" && resource.service.instance.id=~\"${instance:regex}\" && kind=server && (trace:id = \"${trace_id}\" || \"${trace_id}\" = \"\")}",
           "limit": 50,
           "spss": 3,
           "tableType": "traces"
@@ -2997,7 +3218,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 110
+        "y": 119
       },
       "fieldConfig": {
         "defaults": {
@@ -3039,7 +3260,7 @@
             "uid": "tempo"
           },
           "queryType": "traceql",
-          "query": "{resource.service.name=~\"${service:regex}\" && kind=server && duration > ${slow_ms}ms}",
+          "query": "{resource.service.name=~\"${service:regex}\" && resource.service.instance.id=~\"${instance:regex}\" && kind=server && duration > ${slow_ms}ms && (trace:id = \"${trace_id}\" || \"${trace_id}\" = \"\")}",
           "limit": 50,
           "spss": 3,
           "tableType": "traces"
@@ -3049,7 +3270,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 110
+        "y": 119
       },
       "fieldConfig": {
         "defaults": {
@@ -3091,7 +3312,7 @@
             "uid": "tempo"
           },
           "queryType": "traceql",
-          "query": "{resource.service.name=~\"${service:regex}\" && (status=error || span.http.response.status_code >= 500)}",
+          "query": "{resource.service.name=~\"${service:regex}\" && resource.service.instance.id=~\"${instance:regex}\" && (status=error || span.http.response.status_code >= 500) && (trace:id = \"${trace_id}\" || \"${trace_id}\" = \"\")}",
           "limit": 50,
           "spss": 3,
           "tableType": "traces"
@@ -3101,7 +3322,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 120
+        "y": 129
       },
       "fieldConfig": {
         "defaults": {
@@ -3150,7 +3371,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 120
+        "y": 129
       },
       "options": {}
     },
@@ -3163,7 +3384,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 129
+        "y": 138
       },
       "panels": [
         {
@@ -3217,7 +3438,7 @@
             "h": 7,
             "w": 12,
             "x": 0,
-            "y": 130
+            "y": 139
           },
           "fieldConfig": {
             "defaults": {
@@ -3294,7 +3515,7 @@
             "h": 7,
             "w": 12,
             "x": 12,
-            "y": 130
+            "y": 139
           },
           "fieldConfig": {
             "defaults": {

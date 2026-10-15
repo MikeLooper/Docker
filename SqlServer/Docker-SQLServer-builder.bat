@@ -7,6 +7,7 @@ pushd "%~dp0"
 
 set "IMAGE_FILE=mcr.microsoft.com/mssql/server:2025-latest"
 set "COMPOSE_FILE=%~dp0docker-compose.sqlserver.yml"
+set "COMPOSE_PROJECT=local-mssql"
 set "SECRETS_FILE=%~dp0..\secrets\sqlserver.env"
 
 REM Load runtime secrets from file.
@@ -34,10 +35,10 @@ REM 1. Download the SQL Server image:
 docker pull "%IMAGE_FILE%"
 
 REM 2. Stop any prior compose services for this stack.
-docker compose -f "%COMPOSE_FILE%" down --remove-orphans
+docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% down --remove-orphans
 
 REM 3. Start SQL Server with Compose.
-docker compose -f "%COMPOSE_FILE%" -p local-mssql up -d --force-recreate
+docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% up -d --force-recreate
 if errorlevel 1 (
 	echo docker compose up failed.
 	exit /b 1

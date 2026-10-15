@@ -9,10 +9,14 @@ set "IMAGE_FILE=eclipse-temurin:25-jre-alpine"
 set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
 set "COMPOSE_FILE=%~dp0docker-compose.api-java.yml"
+set "COMPOSE_PROJECT=pilot-api-java"
 set "PILOT_JAVA_DIR=%~dp0..\..\PilotApiJava"
 set "SECRETS_FILE=%~dp0..\secrets\api-java.env"
 set "JAVA_MSSQL_PORT=55301"
 set "JAVA_POSTGRES_PORT=55401"
+
+REM Stop any prior compose services for this stack first so its own ports are free to reuse.
+docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% down --remove-orphans
 
 REM Resolve host ports so Windows reserved/in-use ports do not break compose startup.
 call :resolve_open_port 55301 JAVA_MSSQL_PORT
@@ -48,17 +52,14 @@ ECHO Current Date=%CURRENT_DATE%
 REM 2. Download the Java image:
 docker pull "%IMAGE_FILE%"
 
-REM 3. Stop any prior compose services for this stack.
-docker compose -f "%COMPOSE_FILE%" down --remove-orphans
-
-REM 4. Prepare isolated build contexts.
+REM 3. Prepare isolated build contexts.
 if exist "%WORKING_DIR_WIN%" rmdir /S /Q "%WORKING_DIR_WIN%"
 mkdir "%WORKING_DIR_WIN%"
 
 mkdir "%WORKING_DIR_WIN%\api-java-mssql"
 mkdir "%WORKING_DIR_WIN%\api-java-postgres"
 
-REM 5. Build the application jar when it does not already exist.
+REM 4. Build the application jar when it does not already exist.
 if not exist "%PILOT_JAVA_DIR%\pom.xml" (
 	echo PilotApiJava project path not found: "%PILOT_JAVA_DIR%"
 	echo Update PILOT_JAVA_DIR in this script to your local PilotApiJava repository path.
@@ -99,8 +100,8 @@ if errorlevel 1 (
 )
 popd
 
-REM 6. Build and start both API containers with Compose.
-docker compose -f "%COMPOSE_FILE%" -p pilot-api-java up -d --build --force-recreate
+REM 5. Build and start both API containers with Compose.
+docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% up -d --build --force-recreate
 if errorlevel 1 (
 	echo docker compose up failed.
 	exit /b 1
@@ -108,7 +109,7 @@ if errorlevel 1 (
 
 popd
 
-REM 7. Launch health checks.
+REM 6. Launch health checks.
 start http://localhost:%JAVA_MSSQL_PORT%/healthcheck
 start http://localhost:%JAVA_POSTGRES_PORT%/healthcheck
 

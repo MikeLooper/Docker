@@ -11,6 +11,10 @@ services:
     environment:
       APP_DEPLOY_DATE: ${CURRENT_DATE}
       APP_PORT: "${PYTHON_MSSQL_PORT:-55501}"
+      # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
+      OTEL_RESOURCE_ATTRIBUTES: service.instance.id=pilot-api-python-mssql,db.variant=mssql
+      # The application default (localhost:4317) is unreachable from inside the container.
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
     ports:
       - "${PYTHON_MSSQL_PORT:-55501}:${PYTHON_MSSQL_PORT:-55501}"
     mem_limit: 1g
@@ -29,6 +33,10 @@ services:
     environment:
       APP_DEPLOY_DATE: ${CURRENT_DATE}
       APP_PORT: "${PYTHON_POSTGRES_PORT:-55601}"
+      # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
+      OTEL_RESOURCE_ATTRIBUTES: service.instance.id=pilot-api-python-postgres,db.variant=postgres
+      # The application default (localhost:4317) is unreachable from inside the container.
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
     ports:
       - "${PYTHON_POSTGRES_PORT:-55601}:${PYTHON_POSTGRES_PORT:-55601}"
     mem_limit: 1g
