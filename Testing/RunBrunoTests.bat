@@ -52,9 +52,15 @@ if defined FILTER_NAME echo Collection    : %FILTER_NAME%
 echo.
 
 set "OVERALL=0"
+set "RUN_COUNT=0"
 call :RunEnvironment "Docker - PostgreSQL" "PostgreSQL"
 call :RunEnvironment "Docker - SQL Server" "SqlServer"
 call :RunStandalone   "Docker"              "Docker"
+
+if "%RUN_COUNT%"=="0" (
+    echo ERROR: No collections matched the requested filter(s).
+    set "OVERALL=1"
+)
 
 echo.
 echo Building summary report...
@@ -103,6 +109,7 @@ rem  :RunCollection <Name> <CollectionPath>   (uses BRU_ENV and TAG)
 rem ---------------------------------------------------------------------------
 :RunCollection
 if defined FILTER_NAME if /i not "%FILTER_NAME%"=="%~1" goto :eof
+set /a RUN_COUNT+=1
 set "NAME=%~1"
 set "COLL=%~2"
 set "OUT=%REPORT_DIR%\%NAME%_%TAG%"
