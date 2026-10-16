@@ -156,7 +156,7 @@ function FormatDuration([TimeSpan]$t) {
     if ($t.TotalSeconds -lt 60) { '{0:N1} s' -f $t.TotalSeconds } else { '{0}:{1:mm\:ss}' -f [int][Math]::Floor($t.TotalHours), $t }
 }
 # Percentage rounded down to one decimal, so 99.96% never displays as 100%.
-function Pct([int]$n, [int]$d) { if ($d -eq 0) { 100 } else { [Math]::Floor(1000.0 * $n / $d) / 10 } }
+function Pct([int]$n, [int]$d) { if ($d -eq 0) { 'N/A' } else { [Math]::Floor(1000.0 * $n / $d) / 10 } }
 
 $svgPass = "<svg class='ico' viewBox='0 0 16 16' aria-hidden='true'><path d='M3.5 8.5l3 3 6-7' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>"
 $svgFail = "<svg class='ico' viewBox='0 0 16 16' aria-hidden='true'><path d='M4.5 4.5l7 7M11.5 4.5l-7 7' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/></svg>"
@@ -169,8 +169,9 @@ function Badge([string]$cls) {
 }
 function Kpi([string]$label, [string]$value, [string]$sub, [int]$n, [int]$d) {
     $p = Pct $n $d
-    $cls = if ($n -eq $d) { 'pass' } else { 'fail' }
-    "<div class='kpi'><div class='kpi-label'>$label</div><div class='kpi-value'>$value</div><div class='kpi-foot'><span class='pill $cls'>$('{0:0.#}' -f $p)%</span><span class='kpi-sub'>$sub</span></div></div>"
+    $cls = if ($d -eq 0) { 'skip' } elseif ($n -eq $d) { 'pass' } else { 'fail' }
+    $pct = if ($d -eq 0) { $p } else { "{0:0.#}%" -f $p }
+    "<div class='kpi'><div class='kpi-label'>$label</div><div class='kpi-value'>$value</div><div class='kpi-foot'><span class='pill $cls'>$pct</span><span class='kpi-sub'>$sub</span></div></div>"
 }
 
 $manifest = Join-Path $ReportDir 'runs.txt'
@@ -333,6 +334,7 @@ $html = @"
  .pill { display: inline-block; padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.02em; }
  .pill.pass { background: var(--success-bg); color: var(--success); }
  .pill.fail { background: var(--danger-bg); color: var(--danger); }
+ .pill.skip { background: var(--neutral-bg); color: var(--neutral); }
 
  /* Tables */
  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
