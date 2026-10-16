@@ -7,6 +7,7 @@ pushd "%~dp0"
 
 set "IMAGE_FILE=postgres:latest"
 set "COMPOSE_FILE=%~dp0docker-compose.postgresql.yml"
+set "COMPOSE_PROJECT=local-postgres"
 set "SECRETS_FILE=%~dp0..\secrets\postgresql.env"
 
 REM Load runtime secrets from file.
@@ -26,10 +27,10 @@ REM 1. Get the latest image:
 docker pull "%IMAGE_FILE%"
 
 REM 2. Stop any prior compose services for this stack.
-docker compose -f "%COMPOSE_FILE%" down --remove-orphans
+docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% down --remove-orphans
 
 REM 3. Start the PostgreSQL container with Compose.
-docker compose -f "%COMPOSE_FILE%" -p local-postgres up -d --force-recreate
+docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% up -d --force-recreate
 if errorlevel 1 (
 	echo docker compose up failed.
 	exit /b 1

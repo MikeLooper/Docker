@@ -9,9 +9,13 @@ set "IMAGE_FILE=mcr.microsoft.com/dotnet/aspnet:10.0"
 set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
 set "COMPOSE_FILE=%~dp0docker-compose.api-dotnet.yml"
+set "COMPOSE_PROJECT=pilot-api-dotnet"
 set "PILOT_DOTNET_DIR=%~dp0..\..\PilotApiDotNet"
 set "DOTNET_MSSQL_PORT=55101"
 set "DOTNET_POSTGRES_PORT=55201"
+
+REM Stop any prior compose services for this stack first so its own ports are free to reuse.
+docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% down --remove-orphans
 
 REM Resolve host ports so Windows reserved/in-use ports do not break compose startup.
 call :resolve_open_port %DOTNET_MSSQL_PORT% DOTNET_MSSQL_PORT
@@ -26,10 +30,7 @@ REM 2. Build arg used only for deployment metadata.
 FOR /F "usebackq tokens=*" %%i IN (`powershell -NoProfile -Command "Get-Date -Format u"`) DO SET "CURRENT_DATE=%%i"
 ECHO Current Date=%CURRENT_DATE%
 
-REM 3. Stop any prior compose services for this stack.
-docker compose -f "%COMPOSE_FILE%" down --remove-orphans
-
-REM 4. Prepare isolated build contexts.
+REM 3. Prepare isolated build contexts.
 if exist "%WORKING_DIR_WIN%" rmdir /S /Q "%WORKING_DIR_WIN%"
 mkdir "%WORKING_DIR_WIN%"
 
@@ -37,7 +38,7 @@ mkdir "%WORKING_DIR_WIN%\api-dotnet-publish"
 mkdir "%WORKING_DIR_WIN%\api-dotnet-mssql"
 mkdir "%WORKING_DIR_WIN%\api-dotnet-postgres"
 
-REM 5. Publish the API for Linux runtime.
+REM 4. Publish the API for Linux runtime.
 if not exist "%PILOT_DOTNET_DIR%\*.sln" if not exist "%PILOT_DOTNET_DIR%\*.csproj" (
 	echo PilotApiDotNet project path not found: "%PILOT_DOTNET_DIR%"
 	echo Update PILOT_DOTNET_DIR in this script to your local PilotApiDotNet repository path.
@@ -67,7 +68,7 @@ if not exist "%WORKING_DIR_WIN%\api-dotnet-publish\PilotApi.Web.dll" (
 	exit /b 1
 )
 
-REM 6. Copy published files into each context.
+REM 5. Copy published files into each context.
 xcopy /E /I /Y "%WORKING_DIR_WIN%\api-dotnet-publish\*" "%WORKING_DIR_WIN%\api-dotnet-mssql\" >nul
 if errorlevel 1 (
 	echo Failed to copy published files to api-dotnet-mssql build context.
@@ -79,12 +80,12 @@ if errorlevel 1 (
 	exit /b 1
 )
 
-REM 7. Copy environment-specific appsettings into each context.
+REM 6. Copy environment-specific appsettings into each context.
 copy /Y "%~dp0..\secrets\appsettings-api-dotnet-sqlserver.env" "%WORKING_DIR_WIN%\api-dotnet-mssql\appsettings.Production.json" >nul
 copy /Y "%~dp0..\secrets\appsettings-api-dotnet-postgresql.env" "%WORKING_DIR_WIN%\api-dotnet-postgres\appsettings.Production.json" >nul
 
-REM 8. Build and start both API containers with Compose.
-docker compose -f "%COMPOSE_FILE%" -p pilot-api-dotnet up -d --build --force-recreate
+REM 7. Build and start both API containers with Compose.
+docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% up -d --build --force-recreate
 if errorlevel 1 (
 	echo docker compose up failed.
 	exit /b 1
@@ -92,7 +93,7 @@ if errorlevel 1 (
 
 popd
 
-REM 9. Launch health checks.
+REM 8. Launch health checks.
 start http://localhost:%DOTNET_MSSQL_PORT%/healthcheck
 start http://localhost:%DOTNET_POSTGRES_PORT%/healthcheck
 
