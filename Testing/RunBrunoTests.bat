@@ -58,7 +58,7 @@ call :RunEnvironment "Docker - SQL Server" "SqlServer"
 call :RunStandalone   "Docker"              "Docker"
 
 if "%RUN_COUNT%"=="0" (
-    echo ERROR: No collections matched the requested filter(s).
+    echo ERROR: No collections matched the requested filter^(s^).
     set "OVERALL=1"
 )
 
