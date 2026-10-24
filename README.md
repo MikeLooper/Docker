@@ -65,6 +65,43 @@ Each script is the primary entry point for its stack and is kept aligned with it
 On Windows, the API builder scripts for .NET, Java, Python, Python with Claude, and Data API builder automatically probe and select open
 host ports within predefined ranges when preferred ports are reserved or in use.
 
+## Port Binding
+
+Windows categorizes ports into distinct blocks:
+- 0 – 1023 (Well-Known Ports): Reserved for core system protocols (e.g., HTTP 80, HTTPS 443, SMB 445). Avoid binding custom apps here unless building dedicated web infrastructure.
+- 1024 – 49151 (Registered / User Ports): Partially used by third-party applications (like SQL Server on 1433). This is the best zone for custom bindings, provided you check for conflicts.
+- 49152 – 65535 (Dynamic / Ephemeral Ports): The standard Windows 11 range for random outbound client connections and dynamic RPC systems. Do not use these for static custom bindings. Hyper-V, WSL2, and Windows clustering will dynamically seize blocks of 100+ ports in this range upon reboot, blocking your app with an Address already in use error.
+
+### Port usage discovery
+- To find host ports that are excluded from use by Windows:
+```
+netsh interface ipv4 show excludedportrange protocol=tcp
+```
+- To determine what application is currently using a port:
+1. Execute this command:
+```
+netstat -ano > ports.txt
+```
+2. Examine ports.txt for the port you are researching, extract the related PID, then execute:
+```
+resmon.exe
+```
+3. Find the PID and extract the application name.
+
+### Reserving
+
+To force Windows to Exclude/Reserve Your Custom Port by adding an explicit Administered Port Exclusion, which will remain reserved even after you reboot your system:
+```
+powershell -Command "netsh int ipv4 add excludedportrange protocol=tcp startport=<YourPortNumber> numberofports=1 store=persistent"
+```
+
+### Checklist
+
+Custom port binding checklist:
+- Best choice: ports between 1024 – 49151.
+- Never Use: any ports below 1024 or any ports above 49151.
+
+
 ## Secrets
 
 Runtime secrets are now stored in separate local files under the `secrets/` directory.
@@ -191,22 +228,22 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 
 | Status: | Type:                   | Name:                       | Inner Port: | Outer Port: | URL |
 | ------- | ----------------------- | --------------------------- | ----------- | ----------- | --- |
-|  √      | Angular UI              | pilot-ui                    | 4200        | 55401       | http://localhost:55901/ |
-|  √      | ApiDotNet (SQL Server)  | pilot-api-dotnet-mssql      | 8080        | 55101       | http://localhost:55101/swagger, http://localhost:55101/scalar |
-|  √      | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 55201       | http://localhost:55201/swagger, http://localhost:55201/scalar |
-|  √      | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 55301       | http://localhost:55301/swagger-ui/index.html |
-|  √      | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 55401       | http://localhost:55401/swagger-ui/index.html |
-|  √      | ApiMsDab (SQL Server)   | pilot-api-msdab-mssql       | 5000        | 56301       | http://localhost:56301/swagger, http://localhost:56301/graphql |
-|  √      | ApiMsDab (PostgreSQL)   | pilot-api-msdab-postgres    | 5000        | 56401       | http://localhost:56401/swagger, http://localhost:56401/graphql |
-|  √      | MCP Inspector (DAB)     | pilot-msdab-mcp-inspector   | 6274        | 56501       | http://localhost:56501/ |
-|  √      | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 55501       | http://localhost:55501/docs, http://localhost:55501/redoc |
-|  √      | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 55601       | http://localhost:55601/docs, http://localhost:55601/redoc |
-|  √      | ApiPythonWithClaude     | python-api-with-claude      | 56601       | 56601       | http://localhost:56601/docs, http://localhost:56601/health |
-|  √      | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 55701       | http://localhost:55701/swagger, http://localhost:55701/scalar |
-|  √      | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 55801       | http://localhost:55801/swagger, http://localhost:55801/scalar |
-|  √      | Dozzle                  | local-dozzle                | 8080        | 56101       | http://localhost:56101  |
+|  √      | Angular UI              | pilot-ui                    | 4200        | 11301       | http://localhost:11801/ |
+|  √      | ApiDotNet (SQL Server)  | pilot-api-dotnet-mssql      | 8080        | 11001       | http://localhost:11001/swagger, http://localhost:11001/scalar |
+|  √      | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 11101       | http://localhost:11101/swagger, http://localhost:11101/scalar |
+|  √      | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 11201       | http://localhost:11201/swagger-ui/index.html |
+|  √      | ApiJava (PostgreSQL)    | pilot-api-java-postgres     | 8080        | 11301       | http://localhost:11301/swagger-ui/index.html |
+|  √      | ApiMsDab (SQL Server)   | pilot-api-msdab-mssql       | 5000        | 11151       | http://localhost:11151/swagger, http://localhost:11151/graphql |
+|  √      | ApiMsDab (PostgreSQL)   | pilot-api-msdab-postgres    | 5000        | 11161       | http://localhost:11161/swagger, http://localhost:11161/graphql |
+|  √      | MCP Inspector (DAB)     | pilot-msdab-mcp-inspector   | 6274        | 11171       | http://localhost:11171/ |
+|  √      | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 11401       | http://localhost:11401/docs, http://localhost:11401/redoc |
+|  √      | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 11501       | http://localhost:11501/docs, http://localhost:11501/redoc |
+|  √      | ApiPythonWithClaude     | python-api-with-claude      | 11111       | 11111       | http://localhost:11111/docs, http://localhost:11111/health |
+|  √      | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 11601       | http://localhost:11601/swagger, http://localhost:11601/scalar |
+|  √      | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 11701       | http://localhost:11701/swagger, http://localhost:11701/scalar |
+|  √      | Dozzle                  | local-dozzle                | 8080        | 11121       | http://localhost:11121  |
 |  √      | Grafana                 | local-grafana               | 3000        | 3000        | http://localhost:3000   |
-|  √      | Homepage                | local-homepage              | 3000        | 56201       | http://localhost:56201  |
+|  √      | Homepage                | local-homepage              | 3000        | 11131       | http://localhost:11131  |
 |  √      | PostgreSQL              | local-postgres              | 5432        | 5432        |                         |
 |  √      | SQL Server              | local-mssql                 | 1433        | 1433        |                         |
 |  √      | Uptime Kuma             | local-uptimekuma            | 3001        | 3001        | http://localhost:3001   |

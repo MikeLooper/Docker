@@ -7,16 +7,16 @@ services:
       dockerfile: ../../Docker/Api_python/dockerfile_mssql
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
-        APP_PORT: ${PYTHON_MSSQL_PORT:-55501}
+        APP_PORT: ${PYTHON_MSSQL_PORT:-11401}
     environment:
       APP_DEPLOY_DATE: ${CURRENT_DATE}
-      APP_PORT: "${PYTHON_MSSQL_PORT:-55501}"
+      APP_PORT: "${PYTHON_MSSQL_PORT:-11401}"
       # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
       OTEL_RESOURCE_ATTRIBUTES: service.instance.id=pilot-api-python-mssql,db.variant=mssql
       # The application default (localhost:4317) is unreachable from inside the container.
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
     ports:
-      - "${PYTHON_MSSQL_PORT:-55501}:${PYTHON_MSSQL_PORT:-55501}"
+      - "${PYTHON_MSSQL_PORT:-11401}:${PYTHON_MSSQL_PORT:-11401}"
     mem_limit: 1g
     networks:
       - pilot-net
@@ -29,16 +29,16 @@ services:
       dockerfile: ../../Docker/Api_python/dockerfile_postgres
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
-        APP_PORT: ${PYTHON_POSTGRES_PORT:-55601}
+        APP_PORT: ${PYTHON_POSTGRES_PORT:-11501}
     environment:
       APP_DEPLOY_DATE: ${CURRENT_DATE}
-      APP_PORT: "${PYTHON_POSTGRES_PORT:-55601}"
+      APP_PORT: "${PYTHON_POSTGRES_PORT:-11501}"
       # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
       OTEL_RESOURCE_ATTRIBUTES: service.instance.id=pilot-api-python-postgres,db.variant=postgres
       # The application default (localhost:4317) is unreachable from inside the container.
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
     ports:
-      - "${PYTHON_POSTGRES_PORT:-55601}:${PYTHON_POSTGRES_PORT:-55601}"
+      - "${PYTHON_POSTGRES_PORT:-11501}:${PYTHON_POSTGRES_PORT:-11501}"
     mem_limit: 1g
     networks:
       - pilot-net

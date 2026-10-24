@@ -10,12 +10,12 @@ services:
     environment:
       DB_URL: jdbc:sqlserver://local-mssql:1433;databaseName=NorthWind;encrypt=true;trustServerCertificate=true;connectTimeout=30
       DB_PASSWORD: ${MSSQL_DB_PASSWORD}
-      SERVER_PORT: "${JAVA_MSSQL_PORT:-55301}"
+      SERVER_PORT: "${JAVA_MSSQL_PORT:-11201}"
       SPRING_PROFILES_ACTIVE: prod-sqlserver
       # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
       OTEL_RESOURCE_ATTRIBUTES: service.instance.id=pilot-api-java-mssql,db.variant=mssql
     ports:
-      - "${JAVA_MSSQL_PORT:-55301}:${JAVA_MSSQL_PORT:-55301}"
+      - "${JAVA_MSSQL_PORT:-11201}:${JAVA_MSSQL_PORT:-11201}"
     mem_limit: 1g
     networks:
       - pilot-net
@@ -31,12 +31,12 @@ services:
     environment:
       DB_URL: jdbc:postgresql://local-postgres:5432/northwind
       DB_PASSWORD: ${POSTGRES_DB_PASSWORD}
-      SERVER_PORT: "${JAVA_POSTGRES_PORT:-55401}"
+      SERVER_PORT: "${JAVA_POSTGRES_PORT:-11301}"
       SPRING_PROFILES_ACTIVE: prod-postgres
       # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
       OTEL_RESOURCE_ATTRIBUTES: service.instance.id=pilot-api-java-postgres,db.variant=postgres
     ports:
-      - "${JAVA_POSTGRES_PORT:-55401}:${JAVA_POSTGRES_PORT:-55401}"
+      - "${JAVA_POSTGRES_PORT:-11301}:${JAVA_POSTGRES_PORT:-11301}"
     mem_limit: 1g
     networks:
       - pilot-net

@@ -50,12 +50,12 @@ because no CORS policy is configured.
 
 | Browser path | Upstream container | Container port |
 | --- | --- | --- |
-| `/api/55101/` | `pilot-api-dotnet-mssql` | `8080` |
-| `/api/55201/` | `pilot-api-dotnet-postgres` | `8080` |
-| `/api/55301/` | `pilot-api-java-mssql` | `55301` |
-| `/api/55401/` | `pilot-api-java-postgres` | `55401` |
-| `/api/55501/` | `pilot-api-python-mssql` | `55501` |
-| `/api/55601/` | `pilot-api-python-postgres` | `55601` |
+| `/api/11001/` | `pilot-api-dotnet-mssql` | `8080` |
+| `/api/11101/` | `pilot-api-dotnet-postgres` | `8080` |
+| `/api/11201/` | `pilot-api-java-mssql` | `11201` |
+| `/api/11301/` | `pilot-api-java-postgres` | `11301` |
+| `/api/11401/` | `pilot-api-python-mssql` | `11401` |
+| `/api/11501/` | `pilot-api-python-postgres` | `11501` |
 
 The API stacks must be running on the external `pilot-net` network before the UI can reach them.
 The path segment is only a label matching the published host port; the upstream port is the
@@ -78,13 +78,13 @@ Docker-Ui-angular-builder.bat
 4. Copies `dist\PilotUiAngular\browser` and `nginx.conf` into the isolated build context
    `C:\Working\Storage\Dev\GitHub\Working\ui-angular`.
 5. Runs `docker compose -p pilot-ui-angular up -d --build --force-recreate`, which builds the
-   `pilot-ui-angular:1.0` image and starts the `pilot-ui` container on host port `55901`.
-6. Opens `http://localhost:55901/` in the system browser.
+   `pilot-ui-angular:1.0` image and starts the `pilot-ui` container on host port `11801`.
+6. Opens `http://localhost:11801/` in the system browser.
 
 `APP_DEPLOY_DATE` is set on the image (build argument `DEPLOY_DATE`) and on the running container
 with the timestamp of the build.
 
-Before compose startup, the script probes host ports in the range `55901-55499`. If the preferred
+Before compose startup, the script probes host ports in the range `11801-55499`. If the preferred
 port is blocked, reserved, or in use on Windows, the script picks the first open port in that range
 and prints the replacement.
 
@@ -95,7 +95,7 @@ Run from this repository folder after the Angular bundle has been staged:
 ```bat
 set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "CURRENT_DATE=2026-08-03 00:00:00Z"
-set "UI_ANGULAR_PORT=55901"
+set "UI_ANGULAR_PORT=11801"
 docker compose -f docker-compose.ui-angular.yml -p pilot-ui-angular up -d --build --force-recreate
 ```
 

@@ -29,7 +29,7 @@ services:
     volumes:
       - ./data-api/dab-config.mssql.json:/App/dab-config.json:ro
     ports:
-      - "${MSDAB_MSSQL_PORT:-56301}:5000"
+      - "${MSDAB_MSSQL_PORT:-11151}:5000"
 
   pilot-api-msdab-postgres:
     <<: *dab-common
@@ -45,7 +45,7 @@ services:
     volumes:
       - ./data-api/dab-config.postgres.json:/App/dab-config.json:ro
     ports:
-      - "${MSDAB_POSTGRES_PORT:-56401}:5000"
+      - "${MSDAB_POSTGRES_PORT:-11161}:5000"
 
   pilot-msdab-mcp-inspector:
     image: ${INSPECTOR_IMAGE:-ghcr.io/modelcontextprotocol/inspector:2.8.0}
@@ -54,10 +54,10 @@ services:
       # Auth stays on: the token guards the Inspector API and its auto-connect links.
       MCP_INSPECTOR_API_TOKEN: ${MCP_INSPECTOR_API_TOKEN:?MCP_INSPECTOR_API_TOKEN must be set in secrets/ms-dab.env}
       # The host port differs from the container port, so the browser origin must be allowed explicitly.
-      ALLOWED_ORIGINS: http://localhost:${MSDAB_INSPECTOR_PORT:-56501},http://127.0.0.1:${MSDAB_INSPECTOR_PORT:-56501}
+      ALLOWED_ORIGINS: http://localhost:${MSDAB_INSPECTOR_PORT:-11171},http://127.0.0.1:${MSDAB_INSPECTOR_PORT:-11171}
     ports:
       # Loopback only: the Inspector backend can spawn processes on request.
-      - "127.0.0.1:${MSDAB_INSPECTOR_PORT:-56501}:6274"
+      - "127.0.0.1:${MSDAB_INSPECTOR_PORT:-11171}:6274"
     mem_limit: 512m
     networks:
       - pilot-net

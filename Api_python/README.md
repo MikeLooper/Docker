@@ -71,8 +71,8 @@ Docker-Api-python-builder.bat
 
 Before compose startup, the script probes host ports in two separate ranges:
 
-- SQL Server variant: `55501-54599`
-- PostgreSQL variant: `55601-54699`
+- SQL Server variant: `11401-54599`
+- PostgreSQL variant: `11501-54699`
 
 If the preferred start port is blocked, reserved, or in use on Windows, the script picks the first
 open port within that range and prints the replacement.
@@ -81,8 +81,8 @@ open port within that range and prints the replacement.
 
 | Variant | Image | Container | Default Host Port |
 | --- | --- | --- | --- |
-| SQL Server | `pilot-api-python-sqlserver` | `pilot-api-python-mssql` | 55501 |
-| PostgreSQL | `pilot-api-python-postgres` | `pilot-api-python-postgres` | 55601 |
+| SQL Server | `pilot-api-python-sqlserver` | `pilot-api-python-mssql` | 11401 |
+| PostgreSQL | `pilot-api-python-postgres` | `pilot-api-python-postgres` | 11501 |
 
 Both images receive `APP_DEPLOY_DATE` (build date) and `APP_PORT` (listening port) as environment
 variables. Uvicorn listens on `APP_PORT` inside the container, and the same port is published on
@@ -95,8 +95,8 @@ Run from this repository folder:
 ```bat
 set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
 set "CURRENT_DATE=2026-08-16 00:00:00Z"
-set "PYTHON_MSSQL_PORT=55501"
-set "PYTHON_POSTGRES_PORT=55601"
+set "PYTHON_MSSQL_PORT=11401"
+set "PYTHON_POSTGRES_PORT=11501"
 docker compose -f docker-compose.api-python.yml -p pilot-api-python up -d --build --force-recreate
 ```
 
@@ -107,15 +107,15 @@ You can override host ports explicitly with `PYTHON_MSSQL_PORT` and `PYTHON_POST
 ### SQL Server Variant
 
 ```
-http://localhost:55501/healthcheck
-http://localhost:55501/docs
+http://localhost:11401/healthcheck
+http://localhost:11401/docs
 ```
 
 ### PostgreSQL Variant
 
 ```
-http://localhost:55601/healthcheck
-http://localhost:55601/docs
+http://localhost:11501/healthcheck
+http://localhost:11501/docs
 ```
 
 ## Additional Notes

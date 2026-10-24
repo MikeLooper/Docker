@@ -11,8 +11,8 @@ set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
 set "COMPOSE_FILE=%~dp0docker-compose.utility-dotnet.yml"
 set "COMPOSE_PROJECT=utility-api-dotnet"
 set "UTILITY_DOTNET_DIR=%~dp0..\..\PilotUtilityApi"
-set "DOTNET_MSSQL_PORT=55701"
-set "DOTNET_POSTGRES_PORT=55801"
+set "DOTNET_MSSQL_PORT=11601"
+set "DOTNET_POSTGRES_PORT=11701"
 
 REM Stop any prior compose services for this stack first so its own ports are free to reuse.
 docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% down --remove-orphans

@@ -14,7 +14,7 @@ To test the Keycloak setup, run this curl command from outside the container to 
 
 ~~~bash
 curl --request POST ^
-    --url http://localhost:55001/realms/local-realm/protocol/openid-connect/token ^
+    --url http://localhost:11141/realms/local-realm/protocol/openid-connect/token ^
     --header 'Content-Type: application/x-www-form-urlencoded' ^
     --data client_id=local-client ^
     --data username=<userid> ^
@@ -56,7 +56,7 @@ Decoded Payload:
   "exp": 1788283142,
   "iat": 1788282842,
   "jti": "onrtro:2f97b664-2616-7265-44ae-230d4c0e95d6",
-  "iss": "http://localhost:55001/realms/local-realm",
+  "iss": "http://localhost:11141/realms/local-realm",
   "aud": "account",
   "sub": "5c99a53e-4251-4d2f-84a8-6785c2e18487",
   "typ": "Bearer",
@@ -114,5 +114,5 @@ A few relationships worth knowing between a generated token and its Keycloak con
 ## Usage
 
 In a browser:
-- [Admin Console](http://localhost:55001/admin)
-- [Account Console](http://localhost:55001/realms/local-realm/account)
+- [Admin Console](http://localhost:11141/admin)
+- [Account Console](http://localhost:11141/realms/local-realm/account)

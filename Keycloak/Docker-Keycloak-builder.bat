@@ -5,7 +5,7 @@ setlocal EnableExtensions DisableDelayedExpansion
 
 set "IMAGE_FILE=quay.io/keycloak/keycloak:latest"
 set "CONTAINER_NAME=local-keycloak"
-set "KEYCLOAK_PORT=55001"
+set "KEYCLOAK_PORT=11141"
 set "SECRETS_FILE=%~dp0..\secrets\keycloak.env"
 set "KEYCLOAK_INTERNAL_URL=http://localhost:8080"
 set "REALM_NAME=local-realm"
@@ -111,7 +111,7 @@ docker pull "%IMAGE_FILE%"
 
 :: 3. Build and start the Keycloak container.
 docker run -d --name %CONTAINER_NAME% ^
-	-m 1g ^
+	-m 2g ^
 	-p %KEYCLOAK_PORT%:8080 ^
 	--restart=always ^
 	--network pilot-net ^

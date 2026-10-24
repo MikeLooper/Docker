@@ -3,11 +3,10 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: local-homepage
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev,localhost:56201 # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
-      PUID: 9696 # optional, your user id
-      PGID: 9696 # optional, your group id
+      HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev,localhost:11131 # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      # PUID/PGID removed: a non-root user cannot read /var/run/docker.sock (root:root 0660), which breaks the docker integration.
     ports:
-      - 56201:3000
+      - 11131:3000
     volumes:
       - /path/to/config:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations

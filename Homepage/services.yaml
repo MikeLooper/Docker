@@ -4,16 +4,16 @@
 
 - Dashboards:
     - Dozzle:
-        href: http://localhost:56101/
+        href: http://localhost:11121/
         description: Dozzle dashboard for monitoring Docker containers.
         icon: doozle.png
         container: local-dozzle
 
-    - UptimKuma:
+    - UptimeKuma:
         href: http://localhost:3001/
-        description: UptimKuma dashboard for monitoring website uptime.
+        description: UptimeKuma dashboard for monitoring website uptime.
         icon: uptime-kuma.png
-        container: local-uptimkuma
+        container: local-uptimekuma
 
 - Databases:
     - SQL Server:
@@ -30,7 +30,7 @@
 
 - UIs:
     - pilot-ui:
-        href: http://localhost:55901
+        href: http://localhost:11801
         description: Pilot UI for development and testing.
         icon: sh-fizzy.png
         container: pilot-ui
@@ -75,7 +75,7 @@
 - APIs:
     - pilot-api-dotnet:
         - pilot-api-dotnet (SQL Server):
-            href: http://localhost:55101/swagger
+            href: http://localhost:11001/swagger
             description: Pilot .NET API for SQL Server development and testing.
             icon: sh-asp-net-core-light.png
             server: local-docker # The docker server
@@ -91,7 +91,7 @@
                       label: Deploy Date
 
         - pilot-api-dotnet (PostgreSQL):
-            href: http://localhost:55201/swagger
+            href: http://localhost:11101/swagger
             description: Pilot .NET API for PostgreSQL development and testing.
             icon: sh-asp-net-core-light.png
             container: pilot-api-dotnet-postgres
@@ -107,13 +107,13 @@
 
     - pilot-api-java:
         - pilot-api-java (SQL Server):
-            href: http://localhost:55301/swagger-ui/index.html
+            href: http://localhost:11201/swagger-ui/index.html
             description: Pilot Java API for SQL Server development and testing.
             icon: sh-java.png
             container: pilot-api-java-mssql
             widget:
                 type: customapi
-                url: http://pilot-api-java-mssql:55301/about
+                url: http://pilot-api-java-mssql:11201/about
                 method: GET
                 mappings:
                     - field: apiVersion
@@ -122,13 +122,13 @@
                       label: Deploy Date
 
         - pilot-api-java (PostgreSQL):
-            href: http://localhost:55401/swagger-ui/index.html
+            href: http://localhost:11301/swagger-ui/index.html
             description: Pilot Java API for PostgreSQL development and testing.
             icon: sh-java.png
             container: pilot-api-java-postgres
             widget:
                 type: customapi
-                url: http://pilot-api-java-postgres:55401/about
+                url: http://pilot-api-java-postgres:11301/about
                 method: GET
                 mappings:
                     - field: apiVersion
@@ -138,13 +138,13 @@
 
     - pilot-api-python:
         - pilot-api-python (SQL Server):
-            href: http://localhost:55501/docs
+            href: http://localhost:11401/docs
             description: Pilot Python API for SQL Server development and testing.
             icon: sh-python.png
             container: pilot-api-python-mssql
             widget:
                 type: customapi
-                url: http://pilot-api-python-mssql:55501/about
+                url: http://pilot-api-python-mssql:11401/about
                 method: GET
                 mappings:
                     - field: apiVersion
@@ -153,13 +153,13 @@
                       label: Deploy Date
 
         - pilot-api-python (PostgreSQL):
-            href: http://localhost:55601/docs
+            href: http://localhost:11501/docs
             description: Pilot Python API for PostgreSQL development and testing.
             icon: sh-python.png
             container: pilot-api-python-postgres
             widget:
                 type: customapi
-                url: http://pilot-api-python-postgres:55601/about
+                url: http://pilot-api-python-postgres:11501/about
                 method: GET
                 mappings:
                     - field: apiVersion
@@ -169,7 +169,7 @@
 
     - pilot-api-msdab:
         - pilot-api-msdab (SQL Server):
-            href: http://localhost:56301/swagger
+            href: http://localhost:11151/swagger
             description: Microsoft Data API builder (REST, GraphQL, MCP) for SQL Server.
             icon: mdi-database-cog
             container: pilot-api-msdab-mssql
@@ -184,7 +184,7 @@
                       label: DAB Version
 
         - pilot-api-msdab (PostgreSQL):
-            href: http://localhost:56401/swagger
+            href: http://localhost:11161/swagger
             description: Microsoft Data API builder (REST, GraphQL, MCP) for PostgreSQL.
             icon: mdi-database-cog
             container: pilot-api-msdab-postgres
@@ -199,14 +199,14 @@
                       label: DAB Version
 
         - MCP Inspector (DAB):
-            href: http://localhost:56501/
+            href: http://localhost:11171/
             description: MCP Inspector for the Data API builder MCP endpoints.
             icon: mdi-magnify-scan
             container: pilot-msdab-mcp-inspector
 
     - utility-api-dotnet:
         - utility-api-dotnet (SQL Server):
-            href: http://localhost:55701/swagger
+            href: http://localhost:11601/swagger
             description: Utility .NET API for SQL Server development and testing.
             icon: sh-asp-net-core.png
             container: utility-api-dotnet-mssql
@@ -221,7 +221,7 @@
                       label: Deploy Date
 
         - utility-api-dotnet (PostgreSQL):
-            href: http://localhost:55801/swagger
+            href: http://localhost:11701/swagger
             description: Utility .NET API for PostgreSQL development and testing.
             icon: sh-asp-net-core.png
             container: utility-api-dotnet-postgres

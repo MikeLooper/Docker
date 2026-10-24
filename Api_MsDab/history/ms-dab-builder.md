@@ -31,9 +31,9 @@ SQL Server connection strings must include `TrustServerCertificate=True` (the co
 The new Docker containers will match the following definitions:
 | Database | Name | Inner Port | Outer Port |
 | --- | --- | --- | --- |
-| SQL Server | pilot-api-msdab-mssql | 5000 | 56301 |
-| PostgreSQL | pilot-api-msdab-postgres | 5000 | 56401 |
-| (MCP Inspector UI) | pilot-msdab-mcp-inspector | 6274 | 56501 |
+| SQL Server | pilot-api-msdab-mssql | 5000 | 11151 |
+| PostgreSQL | pilot-api-msdab-postgres | 5000 | 11161 |
+| (MCP Inspector UI) | pilot-msdab-mcp-inspector | 6274 | 11171 |
 | (MCP Inspector proxy) | pilot-msdab-mcp-inspector | 6277 | 56502 |
 
 - Use the official image `mcr.microsoft.com/azure-databases/data-api-builder`, pinned to a specific version tag (not `latest`). The version must support MCP (`--mcp.enabled`, DAB 1.7 or later). Use the same version of the `dab` CLI to generate the configs.
@@ -131,12 +131,12 @@ If the docs contradict this prompt (for example about flag names or the MCP endp
 
 6. Add MCP Inspector with the auto-connect URL. Use Streamable HTTP.
 - Run it in Docker on `pilot-net` (for example a `node` image running `npx @modelcontextprotocol/inspector` with a pinned version) so its proxy can reach DAB by service name: `http://pilot-api-msdab-mssql:5000/mcp` and `http://pilot-api-msdab-postgres:5000/mcp`.
-- Set `HOST=0.0.0.0`, and set `ALLOWED_ORIGINS` or the equivalent so the browser UI on port 56501 is accepted.
+- Set `HOST=0.0.0.0`, and set `ALLOWED_ORIGINS` or the equivalent so the browser UI on port 11171 is accepted.
 - Proxy authentication: disabling it is acceptable for local use only (`DANGEROUSLY_OMIT_AUTH=true`). Document this in the README.
-- The auto-connect URL format is `http://localhost:56501/?transport=streamable-http&serverUrl=<encoded MCP URL>&MCP_PROXY_PORT=56502`. Verify this against the pinned Inspector version.
+- The auto-connect URL format is `http://localhost:11171/?transport=streamable-http&serverUrl=<encoded MCP URL>&MCP_PROXY_PORT=56502`. Verify this against the pinned Inspector version.
 
 7. In the `Testing\MsDab` directory create Bruno tests, similar to those found in `C:\Working\Storage\Dev\GitHub\PilotApiDotNet\test\Bruno`, to validate the DAB endpoints.
-- Use the same OpenCollection format (`opencollection.yml`) and environment names that `RunBrunoTests.bat` expects: `Docker - PostgreSQL` (`Host` = `http://localhost:56401/`) and `Docker - SQL Server` (`Host` = `http://localhost:56301/`).
+- Use the same OpenCollection format (`opencollection.yml`) and environment names that `RunBrunoTests.bat` expects: `Docker - PostgreSQL` (`Host` = `http://localhost:11161/`) and `Docker - SQL Server` (`Host` = `http://localhost:11151/`).
 - Coverage: `/health`; REST for every entity (list, get by key including the composite key on `OrderDetails`, `$filter`, `$select`, `$orderby`, `$first` paging with `nextLink`); one GraphQL query per entity; one MCP call (`tools/list`) over Streamable HTTP.
 - Do not change data. Only include create, update, and delete tests if each one cleans up after itself, so that runs can be repeated.
 - No IDP token is needed (anonymous permissions). Don't add an `.env` file unless one is required.
@@ -152,7 +152,7 @@ If the docs contradict this prompt (for example about flag names or the MCP endp
 
 The work is done when all of these are true:
 - A clean run of `Docker-Api-msdab-builder.bat` (with both databases running) exits with code 0, and three containers are running on `pilot-net`.
-- `http://localhost:56301/health` and `http://localhost:56401/health` report healthy.
+- `http://localhost:11151/health` and `http://localhost:11161/health` report healthy.
 - `GET /api/OrderDetails` returns rows on both instances.
 - MCP Inspector auto-connects to both instances and lists DAB's tools.
 - `Testing\RunBrunoTests.bat` runs the MsDab collection in both environments, and it passes.
