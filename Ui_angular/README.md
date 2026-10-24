@@ -84,7 +84,7 @@ Docker-Ui-angular-builder.bat
 `APP_DEPLOY_DATE` is set on the image (build argument `DEPLOY_DATE`) and on the running container
 with the timestamp of the build.
 
-Before compose startup, the script probes host ports in the range `11801-55499`. If the preferred
+Before compose startup, the script probes host ports in the range `11801-11899`. If the preferred
 port is blocked, reserved, or in use on Windows, the script picks the first open port in that range
 and prints the replacement.
 
