@@ -67,8 +67,8 @@ Then replace values in `secrets\api-java.env`:
 
 Before compose startup, the script probes host ports in two separate ranges:
 
-- SQL Server variant: `11201-55399`
-- PostgreSQL variant: `11301-55499`
+- SQL Server variant: `11201-11299`
+- PostgreSQL variant: `11301-11399`
 
 If the preferred start port is blocked/reserved/in-use on Windows, the script picks the first open
 port within that range and prints the replacement.
