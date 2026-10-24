@@ -54,8 +54,8 @@ This script uses:
 
 Before compose startup, the script probes host ports in two separate ranges:
 
-- SQL Server variant: `11601-55799`
-- PostgreSQL variant: `11701-55899`
+- SQL Server variant: `11601-11699`
+- PostgreSQL variant: `11701-11799`
 
 If the preferred start port is blocked/reserved/in-use on Windows, the script picks the first open
 port within that range and prints the replacement.
