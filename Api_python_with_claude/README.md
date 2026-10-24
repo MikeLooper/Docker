@@ -30,7 +30,7 @@ into the image.
 
 ## What The Script Does
 
-1. Resolves an available host port (preferred `11111`, range `11111-56699`) and validates the secrets file.
+1. Resolves an available host port (preferred `11111`, range `11111-11209`) and validates the secrets file.
 2. Pulls the `python:3.14-slim` base image.
 3. Stops the prior stack and force-removes the `python-api-with-claude` container.
 4. Runs `pytest`, then builds the application wheel with `python -m pip wheel`.
