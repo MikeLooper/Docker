@@ -228,7 +228,7 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 
 | Status: | Type:                   | Name:                       | Inner Port: | Outer Port: | URL |
 | ------- | ----------------------- | --------------------------- | ----------- | ----------- | --- |
-|  √      | Angular UI              | pilot-ui                    | 4200        | 11301       | http://localhost:11801/ |
+|  √      | Angular UI              | pilot-ui                    | 8080        | 11801      | http://localhost:11801/ |
 |  √      | ApiDotNet (SQL Server)  | pilot-api-dotnet-mssql      | 8080        | 11001       | http://localhost:11001/swagger, http://localhost:11001/scalar |
 |  √      | ApiDotNet (PostgreSQL)  | pilot-api-dotnet-postgres   | 8080        | 11101       | http://localhost:11101/swagger, http://localhost:11101/scalar |
 |  √      | ApiJava (SQL Server)    | pilot-api-java-mssql        | 8080        | 11201       | http://localhost:11201/swagger-ui/index.html |
