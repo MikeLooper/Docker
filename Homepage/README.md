@@ -6,7 +6,7 @@
 docker run -d \
     --name local-homepage \
     -m 512m \
-    -p 11131:11131 \
+    -p 11131:3000 \
     --restart=always
 ```
 
