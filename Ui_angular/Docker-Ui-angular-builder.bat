@@ -16,7 +16,7 @@ set "ENVIRONMENT_BACKUP=%PILOT_ANGULAR_DIR%\src\environments\environment.ts.dock
 set "SECRETS_FILE=%~dp0..\secrets\ui-angular.env"
 set "UI_SECURITY_TOKEN_SECRETS_FILE=%~dp0..\secrets\ui-security-token-secrets.env"
 set "UI_SECURITY_TOKEN_SECRETS_TARGET=%PILOT_ANGULAR_DIR%\public\security-token-secrets.json"
-set "UI_ANGULAR_PORT=55901"
+set "UI_ANGULAR_PORT=11801"
 
 if not exist "%PILOT_ANGULAR_DIR%\package.json" (
 	echo PilotUiAngular project path not found: "%PILOT_ANGULAR_DIR%"

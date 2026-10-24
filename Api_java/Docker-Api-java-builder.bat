@@ -12,16 +12,16 @@ set "COMPOSE_FILE=%~dp0docker-compose.api-java.yml"
 set "COMPOSE_PROJECT=pilot-api-java"
 set "PILOT_JAVA_DIR=%~dp0..\..\PilotApiJava"
 set "SECRETS_FILE=%~dp0..\secrets\api-java.env"
-set "JAVA_MSSQL_PORT=55301"
-set "JAVA_POSTGRES_PORT=55401"
+set "JAVA_MSSQL_PORT=11201"
+set "JAVA_POSTGRES_PORT=11301"
 
 REM Stop any prior compose services for this stack first so its own ports are free to reuse.
 docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% down --remove-orphans
 
 REM Resolve host ports so Windows reserved/in-use ports do not break compose startup.
-call :resolve_open_port 55301 JAVA_MSSQL_PORT
+call :resolve_open_port 11201 JAVA_MSSQL_PORT
 if errorlevel 1 exit /b 1
-call :resolve_open_port 55401 JAVA_POSTGRES_PORT
+call :resolve_open_port 11301 JAVA_POSTGRES_PORT
 if errorlevel 1 exit /b 1
 
 REM Load runtime secrets from file.

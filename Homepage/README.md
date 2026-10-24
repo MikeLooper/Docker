@@ -6,10 +6,10 @@
 docker run -d \
     --name local-homepage \
     -m 512m \
-    -p 56201:56201 \
+    -p 11131:3000 \
     --restart=always
 ```
 
 ## Usage
 
-In a browser, open http://localhost:56201
+In a browser, open http://localhost:11131

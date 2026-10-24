@@ -3,7 +3,7 @@
 MCP Inspector runs as `pilot-msdab-mcp-inspector` on `pilot-net` and is published only on the loopback address:
 
 ```
-http://localhost:56501/
+http://localhost:11171/
 ```
 
 It uses Inspector v2 (`ghcr.io/modelcontextprotocol/inspector:2.8.0`). v2 has a single web port (6274 in the container). v1's separate proxy port and `MCP_PROXY_PORT` setting no longer exist.
@@ -15,13 +15,13 @@ Replace `<MCP_INSPECTOR_API_TOKEN>` with the value from `secrets\ms-dab.env`. Th
 SQL Server:
 
 ```
-http://localhost:56501/?serverUrl=http://pilot-api-msdab-mssql:5000/mcp&transport=http&autoConnect=<MCP_INSPECTOR_API_TOKEN>
+http://localhost:11171/?serverUrl=http://pilot-api-msdab-mssql:5000/mcp&transport=http&autoConnect=<MCP_INSPECTOR_API_TOKEN>
 ```
 
 PostgreSQL:
 
 ```
-http://localhost:56501/?serverUrl=http://pilot-api-msdab-postgres:5000/mcp&transport=http&autoConnect=<MCP_INSPECTOR_API_TOKEN>
+http://localhost:11171/?serverUrl=http://pilot-api-msdab-postgres:5000/mcp&transport=http&autoConnect=<MCP_INSPECTOR_API_TOKEN>
 ```
 
 | Parameter | Value |
@@ -36,7 +36,7 @@ Authentication stays on. The Inspector backend can start processes on request, s
 
 - sets a fixed token from `secrets\ms-dab.env` (`MCP_INSPECTOR_API_TOKEN`), so auto-connect links keep working across restarts;
 - publishes the port on `127.0.0.1` only;
-- limits `ALLOWED_ORIGINS` to `http://localhost:56501` and `http://127.0.0.1:56501`. Other origins get HTTP 403.
+- limits `ALLOWED_ORIGINS` to `http://localhost:11171` and `http://127.0.0.1:11171`. Other origins get HTTP 403.
 
 ## Manual Connection
 

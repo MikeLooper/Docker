@@ -30,7 +30,7 @@ into the image.
 
 ## What The Script Does
 
-1. Resolves an available host port (preferred `56601`, range `56601-56699`) and validates the secrets file.
+1. Resolves an available host port (preferred `11111`, range `11111-11209`) and validates the secrets file.
 2. Pulls the `python:3.14-slim` base image.
 3. Stops the prior stack and force-removes the `python-api-with-claude` container.
 4. Runs `pytest`, then builds the application wheel with `python -m pip wheel`.
@@ -42,7 +42,7 @@ into the image.
 
 | Image | Container | Default Host Port |
 | --- | --- | --- |
-| `python-api-with-claude` | `python-api-with-claude` | 56601 |
+| `python-api-with-claude` | `python-api-with-claude` | 11111 |
 
 Compose overrides these settings for the container: `APP_HOST=0.0.0.0`, `APP_PORT`,
 `OTEL_SERVICE_NAME=python-api-with-claude`, and
@@ -52,16 +52,16 @@ to the secrets file.
 ## Endpoints
 
 ```
-http://localhost:56601/health
-http://localhost:56601/docs
-http://localhost:56601/api/v1/questions   (POST)
+http://localhost:11111/health
+http://localhost:11111/docs
+http://localhost:11111/api/v1/questions   (POST)
 ```
 
 ## Bruno Tests
 
 The Bruno collection is in the application repository at
 `C:\Working\Storage\Dev\GitHub\PythonAPIWithClaude\tests\Bruno\PythonAPIWithClaude`. Its `Docker`
-environment targets `http://localhost:56601/`. No IDP token is needed, but the `Ask` and
+environment targets `http://localhost:11111/`. No IDP token is needed, but the `Ask` and
 `Ask_WithOverrides` requests call the Claude API and use tokens from your key.
 
 The API does not use a database, so `RunBrunoTests.bat` runs it once (environment `Docker`) after the

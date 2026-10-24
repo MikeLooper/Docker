@@ -13,8 +13,8 @@ set "COMPOSE_PROJECT=pilot-api-python"
 set "PILOT_PYTHON_DIR=%~dp0..\..\PilotApiPython"
 set "MSSQL_SECRETS_FILE=%~dp0..\secrets\appsettings-api-python-sqlserver.env"
 set "POSTGRES_SECRETS_FILE=%~dp0..\secrets\appsettings-api-python-postgresql.env"
-set "PYTHON_MSSQL_PORT=55501"
-set "PYTHON_POSTGRES_PORT=55601"
+set "PYTHON_MSSQL_PORT=11401"
+set "PYTHON_POSTGRES_PORT=11501"
 
 REM Stop any prior compose services for this stack first so its own ports are free to reuse.
 docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% down --remove-orphans

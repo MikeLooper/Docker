@@ -4,7 +4,7 @@ setlocal EnableExtensions DisableDelayedExpansion
 REM Docker - Setup - Dozzle
 
 set "IMAGE_FILE=amir20/dozzle:latest"
-set "DOZZLE_PORT=56101"
+set "DOZZLE_PORT=11121"
 
 REM 1. Remove a previously existing partition, if any is present:
 docker rm -f local-dozzle

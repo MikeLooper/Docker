@@ -7,12 +7,12 @@ services:
       dockerfile: ../../Docker/Utility_dotnet/dockerfile_mssql
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
-        APP_PORT: ${DOTNET_MSSQL_PORT:-55701}
+        APP_PORT: ${DOTNET_MSSQL_PORT:-11601}
     environment:
       # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
       OTEL_RESOURCE_ATTRIBUTES: service.instance.id=utility-api-dotnet-mssql,db.variant=mssql
     ports:
-      - "${DOTNET_MSSQL_PORT:-55701}:8080"
+      - "${DOTNET_MSSQL_PORT:-11601}:8080"
     mem_limit: 1g
     networks:
       - pilot-net
@@ -25,12 +25,12 @@ services:
       dockerfile: ../../Docker/Utility_dotnet/dockerfile_postgres
       args:
         DEPLOY_DATE: ${CURRENT_DATE}
-        APP_PORT: ${DOTNET_POSTGRES_PORT:-55801}
+        APP_PORT: ${DOTNET_POSTGRES_PORT:-11701}
     environment:
       # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
       OTEL_RESOURCE_ATTRIBUTES: service.instance.id=utility-api-dotnet-postgres,db.variant=postgres
     ports:
-      - "${DOTNET_POSTGRES_PORT:-55801}:8080"
+      - "${DOTNET_POSTGRES_PORT:-11701}:8080"
     mem_limit: 1g
     networks:
       - pilot-net

@@ -15,9 +15,9 @@ set "CONFIG_DIR=%~dp0data-api"
 set "MSSQL_CONFIG=%CONFIG_DIR%\dab-config.mssql.json"
 set "POSTGRES_CONFIG=%CONFIG_DIR%\dab-config.postgres.json"
 set "VALIDATE_SCRIPT=%~dp0scripts\Test-DabConfig.ps1"
-set "MSDAB_MSSQL_PORT=56301"
-set "MSDAB_POSTGRES_PORT=56401"
-set "MSDAB_INSPECTOR_PORT=56501"
+set "MSDAB_MSSQL_PORT=11151"
+set "MSDAB_POSTGRES_PORT=11161"
+set "MSDAB_INSPECTOR_PORT=11171"
 
 REM Connection strings use container names on pilot-net. The password is resolved by DAB at runtime.
 set "MSSQL_CONNECTION=Server=local-mssql,1433;Database=NorthWind;User ID=DevUser;Password=@env('DATABASE_PASSWORD');TrustServerCertificate=True;"

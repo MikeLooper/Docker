@@ -14,7 +14,7 @@ set "CONTAINER_NAME=python-api-with-claude"
 set "BUILD_CONTEXT=%WORKING_DIR_WIN%\api-python-with-claude"
 set "SOURCE_DIR=C:\Working\Storage\Dev\GitHub\PythonAPIWithClaude"
 set "SECRETS_FILE=%~dp0..\secrets\api-python-with-claude.env"
-set "PYTHON_CLAUDE_PORT=56601"
+set "PYTHON_CLAUDE_PORT=11111"
 
 REM Resolve the host port so Windows reserved/in-use ports do not break compose startup.
 call :resolve_open_port %PYTHON_CLAUDE_PORT% PYTHON_CLAUDE_PORT

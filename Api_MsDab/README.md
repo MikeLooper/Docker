@@ -77,9 +77,9 @@ This script uses:
 1. Checks for the secrets file, the DAB CLI version, the `pilot-net` network, and running `local-mssql` and `local-postgres` containers. It stops with a message if any is missing.
 2. Stops the prior stack with `docker compose down --remove-orphans`.
 3. Probes the host ports and picks the next open port if one is reserved or in use:
-   - SQL Server instance: `56301-56399`
-   - PostgreSQL instance: `56401-56499`
-   - MCP Inspector: `56501-56599`
+   - SQL Server instance: `11151-11249`
+   - PostgreSQL instance: `11161-11259`
+   - MCP Inspector: `11171-11269`
 4. Pulls the DAB and MCP Inspector images.
 5. Generates both DAB configs with `dab init`, `dab configure`, `dab add`, and `dab update`. The script is the source of truth for the configs; a rerun overwrites them, so don't edit them by hand.
 6. Runs `dab validate` on each config. It validates a temporary copy that points at `localhost` (the host-exposed database ports), with `DATABASE_PASSWORD` set for that process only.
@@ -121,13 +121,13 @@ Both configs share these settings:
 
 | | SQL Server | PostgreSQL |
 | --- | --- | --- |
-| Health | http://localhost:56301/health | http://localhost:56401/health |
-| REST | http://localhost:56301/api/Products | http://localhost:56401/api/Products |
-| GraphQL (Nitro UI) | http://localhost:56301/graphql | http://localhost:56401/graphql |
-| Swagger UI | http://localhost:56301/swagger | http://localhost:56401/swagger |
-| MCP (Streamable HTTP) | http://localhost:56301/mcp | http://localhost:56401/mcp |
+| Health | http://localhost:11151/health | http://localhost:11161/health |
+| REST | http://localhost:11151/api/Products | http://localhost:11161/api/Products |
+| GraphQL (Nitro UI) | http://localhost:11151/graphql | http://localhost:11161/graphql |
+| Swagger UI | http://localhost:11151/swagger | http://localhost:11161/swagger |
+| MCP (Streamable HTTP) | http://localhost:11151/mcp | http://localhost:11161/mcp |
 
-MCP Inspector: http://localhost:56501/. See the [MCP Inspector README](./mcp-inspector/README.md) for its auto-connect links.
+MCP Inspector: http://localhost:11171/. See the [MCP Inspector README](./mcp-inspector/README.md) for its auto-connect links.
 
 If the script picked a different host port, use that port instead.
 
@@ -136,21 +136,21 @@ If the script picked a different host port, use that port instead.
 1. Health reports `"status": "Healthy"`:
 
 ```
-curl http://localhost:56301/health
-curl http://localhost:56401/health
+curl http://localhost:11151/health
+curl http://localhost:11161/health
 ```
 
 2. REST returns rows, including by composite key:
 
 ```
-curl "http://localhost:56301/api/OrderDetails?$first=5"
-curl http://localhost:56401/api/OrderDetails/OrderID/10248/ProductID/11
+curl "http://localhost:11151/api/OrderDetails?$first=5"
+curl http://localhost:11161/api/OrderDetails/OrderID/10248/ProductID/11
 ```
 
 3. GraphQL:
 
 ```
-curl -X POST http://localhost:56301/graphql -H "Content-Type: application/json" -d "{\"query\":\"{ categories(first: 3) { items { CategoryID CategoryName } } }\"}"
+curl -X POST http://localhost:11151/graphql -H "Content-Type: application/json" -d "{\"query\":\"{ categories(first: 3) { items { CategoryID CategoryName } } }\"}"
 ```
 
 4. MCP: open an auto-connect link from the [MCP Inspector README](./mcp-inspector/README.md), then choose **Tools > List Tools**.
@@ -184,16 +184,16 @@ npx --yes @usebruno/cli run -r --env "Docker - PostgreSQL"
 
 To use the Bruno app, open the `PilotApiMsDab` folder as a collection and select an environment.
 
-The environments use ports 56301 and 56401. If the builder picked other ports, update `environments\*.yml`.
+The environments use ports 11151 and 11161. If the builder picked other ports, update `environments\*.yml`.
 
 ## Manual Commands (Equivalent)
 
 Run from this folder after the configs have been generated:
 
 ```bat
-set "MSDAB_MSSQL_PORT=56301"
-set "MSDAB_POSTGRES_PORT=56401"
-set "MSDAB_INSPECTOR_PORT=56501"
+set "MSDAB_MSSQL_PORT=11151"
+set "MSDAB_POSTGRES_PORT=11161"
+set "MSDAB_INSPECTOR_PORT=11171"
 docker compose -f docker-compose.api-msdab.yml -p pilot-api-msdab --env-file ..\secrets\ms-dab.env up -d --force-recreate
 ```
 
