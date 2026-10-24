@@ -71,8 +71,8 @@ Docker-Api-python-builder.bat
 
 Before compose startup, the script probes host ports in two separate ranges:
 
-- SQL Server variant: `11401-54599`
-- PostgreSQL variant: `11501-54699`
+- SQL Server variant: `11401-11499`
+- PostgreSQL variant: `11501-11599`
 
 If the preferred start port is blocked, reserved, or in use on Windows, the script picks the first
 open port within that range and prints the replacement.
