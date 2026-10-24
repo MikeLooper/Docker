@@ -77,9 +77,9 @@ This script uses:
 1. Checks for the secrets file, the DAB CLI version, the `pilot-net` network, and running `local-mssql` and `local-postgres` containers. It stops with a message if any is missing.
 2. Stops the prior stack with `docker compose down --remove-orphans`.
 3. Probes the host ports and picks the next open port if one is reserved or in use:
-   - SQL Server instance: `11151-56399`
-   - PostgreSQL instance: `11161-56499`
-   - MCP Inspector: `11171-56599`
+   - SQL Server instance: `11151-11249`
+   - PostgreSQL instance: `11161-11259`
+   - MCP Inspector: `11171-11269`
 4. Pulls the DAB and MCP Inspector images.
 5. Generates both DAB configs with `dab init`, `dab configure`, `dab add`, and `dab update`. The script is the source of truth for the configs; a rerun overwrites them, so don't edit them by hand.
 6. Runs `dab validate` on each config. It validates a temporary copy that points at `localhost` (the host-exposed database ports), with `DATABASE_PASSWORD` set for that process only.
