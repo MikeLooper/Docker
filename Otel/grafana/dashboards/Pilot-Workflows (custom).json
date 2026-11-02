@@ -1,0 +1,1819 @@
+{
+  "uid": "pilot-workflows",
+  "title": "Pilot-Workflows",
+  "description": "Workflows across the Pilot components. CorrelationId links the parts of a workflow across components; trace ID links the parts inside an application.",
+  "tags": [
+    "pilot",
+    "otel",
+    "workflow"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "",
+  "schemaVersion": 41,
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "templating": {
+    "list": [
+      {
+        "name": "correlationId",
+        "label": "Correlation ID",
+        "type": "textbox",
+        "description": "Set by clicking a workflow, or paste one.",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "hide": 0,
+        "skipUrlSync": false
+      },
+      {
+        "name": "traceId",
+        "label": "Trace ID",
+        "type": "textbox",
+        "description": "Set by clicking a workflow or request, or paste one.",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "hide": 0,
+        "skipUrlSync": false
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [],
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Overview: all workflows in the time range",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "MCP tool calls",
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"request handler completed\" | Method=\"tools/call\" [$__range]))",
+          "queryType": "instant",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Workflows that start at the MCP server. One correlation ID per tool call.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          },
+          "unit": "none",
+          "decimals": 0,
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Failed tool calls",
+      "gridPos": {
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"threw an unhandled exception\" [$__range]))",
+          "queryType": "instant",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Tool calls that ended in an unhandled exception.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          },
+          "unit": "none",
+          "decimals": 0,
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Calls between components",
+      "gridPos": {
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | scope_name=~\".*ClientHandler\" [$__range]))",
+          "queryType": "instant",
+          "editorMode": "code"
+        }
+      ],
+      "description": "HTTP calls the MCP server made to a Pilot API or to Keycloak, from its logs.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          },
+          "unit": "none",
+          "decimals": 0,
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "API requests (traced)",
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "expr": "sum(increase(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\"}[$__range]))",
+          "instant": true,
+          "range": false,
+          "editorMode": "code"
+        }
+      ],
+      "description": "Server spans the APIs sent to Tempo. MCP calls to the Java and Python APIs are not counted: those requests are unsampled, so no spans exist.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
+          "unit": "none",
+          "decimals": 0,
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "API errors",
+      "gridPos": {
+        "x": 16,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({service_name=~\"PilotApiDotNet|PilotApiJava|pilot-api-python|PilotUtilityApiDotNet|python-api-with-claude\"} | detected_level=~\"error|critical|fatal\" [$__range]))",
+          "queryType": "instant",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Error-level log entries from the APIs.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "orange"
+          },
+          "unit": "none",
+          "decimals": 0,
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      }
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "Correlated log entries",
+      "gridPos": {
+        "x": 20,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({service_name=~\"PilotMcpServer|PilotApiDotNet|PilotApiJava|pilot-api-python\"} | CorrelationId!=\"\" [$__range]))",
+          "queryType": "instant",
+          "editorMode": "code"
+        }
+      ],
+      "description": "Log entries carrying a correlation ID. MSDAB is excluded: it creates a new ID per request, so its IDs never link components.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          },
+          "unit": "none",
+          "decimals": 0,
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center"
+      }
+    },
+    {
+      "id": 8,
+      "type": "nodeGraph",
+      "title": "Component flow",
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 15,
+        "h": 20
+      },
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | scope_name=~\".*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if or (contains \":11001\" .Uri) (contains \":11101\" .Uri) }}PilotApiDotNet{{ else if or (contains \":11201\" .Uri) (contains \":11301\" .Uri) }}PilotApiJava{{ else if or (contains \":11401\" .Uri) (contains \":11501\" .Uri) }}pilot-api-python{{ else }}{{ .Uri }}{{ end }}` | label_format source=\"PilotMcpServer\" | label_format id=`{{ .source }}->{{ .target }}` [$__range]))",
+          "queryType": "instant",
+          "editorMode": "code",
+          "legendFormat": "calls"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "expr": "round(sum by (id,source,target) (label_join(label_replace(label_replace(increase(traces_service_graph_request_total[$__range]),\"source\",\"$1\",\"client\",\"(.*)\"),\"target\",\"$1\",\"server\",\"(.*)\"),\"id\",\"->\",\"source\",\"target\")))",
+          "instant": true,
+          "range": false,
+          "editorMode": "code",
+          "legendFormat": "calls"
+        }
+      ],
+      "description": "Who calls whom. PilotMcpServer edges come from its logs; the other edges come from Tempo's service graph. Edge numbers are calls. `user` means a caller with no span in Tempo, so it includes MCP calls to PilotApiDotNet.",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^Value.*$",
+            "renamePattern": "mainstat"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "id",
+                "source",
+                "target",
+                "mainstat"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mainstat"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "calls"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "nodes": {},
+        "edges": {},
+        "zoomMode": "cooperative",
+        "layoutAlgorithm": "layered"
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Log activity by component",
+      "gridPos": {
+        "x": 15,
+        "y": 5,
+        "w": 9,
+        "h": 20
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (service_name) (count_over_time({service_name=~\"PilotMcpServer|PilotApiDotNet|PilotApiJava|pilot-api-python|PilotUtilityApiDotNet|python-api-with-claude\"} [$__auto]))",
+          "queryType": "range",
+          "editorMode": "code",
+          "legendFormat": "{{service_name}}"
+        }
+      ],
+      "description": "When each component was active.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "lineWidth": 0,
+            "showPoints": "never"
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": "row",
+      "title": "Workflows: pick one to see it below",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 11,
+      "type": "table",
+      "title": "MCP workflows (correlation ID: spans components)",
+      "gridPos": {
+        "x": 0,
+        "y": 26,
+        "w": 14,
+        "h": 12
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{service_name=\"PilotMcpServer\"} |= \"request handler completed\" | Method=\"tools/call\"",
+          "queryType": "range",
+          "editorMode": "code",
+          "maxLines": 1000
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{service_name=\"PilotMcpServer\"} |~ \"completed[.] IsError|threw an unhandled exception\" | ToolName!=\"\"",
+          "queryType": "range",
+          "editorMode": "code",
+          "maxLines": 1000
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | scope_name=~\".*PilotHttpClient.*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if or (contains \":11001\" .Uri) (contains \":11101\" .Uri) }}PilotApiDotNet{{ else if or (contains \":11201\" .Uri) (contains \":11301\" .Uri) }}PilotApiJava{{ else if or (contains \":11401\" .Uri) (contains \":11501\" .Uri) }}pilot-api-python{{ else }}{{ .Uri }}{{ end }}`",
+          "queryType": "range",
+          "editorMode": "code",
+          "maxLines": 1000
+        }
+      ],
+      "description": "One row per tool call. Click a correlation ID, then Open workflow, to scope the panels below and zoom the time range to it. Use the browser's Back button to return: under one second, the Overview reads 0 and its Tempo-backed panels show errors.",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "source": "labels",
+            "format": "json",
+            "keepTime": false,
+            "replace": false
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "CorrelationId",
+                "trace_id",
+                "ElapsedMilliseconds"
+              ]
+            }
+          },
+          "filter": {
+            "id": "byRefId",
+            "options": "A"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "CorrelationId": 1,
+              "trace_id": 2,
+              "ElapsedMilliseconds": 3
+            },
+            "excludeByName": {},
+            "renameByName": {
+              "trace_id": "TraceId",
+              "ElapsedMilliseconds": "Duration"
+            }
+          },
+          "filter": {
+            "id": "byRefId",
+            "options": "A"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "CorrelationId",
+                "ToolName",
+                "Line"
+              ]
+            }
+          },
+          "filter": {
+            "id": "byRefId",
+            "options": "B"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "CorrelationId": 0,
+              "ToolName": 1,
+              "Line": 2
+            },
+            "excludeByName": {},
+            "renameByName": {
+              "Line": "Result"
+            }
+          },
+          "filter": {
+            "id": "byRefId",
+            "options": "B"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "CorrelationId",
+                "target"
+              ]
+            }
+          },
+          "filter": {
+            "id": "byRefId",
+            "options": "C"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "CorrelationId": 0,
+              "target": 1
+            },
+            "excludeByName": {},
+            "renameByName": {
+              "target": "Calls"
+            }
+          },
+          "filter": {
+            "id": "byRefId",
+            "options": "C"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "CorrelationId",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "Duration",
+                "destinationType": "number"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "padding",
+            "mode": "binary",
+            "binary": {
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Duration"
+                }
+              },
+              "operator": "*",
+              "right": {
+                "fixed": "0.5"
+              }
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "start",
+            "mode": "binary",
+            "binary": {
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                }
+              },
+              "operator": "-",
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Duration"
+                }
+              }
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "windowFrom",
+            "mode": "binary",
+            "binary": {
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "start"
+                }
+              },
+              "operator": "-",
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "padding"
+                }
+              }
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "windowTo",
+            "mode": "binary",
+            "binary": {
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                }
+              },
+              "operator": "+",
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "padding"
+                }
+              }
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "ToolName",
+                "Result",
+                "Calls",
+                "Duration",
+                "CorrelationId",
+                "TraceId",
+                "windowFrom",
+                "windowTo"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "ToolName": 1,
+              "Result": 2,
+              "Calls": 3,
+              "Duration": 4,
+              "CorrelationId": 5,
+              "TraceId": 6,
+              "windowFrom": 7,
+              "windowTo": 8
+            },
+            "excludeByName": {},
+            "renameByName": {}
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Time",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "windowFrom"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "windowTo"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "time:MM-DD HH:mm:ss.SSS"
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Result"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "regex",
+                    "options": {
+                      "pattern": ".*threw.*",
+                      "result": {
+                        "text": "Failed",
+                        "color": "red"
+                      }
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "options": {
+                      "pattern": ".*IsError = True.*",
+                      "result": {
+                        "text": "Failed",
+                        "color": "red"
+                      }
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "options": {
+                      "pattern": ".*IsError = False.*",
+                      "result": {
+                        "text": "OK",
+                        "color": "green"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CorrelationId"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open workflow (zoom to it)",
+                    "url": "/d/pilot-workflows/pilot-workflows?var-correlationId=${__data.fields.CorrelationId}&var-traceId=${__data.fields.TraceId}&from=${__data.fields.windowFrom}&to=${__data.fields.windowTo}"
+                  },
+                  {
+                    "title": "Open workflow (keep time range)",
+                    "url": "/d/pilot-workflows/pilot-workflows?var-correlationId=${__data.fields.CorrelationId}&var-traceId=${__data.fields.TraceId}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TraceId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open workflow (zoom to it)",
+                    "url": "/d/pilot-workflows/pilot-workflows?var-correlationId=${__data.fields.CorrelationId}&var-traceId=${__data.fields.TraceId}&from=${__data.fields.windowFrom}&to=${__data.fields.windowTo}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 12,
+      "type": "table",
+      "title": "API requests (trace ID: spans one application)",
+      "gridPos": {
+        "x": 14,
+        "y": 26,
+        "w": 10,
+        "h": 12
+      },
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "queryType": "traceql",
+          "query": "{ kind = server && span.correlationId != \"\" } | select(span.correlationId, resource.service.name)",
+          "tableType": "spans",
+          "limit": 200,
+          "spss": 1
+        }
+      ],
+      "description": "Server spans in Tempo. Click a service to see that trace below. This list also covers requests that did not come through the MCP server.",
+      "transformations": [
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "time",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "service.name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Service"
+              },
+              {
+                "id": "custom.width",
+                "value": 140
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open trace",
+                    "url": "/d/pilot-workflows/pilot-workflows?var-traceId=${__data.fields.traceIdHidden}&var-correlationId=${__data.fields.correlationId}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "traceService"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "traceName"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spanID"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "kind"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Operation"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 13,
+      "type": "row",
+      "title": "Selected workflow: correlation ID $correlationId",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 38,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 14,
+      "type": "nodeGraph",
+      "title": "Workflow path",
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 8,
+        "h": 12
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" |= \"Sending HTTP request\" | scope_name=~\".*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if or (contains \":11001\" .Uri) (contains \":11101\" .Uri) }}PilotApiDotNet{{ else if or (contains \":11201\" .Uri) (contains \":11301\" .Uri) }}PilotApiJava{{ else if or (contains \":11401\" .Uri) (contains \":11501\" .Uri) }}pilot-api-python{{ else }}{{ .Uri }}{{ end }}` | label_format source=\"PilotMcpServer\" | label_format id=`{{ .source }}->{{ .target }}` [$__auto]))",
+          "queryType": "range",
+          "editorMode": "code",
+          "legendFormat": "calls"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" |= \"request handler completed\" | label_format source=\"caller\",target=service_name | label_format id=`{{ .source }}->{{ .target }}` [$__auto]))",
+          "queryType": "range",
+          "editorMode": "code",
+          "legendFormat": "calls"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (id,source,target) (count_over_time({service_name=~\".+\",service_name!=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" | label_format source=\"caller\",target=service_name | label_format id=`{{ .source }}->{{ .target }}` [$__auto])) unless on() sum(count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" [1h]))",
+          "queryType": "range",
+          "editorMode": "code",
+          "legendFormat": "calls"
+        }
+      ],
+      "description": "The components this correlation ID passed through, from their logs. Edge numbers are calls for PilotMcpServer's outgoing calls, and log entries for a request that came in directly.",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "^Value.*$",
+            "renamePattern": "mainstat"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "id",
+                "source",
+                "target",
+                "mainstat"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "id": {
+                "operation": "groupby",
+                "aggregations": []
+              },
+              "source": {
+                "operation": "groupby",
+                "aggregations": []
+              },
+              "target": {
+                "operation": "groupby",
+                "aggregations": []
+              },
+              "mainstat": {
+                "operation": "aggregate",
+                "aggregations": [
+                  "sum"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "mainstat (sum)": "mainstat"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mainstat"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "calls"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "nodes": {},
+        "edges": {},
+        "zoomMode": "cooperative",
+        "layoutAlgorithm": "layered"
+      }
+    },
+    {
+      "id": 15,
+      "type": "state-timeline",
+      "title": "Workflow timeline",
+      "gridPos": {
+        "x": 8,
+        "y": 39,
+        "w": 16,
+        "h": 12
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{service_name=~\".+\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\"",
+          "queryType": "range",
+          "editorMode": "code",
+          "maxLines": 500,
+          "direction": "forward"
+        }
+      ],
+      "description": "One lane per component, one block per log entry. Open a workflow with zoom, or the blocks are too narrow to see.",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "source": "labels",
+            "format": "json",
+            "keepTime": false,
+            "replace": false
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "service_name",
+                "Line"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "service_name": 1,
+              "Line": 2
+            },
+            "excludeByName": {},
+            "renameByName": {}
+          }
+        },
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "service_name"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "fillOpacity": 75,
+            "lineWidth": 1
+          },
+          "displayName": "${__field.labels.service_name}"
+        },
+        "overrides": []
+      },
+      "options": {
+        "mergeValues": false,
+        "showValue": "auto",
+        "alignValue": "left",
+        "rowHeight": 0.85,
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "type": "table",
+      "title": "Workflow steps",
+      "gridPos": {
+        "x": 0,
+        "y": 51,
+        "w": 24,
+        "h": 10
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{service_name=~\".+\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\"",
+          "queryType": "range",
+          "editorMode": "code",
+          "maxLines": 500,
+          "direction": "forward"
+        }
+      ],
+      "description": "Every log entry for the correlation ID, in order, across components.",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "source": "labels",
+            "format": "json",
+            "keepTime": false,
+            "replace": false
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "service_name",
+                "detected_level",
+                "Line",
+                "trace_id",
+                "span_id",
+                "scope_name"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "service_name": 1,
+              "detected_level": 2,
+              "Line": 3,
+              "trace_id": 4,
+              "span_id": 5,
+              "scope_name": 6
+            },
+            "excludeByName": {},
+            "renameByName": {
+              "service_name": "Component",
+              "detected_level": "Level",
+              "Line": "Step",
+              "trace_id": "TraceId",
+              "span_id": "SpanId",
+              "scope_name": "Logger"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Time",
+                "desc": false
+              }
+            ]
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "time:HH:mm:ss.SSS"
+              },
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Component"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 160
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "palette-classic-by-name"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Level"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "error": {
+                        "color": "red"
+                      },
+                      "critical": {
+                        "color": "red"
+                      },
+                      "warn": {
+                        "color": "orange"
+                      },
+                      "info": {
+                        "color": "green"
+                      },
+                      "debug": {
+                        "color": "blue"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TraceId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open trace",
+                    "url": "/d/pilot-workflows/pilot-workflows?var-correlationId=$correlationId&var-traceId=${__value.raw}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SpanId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "sortBy": []
+      }
+    },
+    {
+      "id": 17,
+      "type": "row",
+      "title": "Selected trace: trace ID $traceId",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 61,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 18,
+      "type": "traces",
+      "title": "Trace waterfall",
+      "gridPos": {
+        "x": 0,
+        "y": 62,
+        "w": 16,
+        "h": 14
+      },
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "queryType": "traceql",
+          "query": "$traceId",
+          "limit": 20
+        }
+      ],
+      "description": "Spans inside the application for this trace ID. MCP server spans never appear, and MCP calls to the Java and Python APIs show no data: those requests are unsampled. See the Workflow timeline for those."
+    },
+    {
+      "id": 19,
+      "type": "nodeGraph",
+      "title": "Trace service map",
+      "gridPos": {
+        "x": 16,
+        "y": 62,
+        "w": 8,
+        "h": 14
+      },
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "queryType": "traceql",
+          "query": "$traceId",
+          "limit": 20
+        }
+      ],
+      "description": "The spans in this trace as a graph.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mainstat"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "calls"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "nodes": {},
+        "edges": {},
+        "zoomMode": "cooperative",
+        "layoutAlgorithm": "layered"
+      }
+    },
+    {
+      "id": 20,
+      "type": "logs",
+      "title": "Logs for this trace",
+      "gridPos": {
+        "x": 0,
+        "y": 76,
+        "w": 24,
+        "h": 10
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{service_name=~\".+\"} | trace_id=\"$traceId\" | trace_id!=\"\"",
+          "queryType": "range",
+          "editorMode": "code",
+          "maxLines": 500,
+          "direction": "forward"
+        }
+      ],
+      "description": "Log entries that carry the trace ID.",
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": false,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Ascending"
+      }
+    }
+  ]
+}

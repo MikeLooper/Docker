@@ -141,6 +141,19 @@ List dashboards:
 curl -G -s http://localhost:3000/apis/dashboard.grafana.app/v1/namespaces/default/dashboards
 ```
 
+## Dashboards
+
+### Pilot-Workflows
+
+`grafana/dashboards/Pilot-Workflows (custom).json` shows workflows across the Pilot components.
+
+- The correlation ID links the parts of a workflow across components. It comes from the logs in Loki.
+- The trace ID links the parts inside an application. It comes from the spans in Tempo.
+
+Click a correlation ID in **MCP workflows** to see that workflow's path, timeline and steps. Grafana loads a new or changed dashboard file when it restarts: `docker restart local-grafana`.
+
+The dashboard maps MCP server calls to components by host port (`11001` to `11501` and Keycloak on `11141`). If those ports change, update the `target` label in its queries.
+
 ## References
 
 OpenTelemetry:
