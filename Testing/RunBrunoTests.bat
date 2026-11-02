@@ -10,6 +10,9 @@ rem  Environments (run in this order):
 rem    1. Docker - PostgreSQL
 rem    2. Docker - SQL Server
 rem    3. Docker              (database-independent APIs, e.g. PythonAPIWithClaude)
+rem    4. PilotMcpServer      (once per Pilot API deployment: dotnet-mssql,
+rem                            dotnet-postgres, java-mssql, java-postgres,
+rem                            python-mssql, python-postgres)
 rem
 rem  Usage:
 rem    RunBrunoTests.bat                            run everything
@@ -17,11 +20,19 @@ rem    RunBrunoTests.bat PostgreSQL                 run one environment (ShortTa
 rem                                                 PostgreSQL, SqlServer or Docker)
 rem    RunBrunoTests.bat PostgreSQL PilotApiDotNet  run one collection in one
 rem                                                 environment ("" = any environment)
+rem    RunBrunoTests.bat McpServer                  run PilotMcpServer against every
+rem                                                 deployment
+rem    RunBrunoTests.bat dotnet-mssql               run PilotMcpServer against one
+rem                                                 deployment
 rem
 rem  Requires Node.js. Uses the Bruno CLI ("bru") if installed globally,
 rem  otherwise runs it through npx (@usebruno/cli).
 rem  Secrets (e.g. IDP_HOST_PASSWORD) are read by Bruno from the .env file in
 rem  each collection folder.
+rem
+rem  PilotMcpServer also requires the .NET SDK and port 11901 free. This script
+rem  starts the server in HTTP mode, logs its output to the report folder and
+rem  stops it after the tests.
 rem ===========================================================================
 setlocal EnableExtensions
 
@@ -56,6 +67,7 @@ set "RUN_COUNT=0"
 call :RunEnvironment "Docker - PostgreSQL" "PostgreSQL"
 call :RunEnvironment "Docker - SQL Server" "SqlServer"
 call :RunStandalone   "Docker"              "Docker"
+call :RunMcpServer
 
 if "%RUN_COUNT%"=="0" (
     echo ERROR: No collections matched the requested filter^(s^).
@@ -105,6 +117,76 @@ call :RunCollection "PythonAPIWithClaude" "%GITHUB_ROOT%\PythonAPIWithClaude\tes
 goto :eof
 
 rem ---------------------------------------------------------------------------
+rem  :RunMcpServer
+rem  Starts the MCP server in HTTP mode once, runs its collection against each
+rem  selected Pilot API deployment, then stops the server. The server is only
+rem  started when the filters select at least one deployment.
+rem ---------------------------------------------------------------------------
+:RunMcpServer
+set "MCP_ROOT=%GITHUB_ROOT%\PilotMcpServer"
+set "MCP_COLL=%MCP_ROOT%\tests\Bruno"
+set "MCP_DEPLOYMENTS=dotnet-mssql dotnet-postgres java-mssql java-postgres python-mssql python-postgres"
+if defined FILTER_NAME if /i not "%FILTER_NAME%"=="PilotMcpServer" goto :eof
+if defined FILTER_TAG if /i not "%FILTER_TAG%"=="McpServer" (
+    if not exist "%MCP_COLL%\environments\%FILTER_TAG%.bru" goto :eof
+    set "MCP_DEPLOYMENTS=%FILTER_TAG%"
+)
+echo ###########################################################################
+echo  Environment: PilotMcpServer deployments
+echo ###########################################################################
+rem The MCP collection's README pins the CLI version it was written against.
+where npx >nul 2>&1 && set "BRU_CMD=npx --yes @usebruno/cli@4.3.0"
+set "MCP_ERROR="
+set "MCP_PID="
+if exist "%MCP_COLL%\bruno.json" call :StartMcpServer
+for %%D in (%MCP_DEPLOYMENTS%) do call :RunMcpDeployment "%%D"
+if defined MCP_PID taskkill /PID %MCP_PID% /T /F >nul 2>&1
+goto :eof
+
+rem ---------------------------------------------------------------------------
+rem  :RunMcpDeployment <BrunoEnvironmentName>
+rem ---------------------------------------------------------------------------
+:RunMcpDeployment
+set "BRU_ENV=%~1"
+set "TAG=%~1"
+if not defined MCP_ERROR (
+    call :RunCollection "PilotMcpServer" "%MCP_COLL%"
+    goto :eof
+)
+set /a RUN_COUNT+=1
+call :Now START_TS
+>> "%MANIFEST%" echo %TAG%;%BRU_ENV%;PilotMcpServer;%MCP_ERROR%;%START_TS%;%START_TS%
+set "OVERALL=1"
+goto :eof
+
+rem ---------------------------------------------------------------------------
+rem  :StartMcpServer
+rem  Sets MCP_PID once the process has started, and MCP_ERROR if the server is
+rem  not listening. Readiness comes from the server's own log, because a port
+rem  check would also succeed for another process that took the port during the
+rem  build. The PID goes through a file because capturing it with "for /f" would
+rem  wait on a pipe that the server inherits.
+rem ---------------------------------------------------------------------------
+:StartMcpServer
+set "MCP_LOG=%REPORT_DIR%\PilotMcpServer"
+echo Starting PilotMcpServer on http://localhost:11901 (log: %MCP_LOG%.log)
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference = 'Stop'; foreach ($a in '127.0.0.1','::1') { try { (New-Object Net.Sockets.TcpClient($a, 11901)).Close(); exit 3 } catch {} }; $p = Start-Process dotnet -ArgumentList 'run','--project','src/PilotMcpServer','--','--http-url','http://localhost:11901' -WorkingDirectory '%MCP_ROOT%' -NoNewWindow -PassThru -RedirectStandardOutput '%MCP_LOG%.log' -RedirectStandardError '%MCP_LOG%.err.log'; Set-Content -LiteralPath '%MCP_LOG%.pid' -Value $p.Id; $deadline = (Get-Date).AddSeconds(180); while ((Get-Date) -lt $deadline) { if ($p.HasExited) { exit 1 }; if (Select-String -LiteralPath '%MCP_LOG%.err.log' -Pattern 'Now listening on' -Quiet) { exit 0 }; Start-Sleep -Seconds 1 }; exit 2"
+set "RC=%ERRORLEVEL%"
+if exist "%MCP_LOG%.pid" (
+    set /p MCP_PID=<"%MCP_LOG%.pid"
+    del "%MCP_LOG%.pid"
+)
+if "%RC%"=="0" goto :eof
+if "%RC%"=="3" (
+    echo ERROR: Port 11901 is already in use. Stop whatever is using it and run again.
+    set "MCP_ERROR=PORT_11901_IN_USE"
+) else (
+    echo ERROR: PilotMcpServer did not start. See %MCP_LOG%.log and %MCP_LOG%.err.log
+    set "MCP_ERROR=SERVER_NOT_STARTED"
+)
+goto :eof
+
+rem ---------------------------------------------------------------------------
 rem  :RunCollection <Name> <CollectionPath>   (uses BRU_ENV and TAG)
 rem ---------------------------------------------------------------------------
 :RunCollection
@@ -118,7 +200,7 @@ echo  %NAME%  [%BRU_ENV%]
 echo  %COLL%
 echo ===========================================================================
 call :Now START_TS
-if not exist "%COLL%\opencollection.yml" (
+if not exist "%COLL%\opencollection.yml" if not exist "%COLL%\bruno.json" (
     echo ERROR: Collection not found.
     >> "%MANIFEST%" echo %TAG%;%BRU_ENV%;%NAME%;NOT_FOUND;%START_TS%;%START_TS%
     set "OVERALL=1"

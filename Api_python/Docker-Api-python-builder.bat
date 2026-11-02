@@ -59,22 +59,28 @@ if not exist "%PILOT_PYTHON_DIR%\pyproject.toml" (
 	exit /b 1
 )
 
-where python >nul 2>&1
-if errorlevel 1 (
-	echo Python was not found on PATH. Install Python 3.12 or later and retry.
-	exit /b 1
+REM Prefer the project's virtual environment (it has the dev/test dependencies); fall back to PATH.
+set "PYTHON_EXE=%PILOT_PYTHON_DIR%\.venv\Scripts\python.exe"
+if not exist "%PYTHON_EXE%" (
+	where python >nul 2>&1
+	if errorlevel 1 (
+		echo Python was not found on PATH. Install Python 3.12 or later and retry.
+		exit /b 1
+	)
+	set "PYTHON_EXE=python"
 )
+echo Python=%PYTHON_EXE%
 
 pushd "%PILOT_PYTHON_DIR%"
 
-python -m pytest
+"%PYTHON_EXE%" -m pytest
 if errorlevel 1 (
 	echo Unit tests failed. Aborting Docker build process.
 	popd
 	exit /b 1
 )
 
-python -m pip wheel . --no-deps --wheel-dir "%WORKING_DIR_WIN%\api-python-publish"
+"%PYTHON_EXE%" -m pip wheel . --no-deps --wheel-dir "%WORKING_DIR_WIN%\api-python-publish"
 if errorlevel 1 (
 	echo Python wheel build failed.
 	popd
