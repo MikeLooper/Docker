@@ -259,13 +259,13 @@
             "type": "prometheus",
             "uid": "mimir"
           },
-          "expr": "sum(increase(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\"}[$__range]))",
+          "expr": "sum(increase(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\",service!=\"PilotMcpServer\"}[$__range]))",
           "instant": true,
           "range": false,
           "editorMode": "code"
         }
       ],
-      "description": "Server spans the APIs sent to Tempo. MCP calls to the Java and Python APIs are not counted: those requests are unsampled, so no spans exist.",
+      "description": "Server spans the APIs sent to Tempo. The MCP server's own spans are not counted. Calls made through MCP before its tracing fix are only counted for the .NET API.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -430,14 +430,14 @@
             "type": "prometheus",
             "uid": "mimir"
           },
-          "expr": "round(sum by (id,source,target) (label_join(label_replace(label_replace(increase(traces_service_graph_request_total[$__range]),\"source\",\"$1\",\"client\",\"(.*)\"),\"target\",\"$1\",\"server\",\"(.*)\"),\"id\",\"->\",\"source\",\"target\")))",
+          "expr": "round(sum by (id,source,target) (label_join(label_replace(label_replace(increase(traces_service_graph_request_total{client!=\"PilotMcpServer\"}[$__range]),\"source\",\"$1\",\"client\",\"(.*)\"),\"target\",\"$1\",\"server\",\"(.*)\"),\"id\",\"->\",\"source\",\"target\")))",
           "instant": true,
           "range": false,
           "editorMode": "code",
           "legendFormat": "calls"
         }
       ],
-      "description": "Who calls whom. PilotMcpServer edges come from its logs; the other edges come from Tempo's service graph. Edge numbers are calls. `user` means a caller with no span in Tempo, so it includes MCP calls to PilotApiDotNet.",
+      "description": "Who calls whom is built from two sources: edges from PilotMcpServer come from its logs, which include Keycloak; the other edges come from Tempo's service graph. Edge numbers are calls. `user` means a caller with no span in Tempo. Before the MCP server's tracing fix, that includes its calls to PilotApiDotNet.",
       "transformations": [
         {
           "id": "labelsToFields",
@@ -1078,7 +1078,7 @@
             "uid": "tempo"
           },
           "queryType": "traceql",
-          "query": "{ kind = server && span.correlationId != \"\" } | select(span.correlationId, resource.service.name)",
+          "query": "{ kind = server && span.correlationId != \"\" && resource.service.name != \"PilotMcpServer\" } | select(span.correlationId, resource.service.name)",
           "tableType": "spans",
           "limit": 200,
           "spss": 1
@@ -1720,7 +1720,7 @@
           "limit": 20
         }
       ],
-      "description": "Spans inside the application for this trace ID. MCP server spans never appear, and MCP calls to the Java and Python APIs show no data: those requests are unsampled. See the Workflow timeline for those."
+      "description": "Spans for this trace ID, from the MCP server through the API to its database. Tool calls from before the MCP server's tracing fix have no MCP spans, and their Java and Python calls show no data. See the Workflow timeline for those."
     },
     {
       "id": 19,
