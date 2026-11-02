@@ -154,6 +154,8 @@ Click a correlation ID in **MCP workflows** to see that workflow's path, timelin
 
 The dashboard maps MCP server calls to components by host port (`11001` to `11501` and Keycloak on `11141`). If those ports change, update the `target` label in its queries.
 
+A tool call's spans form one trace, from the MCP server through the API to its database. Tool calls recorded before the MCP server's tracing fix have no MCP spans, and their Java and Python calls have no spans either.
+
 ## References
 
 OpenTelemetry:
