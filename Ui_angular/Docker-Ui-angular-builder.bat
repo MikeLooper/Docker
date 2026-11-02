@@ -17,12 +17,42 @@ set "SECRETS_FILE=%~dp0..\secrets\ui-angular.env"
 set "UI_SECURITY_TOKEN_SECRETS_FILE=%~dp0..\secrets\ui-security-token-secrets.env"
 set "UI_SECURITY_TOKEN_SECRETS_TARGET=%PILOT_ANGULAR_DIR%\public\security-token-secrets.json"
 set "UI_ANGULAR_PORT=11801"
+REM Dedicated Playwright dev server port; see PilotUiAngular\tests\playwright.config.ts.
+set "E2E_SERVER_PORT=4201"
 
 if not exist "%PILOT_ANGULAR_DIR%\package.json" (
 	echo PilotUiAngular project path not found: "%PILOT_ANGULAR_DIR%"
 	echo Update PILOT_ANGULAR_DIR in this script to your local PilotUiAngular repository path.
 	exit /b 1
 )
+
+REM A test server left behind by an interrupted E2E run locks node_modules and would break npm ci.
+call :stop_e2e_server
+
+REM Install dependencies and run the tests before touching the running stack, so a failure leaves it deployed.
+REM npm can exit with a negative code (e.g. EPERM is -4048), which "if errorlevel 1" does not catch.
+pushd "%PILOT_ANGULAR_DIR%"
+call npm ci
+if %errorlevel% neq 0 (
+	echo npm ci failed.
+	popd
+	exit /b 1
+)
+
+call npm test
+if %errorlevel% neq 0 (
+	echo Unit tests failed.
+	popd
+	exit /b 1
+)
+
+call npm run test:e2e
+if %errorlevel% neq 0 (
+	echo End-to-end tests failed.
+	popd
+	exit /b 1
+)
+popd
 
 REM Stop any prior compose services for this stack first so its own ports are free to reuse.
 docker compose -f "%COMPOSE_FILE%" -p %COMPOSE_PROJECT% down --remove-orphans
@@ -64,18 +94,10 @@ if errorlevel 1 (
 	exit /b 1
 )
 
-REM 5. Install dependencies and publish the Angular application.
+REM 5. Publish the Angular application.
 pushd "%PILOT_ANGULAR_DIR%"
-call npm ci
-if errorlevel 1 (
-	echo npm ci failed.
-	popd
-	REM call :restore_environment
-	exit /b 1
-)
-
 call npm run build:prod
-if errorlevel 1 (
+if %errorlevel% neq 0 (
 	echo Angular production build failed.
 	popd
 	REM call :restore_environment
@@ -122,6 +144,14 @@ REM 8. Launch the application.
 start http://localhost:%UI_ANGULAR_PORT%/
 
 goto :eof
+
+:stop_e2e_server
+REM Match on the command line: the server's socket does not reliably appear as listening in netstat.
+for /f "usebackq tokens=*" %%P in (`powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'node.exe' -and $_.CommandLine -like '*ng.js* serve --port %E2E_SERVER_PORT%*' } | ForEach-Object { $_.ProcessId }"`) do (
+	echo Stopping leftover E2E server, PID %%P.
+	taskkill /PID %%P /T /F >nul 2>&1
+)
+exit /b 0
 
 :resolve_open_port
 set "RESOLVED_PORT="
