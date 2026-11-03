@@ -31,8 +31,9 @@ rem  Secrets (e.g. IDP_HOST_PASSWORD) are read by Bruno from the .env file in
 rem  each collection folder.
 rem
 rem  PilotMcpServer also requires the .NET SDK and port 11901 free. This script
-rem  starts the server in HTTP mode, logs its output to the report folder and
-rem  stops it after the tests.
+rem  stops any HTTP-mode PilotMcpServer left over from an earlier run, builds
+rem  the server, starts it in HTTP mode (retrying if the port is taken while it
+rem  starts), logs its output to the report folder and stops it after the tests.
 rem ===========================================================================
 setlocal EnableExtensions
 
@@ -40,6 +41,7 @@ set "FILTER_TAG=%~1"
 set "FILTER_NAME=%~2"
 
 set "GITHUB_ROOT=C:\Working\Storage\Dev\GitHub"
+set "SCRIPT=%~f0"
 
 for /f "usebackq delims=" %%T in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"`) do set "STAMP=%%T"
 set "REPORT_DIR=%~dp0BrunoReports\%STAMP%"
@@ -76,7 +78,7 @@ if "%RUN_COUNT%"=="0" (
 
 echo.
 echo Building summary report...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$s = Get-Content -LiteralPath '%~f0' -Raw; $s = $s.Substring($s.LastIndexOf('#==POWERSHELL==#')); & ([scriptblock]::Create($s)) -ReportDir '%REPORT_DIR%'"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$s = Get-Content -LiteralPath '%SCRIPT%' -Raw; $s = $s.Substring($s.LastIndexOf('#==POWERSHELL==#')); & ([scriptblock]::Create($s)) -ReportDir '%REPORT_DIR%'"
 
 echo.
 echo Summary report: %REPORT_DIR%\Summary.html
@@ -162,15 +164,14 @@ goto :eof
 rem ---------------------------------------------------------------------------
 rem  :StartMcpServer
 rem  Sets MCP_PID once the process has started, and MCP_ERROR if the server is
-rem  not listening. Readiness comes from the server's own log, because a port
-rem  check would also succeed for another process that took the port during the
-rem  build. The PID goes through a file because capturing it with "for /f" would
-rem  wait on a pipe that the server inherits.
+rem  not listening. The work is done by the #==STARTMCP==# PowerShell block at
+rem  the end of this file. The PID goes through a file because capturing it
+rem  with "for /f" would wait on a pipe that the server inherits.
 rem ---------------------------------------------------------------------------
 :StartMcpServer
 set "MCP_LOG=%REPORT_DIR%\PilotMcpServer"
 echo Starting PilotMcpServer on http://localhost:11901 (log: %MCP_LOG%.log)
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference = 'Stop'; foreach ($a in '127.0.0.1','::1') { try { (New-Object Net.Sockets.TcpClient($a, 11901)).Close(); exit 3 } catch {} }; $p = Start-Process dotnet -ArgumentList 'run','--project','src/PilotMcpServer','--','--http-url','http://localhost:11901' -WorkingDirectory '%MCP_ROOT%' -NoNewWindow -PassThru -RedirectStandardOutput '%MCP_LOG%.log' -RedirectStandardError '%MCP_LOG%.err.log'; Set-Content -LiteralPath '%MCP_LOG%.pid' -Value $p.Id; $deadline = (Get-Date).AddSeconds(180); while ((Get-Date) -lt $deadline) { if ($p.HasExited) { exit 1 }; if (Select-String -LiteralPath '%MCP_LOG%.err.log' -Pattern 'Now listening on' -Quiet) { exit 0 }; Start-Sleep -Seconds 1 }; exit 2"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$s = Get-Content -LiteralPath '%SCRIPT%' -Raw; $i = $s.LastIndexOf('#==STARTMCP==#'); $s = $s.Substring($i, $s.LastIndexOf('#==POWERSHELL==#') - $i); & ([scriptblock]::Create($s)) -Root '%MCP_ROOT%' -Log '%MCP_LOG%' -Port 11901"
 set "RC=%ERRORLEVEL%"
 if exist "%MCP_LOG%.pid" (
     set /p MCP_PID=<"%MCP_LOG%.pid"
@@ -178,8 +179,11 @@ if exist "%MCP_LOG%.pid" (
 )
 if "%RC%"=="0" goto :eof
 if "%RC%"=="3" (
-    echo ERROR: Port 11901 is already in use. Stop whatever is using it and run again.
+    echo ERROR: Port 11901 is in use by another process ^(listed above^). Stop it and run again.
     set "MCP_ERROR=PORT_11901_IN_USE"
+) else if "%RC%"=="4" (
+    echo ERROR: PilotMcpServer did not build. See %MCP_LOG%.build.log
+    set "MCP_ERROR=BUILD_FAILED"
 ) else (
     echo ERROR: PilotMcpServer did not start. See %MCP_LOG%.log and %MCP_LOG%.err.log
     set "MCP_ERROR=SERVER_NOT_STARTED"
@@ -227,9 +231,76 @@ for /f "usebackq delims=" %%T in (`powershell -NoProfile -Command "Get-Date -For
 goto :eof
 
 rem ---------------------------------------------------------------------------
-rem  Everything below is PowerShell that builds Summary.html from the JSON
-rem  results. It is never executed by cmd (the script exits above).
+rem  Everything below is PowerShell, never executed by cmd (the script exits
+rem  above): first the block that starts PilotMcpServer, then the block that
+rem  builds Summary.html from the JSON results.
 rem ---------------------------------------------------------------------------
+#==STARTMCP==#
+param([string]$Root, [string]$Log, [int]$Port)
+# Exit codes: 0 listening, 1 not started, 3 port in use, 4 build failed.
+# Writes the PID of the running server to "$Log.pid".
+# The build runs first and the server is then started with --no-build, so the
+# port is checked moments before the server binds it rather than before a long
+# build; a bind that still loses the race is retried.
+
+# The connection State is not filtered on: it is not always reported (it can read 0), so a
+# connect attempt is the fallback check.
+function Get-PortOwners {
+    @(Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue | Where-Object { $_.State -ne 'TimeWait' -and $_.OwningProcess } | Select-Object -ExpandProperty OwningProcess -Unique)
+}
+function Test-PortInUse {
+    if ((Get-PortOwners).Count) { return $true }
+    foreach ($a in '127.0.0.1', '::1') { try { (New-Object Net.Sockets.TcpClient($a, $Port)).Close(); return $true } catch {} }
+    $false
+}
+function Wait-PortFree([int]$Seconds) {
+    $deadline = (Get-Date).AddSeconds($Seconds)
+    while ((Test-PortInUse) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 1 }
+    -not (Test-PortInUse)
+}
+function Write-PortOwners {
+    Write-Host "Port $Port is in use by:"
+    foreach ($id in Get-PortOwners) {
+        $p = Get-CimInstance Win32_Process -Filter "ProcessId = $id" -ErrorAction SilentlyContinue
+        Write-Host "  PID $id $($p.Name) $($p.CommandLine)"
+    }
+}
+
+# An HTTP-mode server left behind by an interrupted run holds the port and locks the build output.
+# stdio instances started by MCP clients have no --http-url argument and are left alone.
+Get-CimInstance Win32_Process -Filter "Name = 'PilotMcpServer.exe' OR Name = 'dotnet.exe'" |
+    Where-Object { $_.CommandLine -match 'PilotMcpServer' -and $_.CommandLine -match "--http-url[ =]\S*:$Port\b" } |
+    ForEach-Object {
+        Write-Host "Stopping leftover PilotMcpServer (PID $($_.ProcessId))"
+        Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+    }
+
+Write-Host 'Building PilotMcpServer...'
+$b = Start-Process dotnet -ArgumentList 'build', 'src/PilotMcpServer', '--nologo', '-v', 'q' -WorkingDirectory $Root -NoNewWindow -PassThru -RedirectStandardOutput "$Log.build.log" -RedirectStandardError "$Log.build.err.log"
+$null = $b.Handle   # keeps ExitCode available after the process exits
+$b.WaitForExit()
+if ($b.ExitCode -ne 0) { exit 4 }
+
+$attempts = 3
+for ($attempt = 1; $attempt -le $attempts; $attempt++) {
+    if (-not (Wait-PortFree 30)) { Write-PortOwners; exit 3 }
+    $p = Start-Process dotnet -ArgumentList 'run', '--no-build', '--project', 'src/PilotMcpServer', '--', '--http-url', "http://localhost:$Port" -WorkingDirectory $Root -NoNewWindow -PassThru -RedirectStandardOutput "$Log.log" -RedirectStandardError "$Log.err.log"
+    Set-Content -LiteralPath "$Log.pid" -Value $p.Id
+    $deadline = (Get-Date).AddSeconds(60)
+    while (-not $p.HasExited -and (Get-Date) -lt $deadline) {
+        if (Select-String -LiteralPath "$Log.err.log" -Pattern 'Now listening on' -Quiet) { exit 0 }
+        Start-Sleep -Seconds 1
+    }
+    # Still running but not listening: the batch stops it through the PID file.
+    if (-not $p.HasExited) { exit 1 }
+    Remove-Item -LiteralPath "$Log.pid" -ErrorAction SilentlyContinue
+    if (-not (Select-String -LiteralPath "$Log.err.log" -Pattern 'address already in use' -Quiet)) { exit 1 }
+    Write-Host "Port $Port was taken while the server started (attempt $attempt of $attempts)."
+    if ($attempt -lt $attempts) { Start-Sleep -Seconds 5 }
+}
+Write-PortOwners
+exit 3
+
 #==POWERSHELL==#
 param([string]$ReportDir)
 

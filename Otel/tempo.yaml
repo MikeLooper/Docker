@@ -30,6 +30,16 @@ metrics_generator:
     path: /var/tempo/generator/wal
     remote_write:
       - url: http://mimir:9009/api/v1/push
+  processor:
+    span_metrics:
+      dimensions: [service.instance.id]
+    # Adds client_service_instance_id and server_service_instance_id to the service graph,
+    # so the Pilot-Workflows dashboard can tell the mssql and postgres instances apart.
+    # The User-Agent (server_user_agent_original, or server_http_user_agent from older
+    # semantic conventions) names the caller where Tempo only knows it as `user`.
+    service_graphs:
+      dimensions: [service.instance.id, user_agent.original, http.user_agent]
+      enable_client_server_prefix: true
 
 # Enable metrics-generator processors for the default tenant
 overrides:

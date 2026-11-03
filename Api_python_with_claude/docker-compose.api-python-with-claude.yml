@@ -17,6 +17,8 @@ services:
       APP_HOST: 0.0.0.0
       APP_PORT: "${PYTHON_CLAUDE_PORT:-11111}"
       OTEL_SERVICE_NAME: python-api-with-claude
+      # Stable OTEL identity: the SDK otherwise generates a new service.instance.id on every start.
+      OTEL_RESOURCE_ATTRIBUTES: service.instance.id=python-api-with-claude
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
     ports:
