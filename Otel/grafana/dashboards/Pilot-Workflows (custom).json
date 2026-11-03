@@ -20,6 +20,37 @@
   "templating": {
     "list": [
       {
+        "name": "instance",
+        "label": "Instance",
+        "type": "query",
+        "description": "OTEL service.instance.id, from the Tempo service graph for the time range. Instances with a generated GUID (no stable ID configured) are not listed.",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "mimir"
+        },
+        "query": {
+          "query": "query_result(group by (instance_id) (label_replace(last_over_time(traces_service_graph_request_total[$__range]), \"instance_id\", \"$1\", \"client_service_instance_id\", \"(.+)\") or label_replace(last_over_time(traces_service_graph_request_total[$__range]), \"instance_id\", \"$1\", \"server_service_instance_id\", \"(.+)\")))",
+          "refId": "instance"
+        },
+        "definition": "query_result(group by (instance_id) (label_replace(last_over_time(traces_service_graph_request_total[$__range]), \"instance_id\", \"$1\", \"client_service_instance_id\", \"(.+)\") or label_replace(last_over_time(traces_service_graph_request_total[$__range]), \"instance_id\", \"$1\", \"server_service_instance_id\", \"(.+)\")))",
+        "regex": "/instance_id=\"(?![0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\")([^\"]+)\"/",
+        "multi": true,
+        "includeAll": true,
+        "refresh": 2,
+        "sort": 1,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "skipUrlSync": false
+      },
+      {
         "name": "correlationId",
         "label": "Correlation ID",
         "type": "textbox",
@@ -100,7 +131,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"request handler completed\" | Method=\"tools/call\" [$__range]))",
+          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"request handler completed\" | service_instance_id=~\"$instance\" | Method=\"tools/call\" [$__range]))",
           "queryType": "instant",
           "editorMode": "code"
         }
@@ -153,7 +184,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"threw an unhandled exception\" [$__range]))",
+          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"threw an unhandled exception\" | service_instance_id=~\"$instance\" [$__range]))",
           "queryType": "instant",
           "editorMode": "code"
         }
@@ -206,7 +237,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | scope_name=~\".*ClientHandler\" [$__range]))",
+          "expr": "sum(count_over_time({service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | service_instance_id=~\"$instance\" | scope_name=~\".*ClientHandler\" [$__range]))",
           "queryType": "instant",
           "editorMode": "code"
         }
@@ -313,12 +344,12 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({service_name=~\"PilotApiDotNet|PilotApiJava|pilot-api-python|PilotUtilityApiDotNet|python-api-with-claude\"} | detected_level=~\"error|critical|fatal\" [$__range]))",
+          "expr": "sum(count_over_time({service_instance_id=~\"$instance\", service_name!=\"PilotMcpServer\"} | detected_level=~\"error|critical|fatal\" [$__range]))",
           "queryType": "instant",
           "editorMode": "code"
         }
       ],
-      "description": "Error-level log entries from the APIs.",
+      "description": "Error-level log entries from the selected API instances.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -366,12 +397,12 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({service_name=~\"PilotMcpServer|PilotApiDotNet|PilotApiJava|pilot-api-python\"} | CorrelationId!=\"\" [$__range]))",
+          "expr": "sum(count_over_time({service_name=~\".+\"} | service_instance_id=~\"$instance\" | CorrelationId!=\"\" [$__range]))",
           "queryType": "instant",
           "editorMode": "code"
         }
       ],
-      "description": "Log entries carrying a correlation ID. MSDAB is excluded: it creates a new ID per request, so its IDs never link components.",
+      "description": "Log entries carrying a correlation ID from the selected instances. MSDAB is excluded: it creates a new ID per request, so its IDs never link components, and its instance IDs are generated GUIDs.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -419,7 +450,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | scope_name=~\".*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if or (contains \":11001\" .Uri) (contains \":11101\" .Uri) }}PilotApiDotNet{{ else if or (contains \":11201\" .Uri) (contains \":11301\" .Uri) }}PilotApiJava{{ else if or (contains \":11401\" .Uri) (contains \":11501\" .Uri) }}pilot-api-python{{ else }}{{ .Uri }}{{ end }}` | label_format source=\"PilotMcpServer\" | label_format id=`{{ .source }}->{{ .target }}` [$__range]))",
+          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | service_instance_id=~\"$instance\" | scope_name=~\".*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if contains \":11001\" .Uri }}pilot-api-dotnet-mssql{{ else if contains \":11101\" .Uri }}pilot-api-dotnet-postgres{{ else if contains \":11201\" .Uri }}pilot-api-java-mssql{{ else if contains \":11301\" .Uri }}pilot-api-java-postgres{{ else if contains \":11401\" .Uri }}pilot-api-python-mssql{{ else if contains \":11501\" .Uri }}pilot-api-python-postgres{{ else }}{{ .Uri }}{{ end }}` | label_format source=`{{ .service_instance_id }}` | label_format id=`{{ .source }}->{{ .target }}` [$__range]))",
           "queryType": "instant",
           "editorMode": "code",
           "legendFormat": "calls"
@@ -430,14 +461,14 @@
             "type": "prometheus",
             "uid": "mimir"
           },
-          "expr": "round(sum by (id,source,target) (label_join(label_replace(label_replace(increase(traces_service_graph_request_total{client!=\"PilotMcpServer\"}[$__range]),\"source\",\"$1\",\"client\",\"(.*)\"),\"target\",\"$1\",\"server\",\"(.*)\"),\"id\",\"->\",\"source\",\"target\")))",
+          "expr": "round(sum by (id,source,target) (label_join(label_replace(label_replace(label_replace(label_replace(label_replace(label_join(label_replace(label_replace(label_replace(label_replace(increase(traces_service_graph_request_total{client!=\"PilotMcpServer\",client_service_instance_id=~\"$instance|\"}[$__range]),\"source\",\"$1\",\"client\",\"(.*)\"),\"source\",\"$1\",\"client_service_instance_id\",\"(.+)\"),\"ua\",\"$1\",\"server_http_user_agent\",\"(.+)\"),\"ua\",\"$1\",\"server_user_agent_original\",\"(.+)\"),\"caller\",\";\",\"client\",\"ua\"),\"source\",\"$1\",\"caller\",\"user;(.+)\"),\"source\",\"Bruno\",\"source\",\"bruno-runtime/.*\"),\"source\",\"Browser\",\"source\",\"Mozilla/.*\"),\"target\",\"$1\",\"server\",\"(.*)\"),\"target\",\"$1\",\"server_service_instance_id\",\"(.+)\"),\"id\",\"->\",\"source\",\"target\")))",
           "instant": true,
           "range": false,
           "editorMode": "code",
           "legendFormat": "calls"
         }
       ],
-      "description": "Who calls whom is built from two sources: edges from PilotMcpServer come from its logs, which include Keycloak; the other edges come from Tempo's service graph. Edge numbers are calls. `user` means a caller with no span in Tempo. Before the MCP server's tracing fix, that includes its calls to PilotApiDotNet.",
+      "description": "Who calls whom, by service instance ID (by name for callers, Keycloak and databases). Built from two sources: edges from the PilotMcpServer instances come from their logs, which include Keycloak; the other edges come from Tempo's service graph. Edge numbers are calls. A caller with no span in Tempo is named from its User-Agent: Bruno, Browser (the Angular UI), or the raw User-Agent for anything else. Edges recorded before Tempo captured the User-Agent show it as `user`. Tempo edges recorded before the service graph carried instance IDs show service names.",
       "transformations": [
         {
           "id": "labelsToFields",
@@ -499,7 +530,7 @@
     {
       "id": 9,
       "type": "timeseries",
-      "title": "Log activity by component",
+      "title": "Log activity by instance",
       "gridPos": {
         "x": 15,
         "y": 5,
@@ -517,13 +548,13 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (service_name) (count_over_time({service_name=~\"PilotMcpServer|PilotApiDotNet|PilotApiJava|pilot-api-python|PilotUtilityApiDotNet|python-api-with-claude\"} [$__auto]))",
+          "expr": "sum by (service_instance_id) (count_over_time({service_name=~\".+\"} | service_instance_id=~\"$instance\" [$__auto]))",
           "queryType": "range",
           "editorMode": "code",
-          "legendFormat": "{{service_name}}"
+          "legendFormat": "{{service_instance_id}}"
         }
       ],
-      "description": "When each component was active.",
+      "description": "When each service instance was active.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -586,7 +617,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service_name=\"PilotMcpServer\"} |= \"request handler completed\" | Method=\"tools/call\"",
+          "expr": "{service_name=\"PilotMcpServer\"} |= \"request handler completed\" | service_instance_id=~\"$instance\" | Method=\"tools/call\"",
           "queryType": "range",
           "editorMode": "code",
           "maxLines": 1000
@@ -597,7 +628,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service_name=\"PilotMcpServer\"} |~ \"completed[.] IsError|threw an unhandled exception\" | ToolName!=\"\"",
+          "expr": "{service_name=\"PilotMcpServer\"} |~ \"completed[.] IsError|threw an unhandled exception\" | service_instance_id=~\"$instance\" | ToolName!=\"\"",
           "queryType": "range",
           "editorMode": "code",
           "maxLines": 1000
@@ -608,7 +639,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | scope_name=~\".*PilotHttpClient.*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if or (contains \":11001\" .Uri) (contains \":11101\" .Uri) }}PilotApiDotNet{{ else if or (contains \":11201\" .Uri) (contains \":11301\" .Uri) }}PilotApiJava{{ else if or (contains \":11401\" .Uri) (contains \":11501\" .Uri) }}pilot-api-python{{ else }}{{ .Uri }}{{ end }}`",
+          "expr": "{service_name=\"PilotMcpServer\"} |= \"Sending HTTP request\" | service_instance_id=~\"$instance\" | scope_name=~\".*PilotHttpClient.*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if contains \":11001\" .Uri }}pilot-api-dotnet-mssql{{ else if contains \":11101\" .Uri }}pilot-api-dotnet-postgres{{ else if contains \":11201\" .Uri }}pilot-api-java-mssql{{ else if contains \":11301\" .Uri }}pilot-api-java-postgres{{ else if contains \":11401\" .Uri }}pilot-api-python-mssql{{ else if contains \":11501\" .Uri }}pilot-api-python-postgres{{ else }}{{ .Uri }}{{ end }}`",
           "queryType": "range",
           "editorMode": "code",
           "maxLines": 1000
@@ -631,6 +662,7 @@
             "include": {
               "names": [
                 "Time",
+                "service_instance_id",
                 "CorrelationId",
                 "trace_id",
                 "ElapsedMilliseconds"
@@ -647,14 +679,16 @@
           "options": {
             "indexByName": {
               "Time": 0,
-              "CorrelationId": 1,
-              "trace_id": 2,
-              "ElapsedMilliseconds": 3
+              "service_instance_id": 1,
+              "CorrelationId": 2,
+              "trace_id": 3,
+              "ElapsedMilliseconds": 4
             },
             "excludeByName": {},
             "renameByName": {
               "trace_id": "TraceId",
-              "ElapsedMilliseconds": "Duration"
+              "ElapsedMilliseconds": "Duration",
+              "service_instance_id": "Instance"
             }
           },
           "filter": {
@@ -842,6 +876,7 @@
             "include": {
               "names": [
                 "Time",
+                "Instance",
                 "ToolName",
                 "Result",
                 "Calls",
@@ -859,14 +894,15 @@
           "options": {
             "indexByName": {
               "Time": 0,
-              "ToolName": 1,
-              "Result": 2,
-              "Calls": 3,
-              "Duration": 4,
-              "CorrelationId": 5,
-              "TraceId": 6,
-              "windowFrom": 7,
-              "windowTo": 8
+              "Instance": 1,
+              "ToolName": 2,
+              "Result": 3,
+              "Calls": 4,
+              "Duration": 5,
+              "CorrelationId": 6,
+              "TraceId": 7,
+              "windowFrom": 8,
+              "windowTo": 9
             },
             "excludeByName": {},
             "renameByName": {}
@@ -1045,6 +1081,18 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Instance"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 230
+              }
+            ]
           }
         ]
       },
@@ -1078,13 +1126,13 @@
             "uid": "tempo"
           },
           "queryType": "traceql",
-          "query": "{ kind = server && span.correlationId != \"\" && resource.service.name != \"PilotMcpServer\" } | select(span.correlationId, resource.service.name)",
+          "query": "{ kind = server && span.correlationId != \"\" && resource.service.instance.id =~ \"${instance:regex}\" && resource.service.instance.id !~ \"pilot-mcp-server-.*\" } | select(span.correlationId, resource.service.instance.id)",
           "tableType": "spans",
           "limit": 200,
           "spss": 1
         }
       ],
-      "description": "Server spans in Tempo. Click a service to see that trace below. This list also covers requests that did not come through the MCP server.",
+      "description": "Server spans in Tempo from the selected instances. Click an instance to see that trace below. This list also covers requests that did not come through the MCP server.",
       "transformations": [
         {
           "id": "sortBy",
@@ -1108,16 +1156,16 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "service.name"
+              "options": "service.instance.id"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Service"
+                "value": "Instance"
               },
               {
                 "id": "custom.width",
-                "value": 140
+                "value": 190
               },
               {
                 "id": "links",
@@ -1234,7 +1282,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" |= \"Sending HTTP request\" | scope_name=~\".*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if or (contains \":11001\" .Uri) (contains \":11101\" .Uri) }}PilotApiDotNet{{ else if or (contains \":11201\" .Uri) (contains \":11301\" .Uri) }}PilotApiJava{{ else if or (contains \":11401\" .Uri) (contains \":11501\" .Uri) }}pilot-api-python{{ else }}{{ .Uri }}{{ end }}` | label_format source=\"PilotMcpServer\" | label_format id=`{{ .source }}->{{ .target }}` [$__auto]))",
+          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" |= \"Sending HTTP request\" | scope_name=~\".*ClientHandler\" | label_format target=`{{ if contains \":11141\" .Uri }}Keycloak{{ else if contains \":11001\" .Uri }}pilot-api-dotnet-mssql{{ else if contains \":11101\" .Uri }}pilot-api-dotnet-postgres{{ else if contains \":11201\" .Uri }}pilot-api-java-mssql{{ else if contains \":11301\" .Uri }}pilot-api-java-postgres{{ else if contains \":11401\" .Uri }}pilot-api-python-mssql{{ else if contains \":11501\" .Uri }}pilot-api-python-postgres{{ else }}{{ .Uri }}{{ end }}` | label_format source=`{{ .service_instance_id }}` | label_format id=`{{ .source }}->{{ .target }}` [$__auto]))",
           "queryType": "range",
           "editorMode": "code",
           "legendFormat": "calls"
@@ -1245,7 +1293,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" |= \"request handler completed\" | label_format source=\"caller\",target=service_name | label_format id=`{{ .source }}->{{ .target }}` [$__auto]))",
+          "expr": "sum by (id,source,target) (count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" |= \"request handler completed\" | label_format source=\"caller\",target=`{{ .service_instance_id }}` | label_format id=`{{ .source }}->{{ .target }}` [$__auto]))",
           "queryType": "range",
           "editorMode": "code",
           "legendFormat": "calls"
@@ -1256,13 +1304,13 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (id,source,target) (count_over_time({service_name=~\".+\",service_name!=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" | label_format source=\"caller\",target=service_name | label_format id=`{{ .source }}->{{ .target }}` [$__auto])) unless on() sum(count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" [1h]))",
+          "expr": "sum by (id,source,target) (count_over_time({service_instance_id=~\".+\"} | service_instance_id!~\"pilot-mcp-server-.+\" | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" | label_format source=\"caller\",target=service_instance_id | label_format id=`{{ .source }}->{{ .target }}` [$__auto])) unless on() sum(count_over_time({service_name=\"PilotMcpServer\"} | label_format selected=\"$correlationId\" | selected!=\"\" | CorrelationId=\"$correlationId\" or correlationId=\"$correlationId\" [1h]))",
           "queryType": "range",
           "editorMode": "code",
           "legendFormat": "calls"
         }
       ],
-      "description": "The components this correlation ID passed through, from their logs. Edge numbers are calls for PilotMcpServer's outgoing calls, and log entries for a request that came in directly.",
+      "description": "The service instances this correlation ID passed through, from their logs. Edge numbers are calls for the PilotMcpServer instance's outgoing calls, and log entries for a request that came in directly.",
       "transformations": [
         {
           "id": "labelsToFields",
@@ -1382,7 +1430,7 @@
           "direction": "forward"
         }
       ],
-      "description": "One lane per component, one block per log entry. Open a workflow with zoom, or the blocks are too narrow to see.",
+      "description": "One lane per service instance, one block per log entry. Open a workflow with zoom, or the blocks are too narrow to see.",
       "transformations": [
         {
           "id": "extractFields",
@@ -1399,7 +1447,7 @@
             "include": {
               "names": [
                 "Time",
-                "service_name",
+                "service_instance_id",
                 "Line"
               ]
             }
@@ -1410,7 +1458,7 @@
           "options": {
             "indexByName": {
               "Time": 0,
-              "service_name": 1,
+              "service_instance_id": 1,
               "Line": 2
             },
             "excludeByName": {},
@@ -1421,7 +1469,7 @@
           "id": "partitionByValues",
           "options": {
             "fields": [
-              "service_name"
+              "service_instance_id"
             ],
             "keepFields": false,
             "naming": {
@@ -1439,7 +1487,7 @@
             "fillOpacity": 75,
             "lineWidth": 1
           },
-          "displayName": "${__field.labels.service_name}"
+          "displayName": "${__field.labels.service_instance_id}"
         },
         "overrides": []
       },
@@ -1485,7 +1533,7 @@
           "direction": "forward"
         }
       ],
-      "description": "Every log entry for the correlation ID, in order, across components.",
+      "description": "Every log entry for the correlation ID, in order, across service instances.",
       "transformations": [
         {
           "id": "extractFields",
@@ -1502,7 +1550,7 @@
             "include": {
               "names": [
                 "Time",
-                "service_name",
+                "service_instance_id",
                 "detected_level",
                 "Line",
                 "trace_id",
@@ -1517,7 +1565,7 @@
           "options": {
             "indexByName": {
               "Time": 0,
-              "service_name": 1,
+              "service_instance_id": 1,
               "detected_level": 2,
               "Line": 3,
               "trace_id": 4,
@@ -1526,7 +1574,7 @@
             },
             "excludeByName": {},
             "renameByName": {
-              "service_name": "Component",
+              "service_instance_id": "Instance",
               "detected_level": "Level",
               "Line": "Step",
               "trace_id": "TraceId",
@@ -1573,12 +1621,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Component"
+              "options": "Instance"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 160
+                "value": 190
               },
               {
                 "id": "custom.cellOptions",
