@@ -290,7 +290,7 @@
             "type": "prometheus",
             "uid": "mimir"
           },
-          "expr": "sum(increase(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\",service!=\"PilotMcpServer\"}[$__range]))",
+          "expr": "sum(increase(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\",service!=\"PilotMcpServer\",service_instance_id=~\"$instance\"}[$__range]))",
           "instant": true,
           "range": false,
           "editorMode": "code"
