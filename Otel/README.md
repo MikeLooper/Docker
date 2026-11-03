@@ -21,6 +21,8 @@ What the batch does:
 5. Attempts best-effort Grafana limited-user provisioning (non-fatal if not allowed).
 6. Opens Grafana in the default browser.
 
+All containers use `restart: unless-stopped`, so they start automatically when Docker starts unless you stopped them yourself.
+
 ## Prerequisites
 
 - Docker Desktop installed and running.
