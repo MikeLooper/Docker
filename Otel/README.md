@@ -58,9 +58,12 @@ To work with the different containers directly, there are APIs that can be acces
 
 ### Loki
 
+Application logs.
+
 #### API Documentation
 
-https://grafana.com/docs/loki/latest/reference/loki-http-api/
+- https://grafana.com/oss/loki/
+- https://grafana.com/docs/loki/latest/reference/loki-http-api/
 
 #### Select Commands
 
@@ -109,9 +112,15 @@ curl -G -s http://localhost:9009/metrics
 
 ### Tempo
 
+Easy-to-use, and high-scale distributed tracing backend.
+
 #### API Documentation
 
-https://grafana.com/docs/tempo/latest/api_docs/
+- https://grafana.com/docs/tempo/latest/)
+- https://grafana.com/docs/tempo/latest/api_docs/
+- https://github.com/grafana/tempo
+- https://github.com/grafana/tempo/tree/main/example/docker-compose
+- https://grafana.com/docs/tempo/latest/docker-example/
 
 #### Select Commands
 
@@ -127,9 +136,12 @@ curl -G -s http://localhost:3200/api/search/tags?scope=span
 
 ### Grafana
 
+Self-Hosted Observability
+
 #### API Documentation
 
-https://grafana.com/docs/grafana/latest/developer-resources/api-reference/http-api/
+- https://grafana.com/oss/
+- https://grafana.com/docs/grafana/latest/developer-resources/api-reference/http-api/
 
 #### Select Commands
 

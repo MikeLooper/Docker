@@ -1,0 +1,68 @@
+# Local cloud emulators (Floci): AWS, Azure, GCP
+
+services:
+  local-aws:
+    image: floci/floci:latest
+    container_name: local-aws
+    mem_limit: 2g
+    restart: unless-stopped
+    user: root
+    environment:
+      - FLOCI_STORAGE_MODE=hybrid
+      - FLOCI_STORAGE_PERSISTENT_PATH=/app/data
+      - FLOCI_SERVICES_UI_CONTAINER_NAME=floci-aws-ui
+      - FLOCI_SERVICES_UI_PORT=4500
+      - FLOCI_SERVICES_UI_DOCKER_NETWORK=pilot-net
+    volumes:
+      - local-aws-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4566:4566"   # AWS API (all services)
+    networks:
+      - pilot-net
+
+  local-azure:
+    image: floci/floci-az:latest
+    container_name: local-azure
+    mem_limit: 2g
+    restart: unless-stopped
+    environment:
+      - FLOCI_AZ_STORAGE_MODE=hybrid
+      - FLOCI_AZ_STORAGE_PATH=/app/data
+      - FLOCI_AZ_UI_PORT=4501
+      - FLOCI_AZ_DOCKER_RESOURCE_NAMESPACE=local-azure
+    volumes:
+      - local-azure-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4577:4577"   # Azure API (all HTTP services)
+    networks:
+      - pilot-net
+
+  local-gcp:
+    image: floci/floci-gcp:latest
+    container_name: local-gcp
+    mem_limit: 2g
+    restart: unless-stopped
+    environment:
+      - FLOCI_GCP_STORAGE_MODE=hybrid
+      - FLOCI_GCP_STORAGE_PERSISTENT_PATH=/app/data
+      - FLOCI_GCP_SERVICES_DOCKER_NETWORK=pilot-net
+      - FLOCI_GCP_DOCKER_RESOURCE_NAMESPACE=local-gcp
+    volumes:
+      - local-gcp-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4588:4588"   # GCP APIs (gRPC + REST)
+    networks:
+      - pilot-net
+
+volumes:
+  local-aws-data:
+  local-azure-data:
+  local-gcp-data:
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

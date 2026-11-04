@@ -33,6 +33,18 @@ ECHO Start Keycloak ...
 docker start local-keycloak
 
 ECHO .
+ECHO Start AWS emulator ...
+docker start local-aws
+
+ECHO .
+ECHO Start Azure emulator ...
+docker start local-azure
+
+ECHO .
+ECHO Start GCP emulator ...
+docker start local-gcp
+
+ECHO .
 ECHO Start Pilot API .NET PostGreSQL ...
 docker start pilot-api-dotnet-postgres
 

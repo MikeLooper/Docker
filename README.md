@@ -39,6 +39,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `Api_MsDab\docker-compose.api-msdab.yml`
 - `Api_python\docker-compose.api-python.yml`
 - `Api_python_with_claude\docker-compose.api-python-with-claude.yml`
+- `Clouds\docker-compose.clouds.yml`
 - `Homepage\docker-compose.homepage.yml`
 - `PostgreSQL\docker-compose.postgresql.yml`
 - `SqlServer\docker-compose.sqlserver.yml`
@@ -52,6 +53,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `Api_MsDab\Docker-Api-msdab-builder.bat`
 - `Api_python\Docker-Api-python-builder.bat`
 - `Api_python_with_claude\Docker-pythonapi-with-claude-builder.bat`
+- `Clouds\Docker-clouds-builder.bat`
 - `Dozzle\Docker-Dozzle-builder.bat`
 - `Homepage\Docker-Homepage-builder.bat`
 - `PostgreSQL\Docker-PostgreSQL-builder.bat`
@@ -125,6 +127,12 @@ docker network inspect pilot-net
 ```
 
 ## Active Subjects
+
+### Cloud Emulators (AWS / Azure / GCP)
+
+Local, credential-free emulators of AWS, Azure, and GCP services (Floci), for developing and testing cloud integrations without a cloud account.
+
+Follow the directions in the [Clouds README](./Clouds/README.md).
 
 ### Dozzle
 
@@ -241,6 +249,11 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |  √      | ApiPythonWithClaude     | python-api-with-claude      | 11111       | 11111       | http://localhost:11111/docs, http://localhost:11111/health |
 |  √      | ApiUtility (SQL Server) | utility-api-dotnet-mssql    | 8080        | 11601       | http://localhost:11601/swagger, http://localhost:11601/scalar |
 |  √      | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 11701       | http://localhost:11701/swagger, http://localhost:11701/scalar |
+|  √      | AWS Emulator (Floci)    | local-aws                   | 4566        | 4566        | http://localhost:4566/_floci/ui |
+|  √      | AWS Console (sidecar)   | floci-aws-ui                | 4500        | 4500        | http://localhost:4500   |
+|  √      | Azure Emulator (Floci)  | local-azure                 | 4577        | 4577        | http://localhost:4577/_floci/ui |
+|  √      | Azure Console (sidecar) | floci-az-local-azure-ui     | 4500        | 4501        | http://localhost:4501/console/azure |
+|  √      | GCP Emulator (Floci)    | local-gcp                   | 4588        | 4588        | http://localhost:4588/_floci-gcp/info |
 |  √      | Dozzle                  | local-dozzle                | 8080        | 11121       | http://localhost:11121  |
 |  √      | Grafana                 | local-grafana               | 3000        | 3000        | http://localhost:3000   |
 |  √      | Homepage                | local-homepage              | 3000        | 11131       | http://localhost:11131  |
