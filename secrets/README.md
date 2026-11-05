@@ -14,6 +14,7 @@ For each of the following files, there is a related template file that is named 
 - `secrets/appsettings-api-python-sqlserver.env`
 - `secrets/appsettings-utility-dotnet-postgresql.env`
 - `secrets/appsettings-utility-dotnet-sqlserver.env`
+- `secrets/clouds-db.env` (cloud emulator databases and APIs; see `Clouds/README.md`)
 - `secrets/ms-dab.env`
 - `secrets/postgresql.env`
 - `secrets/sqlserver.env`

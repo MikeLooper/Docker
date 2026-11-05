@@ -1,6 +1,12 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
 
+REM Cloud emulators: only the ones selected by Clouds\Docker-clouds-builder.bat -platform
+REM (saved in Clouds\.platform; a missing file means all).
+set "CLOUD_PLATFORM=all"
+if exist "%~dp0Clouds\.platform" set /p CLOUD_PLATFORM=<"%~dp0Clouds\.platform"
+for /f "tokens=1" %%P in ("%CLOUD_PLATFORM%") do set "CLOUD_PLATFORM=%%P"
+
 ECHO Start PostGreSQL ...
 docker start local-postgres
 
@@ -34,15 +40,18 @@ docker start local-keycloak
 
 ECHO .
 ECHO Start AWS emulator ...
-docker start local-aws
+if /I "%CLOUD_PLATFORM%"=="all" docker start local-aws
+if /I "%CLOUD_PLATFORM%"=="aws" docker start local-aws
 
 ECHO .
 ECHO Start Azure emulator ...
-docker start local-azure
+if /I "%CLOUD_PLATFORM%"=="all" docker start local-azure
+if /I "%CLOUD_PLATFORM%"=="azure" docker start local-azure
 
 ECHO .
 ECHO Start GCP emulator ...
-docker start local-gcp
+if /I "%CLOUD_PLATFORM%"=="all" docker start local-gcp
+if /I "%CLOUD_PLATFORM%"=="gcp" docker start local-gcp
 
 ECHO .
 ECHO Start Pilot API .NET PostGreSQL ...

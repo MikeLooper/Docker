@@ -1,0 +1,8 @@
+[
+  { "name": "cloud-api-dotnet-mssql",    "lang": "dotnet", "db": "mssql" },
+  { "name": "cloud-api-dotnet-postgres", "lang": "dotnet", "db": "postgres" },
+  { "name": "cloud-api-java-mssql",      "lang": "java",   "db": "mssql" },
+  { "name": "cloud-api-java-postgres",   "lang": "java",   "db": "postgres" },
+  { "name": "cloud-api-python-mssql",    "lang": "python", "db": "mssql" },
+  { "name": "cloud-api-python-postgres", "lang": "python", "db": "postgres" }
+]

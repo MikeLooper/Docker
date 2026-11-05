@@ -53,7 +53,12 @@ Then, execute the networking command listed in the *Network* section below.
 - `Api_MsDab\Docker-Api-msdab-builder.bat`
 - `Api_python\Docker-Api-python-builder.bat`
 - `Api_python_with_claude\Docker-pythonapi-with-claude-builder.bat`
-- `Clouds\Docker-clouds-builder.bat`
+- `Clouds\Docker-clouds-builder.bat` (`-platform all|aws|azure|gcp`)
+- `Clouds\Docker-clouds-api-images-builder.bat`
+- `Clouds\Docker-clouds-aws-dbapi-builder.bat`
+- `Clouds\Docker-clouds-azure-dbapi-builder.bat`
+- `Clouds\Docker-clouds-gcp-dbapi-builder.bat`
+- `Clouds\Docker-clouds-<cloud>-start.bat` / `Clouds\Docker-clouds-<cloud>-stop.bat` (`aws`, `azure`, `gcp`)
 - `Dozzle\Docker-Dozzle-builder.bat`
 - `Homepage\Docker-Homepage-builder.bat`
 - `PostgreSQL\Docker-PostgreSQL-builder.bat`
@@ -133,6 +138,20 @@ docker network inspect pilot-net
 Local, credential-free emulators of AWS, Azure, and GCP services (Floci), for developing and testing cloud integrations without a cloud account.
 
 Follow the directions in the [Clouds README](./Clouds/README.md).
+
+After a cloud has been built, stop and start it (with its databases and APIs) using its own scripts. `<cloud>` is `aws`, `azure` or `gcp`:
+
+```
+Clouds\Docker-clouds-<cloud>-stop.bat
+Clouds\Docker-clouds-<cloud>-start.bat
+Clouds\Docker-clouds-<cloud>-start.bat -norebuild
+```
+
+- Stop: deletes nothing. Data, images and Terraform state are kept.
+- Start: checks every API, and re-runs that cloud's dbapi builder if one does not answer.
+- `-norebuild`: only reports unhealthy APIs, without rebuilding.
+
+See [Starting and stopping one cloud](./Clouds/README.md#starting-and-stopping-one-cloud) for details.
 
 ### Dozzle
 
@@ -251,7 +270,8 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |  √      | ApiUtility (PostgreSQL) | utility-api-dotnet-postgres | 8080        | 11701       | http://localhost:11701/swagger, http://localhost:11701/scalar |
 |  √      | AWS Emulator (Floci)    | local-aws                   | 4566        | 4566        | http://localhost:4566/_floci/ui |
 |  √      | AWS Console (sidecar)   | floci-aws-ui                | 4500        | 4500        | http://localhost:4500   |
-|  √      | Azure Emulator (Floci)  | local-azure                 | 4577        | 4577        | http://localhost:4577/_floci/ui |
+|  √      | AWS RDS proxy (cloud DBs) | local-aws                 | 7001-7010   | 7001-7010   | SQL Server 7001, PostgreSQL 7002 (see [Clouds README](./Clouds/README.md#databases-and-apis)) |
+|  √      | Azure Emulator (Floci)  | local-azure                 | 4577        | 4577        | https://localhost:4577/_floci/ui (self-signed TLS; HTTP also answers) |
 |  √      | Azure Console (sidecar) | floci-az-local-azure-ui     | 4500        | 4501        | http://localhost:4501/console/azure |
 |  √      | GCP Emulator (Floci)    | local-gcp                   | 4588        | 4588        | http://localhost:4588/_floci-gcp/info |
 |  √      | Dozzle                  | local-dozzle                | 8080        | 11121       | http://localhost:11121  |

@@ -25,15 +25,17 @@ This folder includes `Docker-clouds-builder.bat`, which prepares and starts the 
 
 What the batch does:
 
-1. Creates the `pilot-net` network if it does not exist.
-2. Pulls the three images.
-3. Stops any existing `local-clouds` compose stack, and removes leftover console sidecars (`floci-aws-ui`, `floci-az-local-azure-ui`).
-4. Starts a fresh stack using `docker-compose.clouds.yml`.
-5. Waits for each emulator's health endpoint (up to 2 minutes each):
+1. Validates `-platform` (`all` by default; `aws`, `azure` or `gcp` for one cloud).
+2. Creates the `pilot-net` network if it does not exist.
+3. Pulls the selected images.
+4. `all`: stops any existing `local-clouds` compose stack and removes leftover console sidecars (`floci-aws-ui`, `floci-az-local-azure-ui`).
+   One cloud: for each other cloud, runs its `Docker-clouds-<cloud>-dbapi-builder.bat -destroy` (when it has Terraform state and its emulator is running), then stops that emulator and its sidecar.
+5. Starts the selected emulators using `docker-compose.clouds.yml`.
+6. Waits for each emulator's health endpoint (up to 2 minutes each):
    - AWS: `http://localhost:4566/_localstack/health`
-   - Azure: `http://localhost:4577/_floci/health`
+   - Azure: `https://localhost:4577/_floci/health` (self-signed TLS; the CA certificate is saved to `terraform\tls\floci-az.pem`)
    - GCP: `http://localhost:4588/health`
-6. Opens the AWS console, the Azure console, and the GCP info page in the default browser.
+7. Saves the selection in `Clouds\.platform` and opens the consoles of the selected emulators in the default browser.
 
 All containers use `restart: unless-stopped`, so they start automatically when Docker starts unless you stopped them yourself.
 
@@ -49,6 +51,7 @@ From the `Clouds` folder:
 
 ```bat
 Docker-clouds-builder.bat
+Docker-clouds-builder.bat -platform aws
 ```
 
 Or from repository root:
@@ -56,6 +59,44 @@ Or from repository root:
 ```bat
 Clouds\Docker-clouds-builder.bat
 ```
+
+### Starting and stopping one cloud
+
+Once a cloud has been built, use its start and stop scripts day to day (`<cloud>` is `aws`, `azure` or `gcp`). From the `Clouds` folder:
+
+```bat
+REM Stop the AWS emulator and everything it manages (nothing is deleted)
+Docker-clouds-aws-stop.bat
+
+REM Start it again; if an API does not answer, the AWS dbapi builder is re-run to repair it
+Docker-clouds-aws-start.bat
+
+REM Start it again, but only report unhealthy APIs (exit code 1) instead of rebuilding
+Docker-clouds-aws-start.bat -norebuild
+```
+
+The Azure and GCP scripts work the same way:
+
+```bat
+Docker-clouds-azure-stop.bat
+Docker-clouds-azure-start.bat
+Docker-clouds-gcp-stop.bat
+Docker-clouds-gcp-start.bat
+```
+
+Or from repository root:
+
+```bat
+Clouds\Docker-clouds-aws-start.bat
+Clouds\Docker-clouds-aws-stop.bat
+```
+
+- The start script only works for a cloud allowed by `Clouds\.platform`. For example, after `-platform aws`, `Docker-clouds-azure-start.bat` stops with an error. Run `Docker-clouds-builder.bat -platform azure` (or `all`) first.
+- If nothing is deployed yet, the start script starts the emulator and tells you to run `Docker-clouds-<cloud>-dbapi-builder.bat`.
+- On success, it prints the API base URLs.
+- GCP: after a stop, SQL Server comes back empty. Use plain `Docker-clouds-gcp-start.bat`; with `-norebuild`, the three SQL Server APIs are reported as unhealthy.
+
+See [Start and stop](#start-and-stop) for what each script does.
 
 ## Web Consoles
 
@@ -76,6 +117,76 @@ GCP has no web console. Use these endpoints instead:
 - Health (per-service status): http://localhost:4588/health
 
 AWS and Azure also expose a JSON info page at `/_floci/info`.
+
+## Databases and APIs
+
+The emulators also host the Northwind databases (SQL Server and PostgreSQL) and the six Pilot APIs (DotNet, Java, Python; a SQL Server and a PostgreSQL variant of each). Every cloud resource is created with Terraform. The full design is in [docs/CloudEmulatorsDbAndApi.md](docs/CloudEmulatorsDbAndApi.md).
+
+| Cloud | SQL Server | PostgreSQL | API compute | API front door |
+| ----- | ---------- | ---------- | ----------- | -------------- |
+| AWS   | RDS `sqlserver-se` | RDS `postgres` | ECS (Fargate) | API Gateway HTTP API (v2), VPC link + Cloud Map |
+| Azure | Azure SQL (managed data plane) | Flexible Server | Container Apps | Container Apps ingress (APIM not usable, see below) |
+| GCP   | Compute Engine + SQL Server container | Cloud SQL | Cloud Run | Cloud Run service URL |
+
+### Scripts
+
+| Script | What it does |
+| ------ | ------------ |
+| `Docker-clouds-builder.bat [-platform all\|aws\|azure\|gcp]` | Starts the emulators. A single platform first destroys the other clouds' databases and APIs (while their emulators can still clean up), then stops those emulators. The choice is saved in `Clouds\.platform` (git-ignored); `Docker-StartAll.bat` starts only the selected emulators. |
+| `Docker-clouds-api-images-builder.bat` | Builds the 6 images `cloud-api-<lang>-<db>:1.0` once, for all clouds. Runs the unit tests. The images hold **no** database or security settings; each cloud injects them as env vars (`terraform\modules\api-env`). Checks at the end that no password, `DB_URL`, `appsettings.Production.json` or `.env` is in any image. |
+| `Docker-clouds-<cloud>-dbapi-builder.bat [-destroy]` | Applies `terraform\<cloud>\10-databases`, loads Northwind (`scripts\load-mssql.bat`, `scripts\load-postgres.bat`), applies the API roots, then waits for every `/healthcheck` and calls `GET /v1/customers/get-all` with a Keycloak token (expects data) and without one (expects 401). `-destroy` removes everything that cloud's builder created. |
+
+Order: `Docker-clouds-builder.bat -platform <cloud>`, then `Docker-clouds-api-images-builder.bat` (once, or after API source changes), then `Docker-clouds-<cloud>-dbapi-builder.bat`.
+
+Prerequisites: `secrets\clouds-db.env` (from `secrets\clouds-db.env.example`), and `local-keycloak` and `otel-collector` running. Terraform runs in the `hashicorp/terraform` image; nothing is installed on the host.
+
+### Layout
+
+```text
+Clouds\terraform\apis.json              the 6 APIs (drives every for_each)
+Clouds\terraform\modules\api-env\       per-language env vars (DB, Keycloak, OTEL)
+Clouds\terraform\<cloud>\10-databases\  DB servers; outputs mssql_host/port, postgres_host/port
+Clouds\terraform\<cloud>\20-apis\       API compute and front door
+```
+
+State is local (`terraform.tfstate` in each root, git-ignored). **It holds the DB passwords in plain text**; it stays on the local disk.
+
+### Endpoints
+
+| Cloud | API base URL (see the builder's output) | Databases from `pilot-net` / host |
+| ----- | --------------------------------------- | --------------------------------- |
+| AWS   | `http://<apiId>.execute-api.localhost.floci.io:4566` | `local-aws:7001` (SQL Server), `local-aws:7002` (PostgreSQL); the same ports on `localhost` |
+| Azure | `http://<api-name>.cae-cloud-apis.<hash>.localhost:4577` | `floci-az-local-azure-sql-cloud-mssql:1433`, `floci-az-local-azure-pg-cloud-postgres:5432` |
+| GCP   | `http://<api-name>-<token>.us-central1.run.localhost.floci.io:4588` | `floci-gcp-local-gcp-compute-floci-local-us-central1-a-mssql-vm:1433` (SQL Server); Cloud SQL container IP, port 5432 (`terraform output` in `gcp\10-databases`) |
+
+`*.localhost.floci.io` resolves to `127.0.0.1` in public DNS. Logins: `DevUser` with `CLOUD_DB_DEVUSER_PASSWORD`. Traces appear in Grafana/Tempo as `<cloud>-cloud-api-*`, with `cloud.provider` set.
+
+### Emulator behaviour worth knowing
+
+- **SQL Server admin login.** On AWS RDS and Azure SQL, Floci applies the admin password to the engine's `sa` login; the master login (`cloudadmin`) exists but has no server rights. The loader therefore falls back to `sa` (and leaves it enabled). On GCP, `sa` is disabled after `DevUser` is created, as the local builder does.
+- **GCP Cloud SQL admin login** is fixed at `postgres`/`postgres` in floci-gcp, whatever root password is sent.
+- **GCP VM name.** The SQL Server VM is named `mssql-vm` (not `cloud-mssql`): floci-gcp names its container `floci-gcp-local-gcp-compute-<project>-<zone>-<instance>`, and Docker DNS only resolves names up to 63 characters. floci-gcp's machine-type catalogue has only `e2-standard-2`, `n2-standard-4/8`, `c3-standard-4` and `g2-*`; `e2-standard-2` (8 GB) is used. The `cos-stable` boot image is not in its image catalogue and falls back to `debian:12`, which is fine because SQL Server runs from the container declaration.
+- **Azure TLS.** `local-azure` runs with `FLOCI_AZ_TLS_ENABLED=true` because the azurerm provider requires HTTPS. Port 4577 still answers plain HTTP as well. `Docker-clouds-builder.bat` saves the CA certificate to `terraform\tls\floci-az.pem`; clients using HTTPS must trust it (`/_floci/tls-cert`).
+- **Azure front door: Container Apps ingress, not APIM.** floci-az's APIM gateway forwards no client headers to the backend, so the `Authorization` header never reaches the APIs and every secured call returns 401 (it also cannot reach a Container App by name). Container Apps ingress on port 4577 routes by `Host` header and passes headers through. `FLOCI_AZ_SERVICES_CONTAINER_APPS_DNS_SUFFIX=localhost` makes the app FQDNs end in `.localhost`, which browsers and `curl` resolve to `127.0.0.1`. Use plain HTTP for these URLs (the TLS certificate's `*.localhost` covers one label only).
+- **Secrets.** ECS task definitions and Cloud Run services carry the DB password as a plain env var (Cloud Run secrets are not emulated); Container Apps use a secret reference. Dev-only stack.
+- **The databases are owned by the loader**, not Terraform, so they do not appear in the RDS / ARM / Cloud SQL database listings.
+
+### Start and stop
+
+| Script | What it does |
+| ------ | ------------ |
+| `Docker-clouds-<cloud>-stop.bat` | Stops `local-<cloud>` first (so it cannot replace containers), then every container it manages: databases, APIs, console. Deletes nothing; data, images and Terraform state are kept. `local-keycloak` and the OTEL stack keep running. |
+| `Docker-clouds-<cloud>-start.bat [-norebuild]` | Starts `local-keycloak` and the OTEL stack if needed, then `local-<cloud>`, then any of its managed containers that are still stopped. If the cloud is deployed, it checks every API (health + authenticated data probe). When an API does not answer, it re-runs `Docker-clouds-<cloud>-dbapi-builder.bat`, which repairs the databases and reloads Northwind; with `-norebuild` it only reports. |
+
+`<cloud>` is `aws`, `azure` or `gcp`. The scripts respect `Clouds\.platform`, as the builders do. The shared code is `scripts\cloud-lifecycle.bat`.
+
+### Restarts (what the emulators do)
+
+After `docker restart local-<cloud>` or a host reboot, use `Docker-clouds-<cloud>-start.bat` (or re-run that cloud's dbapi builder). `Docker-StartAll.bat` only starts the selected emulators; it does not re-apply Terraform or check the APIs.
+
+- **AWS:** after `docker restart local-aws` the RDS containers and new ECS tasks came back on their own, data intact, and the gateways answered. But Floci leaves the old tasks' network interfaces behind, which blocks deleting the subnets on `-destroy`; the builder then drops the VPC and subnets from the Terraform state with a warning.
+- **GCP:** after `docker restart local-gcp`, Cloud Run and Cloud SQL came back, but the SQL Server container (`<vm>_klt`) did not. The GCP builder detects this and replaces the VM (`-replace=google_compute_instance.mssql`), then reloads Northwind. After a stop/start, the VM's SQL Server comes back empty (no persistent disk), so `Docker-clouds-gcp-start.bat` re-runs the builder.
+- **Azure:** after `docker restart local-azure` the Container Apps replicas came back, but the SQL Server and PostgreSQL data-plane containers did not (`/connect` reports not ready / port 0). The Azure builder detects this and replaces both servers (`terraform apply -replace=...`), then reloads Northwind.
 
 ## Connecting Clients
 

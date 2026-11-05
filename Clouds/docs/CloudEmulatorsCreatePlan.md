@@ -268,3 +268,7 @@ The console sidecars are not started here. They are created on demand when `/_fl
 - A root-level `Clouds-builder.lnk` shortcut (`.lnk` files are git-ignored and created by hand).
 - Publishing secondary protocol ports (AMQP, Kafka, Cassandra, Gremlin, MongoDB).
 - Wiring the Pilot APIs to use the emulated cloud services.
+
+## 7. Constraints
+
+If Docker is nt orunning or is not available for some other reason, stop processing and notify the user.
