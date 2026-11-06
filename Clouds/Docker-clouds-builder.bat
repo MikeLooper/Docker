@@ -185,7 +185,7 @@ for /L %%I in (1,1,60) do (
 	) else (
 		curl.exe -s -o nul "%WAIT_URL%" >nul 2>nul && goto wait_ready
 	)
-	timeout /t 2 /nobreak >nul
+	ping -n 3 127.0.0.1 >nul
 )
 echo %WAIT_NAME% did not become ready in time.
 exit /b 1
