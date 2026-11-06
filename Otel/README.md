@@ -116,7 +116,7 @@ Easy-to-use, and high-scale distributed tracing backend.
 
 #### API Documentation
 
-- https://grafana.com/docs/tempo/latest/)
+- https://grafana.com/docs/tempo/latest/
 - https://grafana.com/docs/tempo/latest/api_docs/
 - https://github.com/grafana/tempo
 - https://github.com/grafana/tempo/tree/main/example/docker-compose
