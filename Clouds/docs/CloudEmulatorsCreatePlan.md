@@ -271,4 +271,4 @@ The console sidecars are not started here. They are created on demand when `/_fl
 
 ## 7. Constraints
 
-If Docker is nt orunning or is not available for some other reason, stop processing and notify the user.
+If Docker is not running or is not available for some other reason, stop processing and notify the user.
