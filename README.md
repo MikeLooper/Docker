@@ -153,6 +153,8 @@ Clouds\Docker-clouds-<cloud>-start.bat -norebuild
 
 See [Starting and stopping one cloud](./Clouds/README.md#starting-and-stopping-one-cloud) for details.
 
+To test the APIs deployed in a cloud emulator, see [Cloud emulator APIs](#cloud-emulator-apis).
+
 ### Dozzle
 
 A real time Docker log viewer or partition logs.
@@ -224,6 +226,81 @@ Follow the directions in the [Uptime Kuma README](./UptimeKuma/README.md).
 A .NET Core API that contain utility tooling (MS SQL Server or PostgreSQL)
 
 Follow the directions in the [Utility (DotNet) README](./Utility_dotnet/README.md).
+
+## Bruno Tests
+
+The APIs hosted in this workspace are tested with [Bruno](https://www.usebruno.com/) collections. The scripts that run them, and their reports, are in the `Testing` folder.
+
+| Script | Tests |
+| ------ | ----- |
+| `Testing\RunBrunoTests.bat` | The APIs running in local Docker containers, and PilotMcpServer |
+| `Testing\RunBrunoCloudTests-aws.bat` | The Pilot APIs deployed in the AWS emulator |
+| `Testing\RunBrunoCloudTests-azure.bat` | The Pilot APIs deployed in the Azure emulator |
+| `Testing\RunBrunoCloudTests-gcp.bat` | The Pilot APIs deployed in the GCP emulator |
+
+Prerequisites:
+
+- Node.js. The scripts use the Bruno CLI (`bru`) if it is installed globally (`npm install -g @usebruno/cli`), otherwise they run it through `npx`.
+- `local-keycloak` running. The collections get their bearer token from it, for both the Docker and the cloud APIs.
+- A `.env` file in each collection folder, copied from its `.env.example`, with `IDP_HOST_PASSWORD` set.
+
+### Collections
+
+Most collections live in the repository of the API they test. Each Bruno environment points a collection at one deployment of its API.
+
+| Collection | Location | Environments |
+| ---------- | -------- | ------------ |
+| PilotApiDotNet  | `PilotApiDotNet\test\Bruno\PilotApiDotNet`   | `Docker - SQL Server`, `Docker - PostgreSQL`, `AWS - ...`, `Azure - ...`, `GCP - ...`, `Local` |
+| PilotApiJava    | `PilotApiJava\test\Bruno\PilotApiJava`       | `Docker - SQL Server`, `Docker - PostgreSQL`, `AWS - ...`, `Azure - ...`, `GCP - ...`, `Local` |
+| PilotApiPython  | `PilotApiPython\tests\Bruno\PilotApiPython`  | `Docker - SQL Server`, `Docker - PostgreSQL`, `AWS - ...`, `Azure - ...`, `GCP - ...`, `Local` |
+| PilotUtilityApi | `PilotUtilityApi\test\Bruno\PilotUtilityApi` | `Docker - SQL Server`, `Docker - PostgreSQL`, `Local` |
+| PilotApiMsDab   | `Docker\Testing\MsDab\PilotApiMsDab`         | `Docker - SQL Server`, `Docker - PostgreSQL` |
+| PythonAPIWithClaude | `PythonAPIWithClaude\tests\Bruno\PythonAPIWithClaude` | `Docker`, `Local` |
+| PilotMcpServer  | `PilotMcpServer\tests\Bruno`                 | One per Pilot API deployment (`dotnet-mssql`, `java-postgres`, ...) |
+
+Paths outside `Docker\` are relative to `C:\Working\Storage\Dev\GitHub`. Each cloud has a `SQL Server` and a `PostgreSQL` environment (for example `AWS - SQL Server`), which test `cloud-api-<lang>-mssql` and `cloud-api-<lang>-postgres` in that emulator.
+
+### Docker APIs
+
+```
+Testing\RunBrunoTests.bat
+Testing\RunBrunoTests.bat PostgreSQL
+Testing\RunBrunoTests.bat PostgreSQL PilotApiDotNet
+Testing\RunBrunoTests.bat McpServer
+```
+
+Runs every collection against the Docker containers, in this order: `Docker - PostgreSQL`, `Docker - SQL Server`, `Docker`, then PilotMcpServer once per Pilot API deployment. The first argument selects one environment (`PostgreSQL`, `SqlServer`, `Docker`, `McpServer` or one MCP deployment) and the second one collection. The containers must already be running. `RunBrunoTests.lnk` in the repository root starts the full run.
+
+### Cloud emulator APIs
+
+```
+Testing\RunBrunoCloudTests-aws.bat
+Testing\RunBrunoCloudTests-azure.bat PilotApiJava
+Testing\RunBrunoCloudTests-gcp.bat -norebuild
+```
+
+Each script tests the six Pilot APIs deployed in one emulator:
+
+1. Starts the emulator with `Clouds\Docker-clouds-<cloud>-start.bat`. That script checks every API and, if one does not answer, re-runs the cloud's dbapi builder to repair it. With `-norebuild` it only reports the problem, and the tests are skipped.
+2. Runs PilotApiDotNet, PilotApiJava and PilotApiPython against `<Cloud> - SQL Server`, then `<Cloud> - PostgreSQL`.
+3. Stops the emulator with `Clouds\Docker-clouds-<cloud>-stop.bat`. This step always runs, even when step 1 or 2 failed.
+
+An optional argument selects one collection (`PilotApiDotNet`, `PilotApiJava` or `PilotApiPython`). The APIs must have been deployed once with `Clouds\Docker-clouds-<cloud>-dbapi-builder.bat` (see [Databases and APIs](./Clouds/README.md#databases-and-apis)). Otherwise every collection is reported as `NOT_DEPLOYED`.
+
+The cloud API URLs change whenever an API is redeployed (AWS API ids, the Azure environment hash, the GCP Cloud Run token). The script therefore reads them from the Terraform state (output `api_base_urls` in `Clouds\terraform\<cloud>\20-apis`) and passes each one to Bruno as `--env-var Host=<url>/`. The `Host` values in the `<Cloud> - ...` environment files are only the last known URLs, for use in the Bruno app. After a redeploy, copy the current URLs from the start script's output.
+
+The shared code is `Testing\scripts\RunBrunoCloudTests.bat`. It builds the summary report with the report code in `Testing\RunBrunoTests.bat`, so both kinds of run produce the same report.
+
+### Reports
+
+Each run writes to its own folder under `Testing\BrunoReports` (git-ignored): `<yyyyMMdd_HHmmss>` for `RunBrunoTests.bat`, `<yyyyMMdd_HHmmss>_<cloud>` for the cloud scripts. The folder holds:
+
+- `Summary.html`: every collection run, with request, test and assertion totals and the failures of each request. It opens in the default browser when the run ends.
+- `<Collection>_<Tag>.html`, `.json` and `.xml`: the Bruno HTML, JSON and JUnit reports of one run.
+- `runs.txt`: the list of runs that the summary is built from.
+- Cloud runs only: `api-urls.txt`, the API base URLs that were tested.
+
+The exit code is `0` when every collection passed, and `1` otherwise.
 
 ## Future Subjects
 

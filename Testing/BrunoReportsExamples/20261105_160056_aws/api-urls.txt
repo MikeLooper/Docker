@@ -1,0 +1,6 @@
+cloud-api-dotnet-mssql http://62aab7fc43.execute-api.localhost.floci.io:4566
+cloud-api-dotnet-postgres http://42018c7e25.execute-api.localhost.floci.io:4566
+cloud-api-java-mssql http://5b92b6ec6a.execute-api.localhost.floci.io:4566
+cloud-api-java-postgres http://3f234287cc.execute-api.localhost.floci.io:4566
+cloud-api-python-mssql http://7230b4425c.execute-api.localhost.floci.io:4566
+cloud-api-python-postgres http://00f88653ea.execute-api.localhost.floci.io:4566
