@@ -1,0 +1,86 @@
+# Local cloud emulators (Floci): AWS, Azure, GCP
+
+services:
+  local-aws:
+    image: floci/floci:latest
+    container_name: local-aws
+    mem_limit: 2g
+    restart: unless-stopped
+    user: root
+    environment:
+      - FLOCI_STORAGE_MODE=hybrid
+      - FLOCI_STORAGE_PERSISTENT_PATH=/app/data
+      - FLOCI_SERVICES_UI_CONTAINER_NAME=floci-aws-ui
+      - FLOCI_SERVICES_UI_PORT=4500
+      - FLOCI_SERVICES_UI_DOCKER_NETWORK=pilot-net
+      # Databases and APIs (see docs/CloudEmulatorsDbAndApi.md, Phase 1)
+      - FLOCI_SERVICES_DOCKER_NETWORK=pilot-net
+      - FLOCI_SERVICES_ECS_DOCKER_NETWORK=pilot-net
+      - FLOCI_SERVICES_RDS_ENDPOINT_HOST=local-aws
+      - FLOCI_SERVICES_RDS_PROXY_BASE_PORT=7001
+      - FLOCI_SERVICES_RDS_PROXY_MAX_PORT=7010
+      - FLOCI_SERVICES_RDS_DEFAULT_SQL_SERVER_IMAGE=mcr.microsoft.com/mssql/server:2025-latest
+    volumes:
+      - local-aws-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4566:4566"   # AWS API (all services)
+      - "7001-7010:7001-7010"   # RDS proxy (host tools such as SSMS / psql)
+    networks:
+      - pilot-net
+
+  local-azure:
+    image: floci/floci-az:latest
+    container_name: local-azure
+    mem_limit: 2g
+    restart: unless-stopped
+    environment:
+      - FLOCI_AZ_STORAGE_MODE=hybrid
+      - FLOCI_AZ_STORAGE_PATH=/app/data
+      - FLOCI_AZ_UI_PORT=4501
+      - FLOCI_AZ_DOCKER_RESOURCE_NAMESPACE=local-azure
+      # Databases and APIs (see docs/CloudEmulatorsDbAndApi.md, Phase 2).
+      # TLS is required by the azurerm Terraform provider; port 4577 still answers plain HTTP too.
+      - FLOCI_AZ_TLS_ENABLED=true
+      - FLOCI_AZ_SERVICES_SQL_DATA_PLANE_PROVIDER=managed
+      - FLOCI_AZ_SERVICES_SQL_ACCEPT_EULA=Y
+      - FLOCI_AZ_SERVICES_SQL_IMAGE=mcr.microsoft.com/mssql/server:2025-latest
+      - FLOCI_AZ_SERVICES_CONTAINER_APPS_MOCKED=false
+      - FLOCI_AZ_SERVICES_CONTAINER_APPS_DNS_SUFFIX=localhost   # app URLs resolve to 127.0.0.1
+    volumes:
+      - local-azure-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4577:4577"   # Azure API (all HTTP services)
+    networks:
+      - pilot-net
+
+  local-gcp:
+    image: floci/floci-gcp:latest
+    container_name: local-gcp
+    mem_limit: 2g
+    restart: unless-stopped
+    environment:
+      - FLOCI_GCP_STORAGE_MODE=hybrid
+      - FLOCI_GCP_STORAGE_PERSISTENT_PATH=/app/data
+      - FLOCI_GCP_SERVICES_DOCKER_NETWORK=pilot-net
+      - FLOCI_GCP_DOCKER_RESOURCE_NAMESPACE=local-gcp
+      # Databases and APIs (see docs/CloudEmulatorsDbAndApi.md, Phase 3): run VMs as containers.
+      - FLOCI_GCP_SERVICES_COMPUTE_MOCK=false
+    volumes:
+      - local-gcp-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4588:4588"   # GCP APIs (gRPC + REST)
+    networks:
+      - pilot-net
+
+volumes:
+  local-aws-data:
+  local-azure-data:
+  local-gcp-data:
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

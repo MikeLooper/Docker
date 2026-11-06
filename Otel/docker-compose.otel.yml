@@ -6,6 +6,7 @@ services:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
     mem_limit: 1g
+    restart: unless-stopped
     volumes:
       - ./otel-collector.yaml:/etc/otelcol-contrib/config.yaml
     ports:
@@ -23,6 +24,7 @@ services:
     image: grafana/tempo:latest
     container_name: local-tempo
     mem_limit: 1g
+    restart: unless-stopped
     volumes:
       - ./tempo.yaml:/etc/tempo/config.yaml
       - tempo-data:/var/tempo
@@ -39,6 +41,7 @@ services:
     image: grafana/mimir:latest
     container_name: local-mimir
     mem_limit: 1g
+    restart: unless-stopped
     volumes:
       - ./mimir.yaml:/etc/mimir/config.yaml
       - mimir-data:/data
@@ -55,6 +58,7 @@ services:
     image: grafana/loki:latest
     container_name: local-loki
     mem_limit: 1g
+    restart: unless-stopped
     volumes:
       - ./loki.yaml:/etc/loki/config.yaml
       - loki-data:/loki
@@ -71,6 +75,7 @@ services:
     image: grafana/grafana:latest
     container_name: local-grafana
     mem_limit: 2g
+    restart: unless-stopped
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
