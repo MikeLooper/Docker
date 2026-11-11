@@ -63,6 +63,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `Homepage\Docker-Homepage-builder.bat`
 - `PostgreSQL\Docker-PostgreSQL-builder.bat`
 - `SqlServer\Docker-SQLServer-builder.bat`
+- `Tooling\Docker-SkillSpector-builder.bat` (helpers in `Tooling\SkillSpector\`)
 - `Ui_angular\Docker-Ui-angular-builder.bat`
 - `UptimeKuma\Docker-UptimeKuma-builder.bat`
 - `Utility_dotnet\Docker-Utility-dornet-builder.bat`
@@ -209,6 +210,12 @@ A PostgreSQL database installation.
 
 Follow the directions in the [PostgreSQL README](./PostgreSQL/README.md).
 
+### SkillSpector
+
+NVIDIA's security scanner for AI agent skills (for example, a Claude Code skill folder with a `SKILL.md`). It runs as a command-line tool in the `local-skillspector` container.
+
+Follow the directions in the [Tooling README](./Tooling/README.md#skillspector).
+
 ### SQL Server
 
 A Microsoft SQL Server database installation.
@@ -269,7 +276,7 @@ Testing\RunBrunoTests.bat PostgreSQL PilotApiDotNet
 Testing\RunBrunoTests.bat McpServer
 ```
 
-Runs every collection against the Docker containers, in this order: `Docker - PostgreSQL`, `Docker - SQL Server`, `Docker`, then PilotMcpServer once per Pilot API deployment. The first argument selects one environment (`PostgreSQL`, `SqlServer`, `Docker`, `McpServer` or one MCP deployment) and the second one collection. The containers must already be running. `RunBrunoTests.lnk` in the repository root starts the full run.
+Runs every collection against the Docker containers, in this order: `Docker - PostgreSQL`, `Docker - SQL Server`, `Docker`, then PilotMcpServer once per Pilot API deployment. The first argument selects one environment (`PostgreSQL`, `SqlServer`, `Docker`, `McpServer` or one MCP deployment) and the second one collection. The containers must already be running.
 
 ### Cloud emulator APIs
 
@@ -355,6 +362,7 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |  √      | Grafana                 | local-grafana               | 3000        | 3000        | http://localhost:3000   |
 |  √      | Homepage                | local-homepage              | 3000        | 11131       | http://localhost:11131  |
 |  √      | PostgreSQL              | local-postgres              | 5432        | 5432        |                         |
+|  √      | SkillSpector (CLI)      | local-skillspector          |             |             | (no ports; see [Tooling README](./Tooling/README.md#skillspector)) |
 |  √      | SQL Server              | local-mssql                 | 1433        | 1433        |                         |
 |  √      | Uptime Kuma             | local-uptimekuma            | 3001        | 3001        | http://localhost:3001   |
 | TBD     | Komodo                  | local-komodo                | 9120        | 9120        |                         |
