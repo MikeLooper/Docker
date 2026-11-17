@@ -107,7 +107,7 @@ docker start pilot-ui
 
 ECHO .
 ECHO Compliance Reviewer ...
-docker start compliance-reviewer
+docker start local-compliance-reviewer
 
 ECHO .
 ECHO Start Homepage ...
