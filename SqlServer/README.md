@@ -67,7 +67,7 @@ Then replace values in `..\secrets\sqlserver.env`:
 
 ```bat
 set "IMAGE_FILE=mcr.microsoft.com/mssql/server:2025-latest"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
+set "WORKING_DIR=%CD%\..\..\Working"
 set "SA_PASSWORD=replace-me"
 set "DEV_USER_PASSWORD=replace-me"
 docker pull "%IMAGE_FILE%"

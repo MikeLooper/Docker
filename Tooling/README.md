@@ -6,7 +6,7 @@ Developer tools that run locally in Docker containers. Each tool has a builder s
 | --- | --- | --- | --- | --- |
 | [SkillSpector](#skillspector) | Security scanner for AI agent skills | `Docker-SkillSpector-builder.bat` | `SkillSpector\` | `local-skillspector` |
 
-Run the commands below from the repository root (`C:\Working\Storage\Dev\GitHub\Docker`).
+Run the commands below from the repository root (the folder that holds the top-level `README.md`). The GitHub root is the parent of the repository root (`..`).
 
 ---
 
@@ -38,10 +38,10 @@ The image's entrypoint is the one-shot `skillspector` CLI. So the container is k
 
 | Host | Container | Access |
 | --- | --- | --- |
-| `C:\Working\Storage\Dev\GitHub` | `/scan` | read-only |
-| `C:\Working\Storage\Dev\GitHub\Working\skillspector-reports` | `/reports` | read-write |
+| GitHub root (`..`) | `/scan` | read-only |
+| `..\Working\skillspector-reports` | `/reports` | read-write |
 
-The helpers translate Windows paths under `C:\Working\Storage\Dev\GitHub` to `/scan/...`. For a path anywhere else, they scan in a throwaway container (`docker run --rm`) that mounts the path's parent folder.
+The helpers translate Windows paths under the GitHub root to `/scan/...`. For a path anywhere else, they scan in a throwaway container (`docker run --rm`) that mounts the path's parent folder.
 
 The scan helpers start the container if it is stopped. If it does not exist, they ask you to run the builder.
 
@@ -69,21 +69,21 @@ Tooling\Docker-SkillSpector-builder.bat
 Scan one skill file, or a whole skill folder (its `references\` and scripts included):
 
 ```
-Tooling\SkillSpector\SkillSpector-scan.bat C:\Working\Storage\Dev\GitHub\AI-Working\.claude\skills\domain-feature-scaffold\SKILL.md
-Tooling\SkillSpector\SkillSpector-scan.bat C:\Working\Storage\Dev\GitHub\AI-Working\.claude\skills\domain-feature-scaffold
+Tooling\SkillSpector\SkillSpector-scan.bat ..\AI-Working\.claude\skills\domain-feature-scaffold\SKILL.md
+Tooling\SkillSpector\SkillSpector-scan.bat ..\AI-Working\.claude\skills\domain-feature-scaffold
 ```
 
-Save reports to `C:\Working\Storage\Dev\GitHub\Working\skillspector-reports`:
+Save reports to `..\Working\skillspector-reports`:
 
 ```
-Tooling\SkillSpector\SkillSpector-report.bat C:\Working\Storage\Dev\GitHub\AI-Working\.claude\skills\domain-feature-scaffold
+Tooling\SkillSpector\SkillSpector-report.bat ..\AI-Working\.claude\skills\domain-feature-scaffold
 ```
 
 Common options:
 
 ```
 REM Scan every skill under a folder (up to 50)
-Tooling\SkillSpector\SkillSpector-scan.bat C:\Working\Storage\Dev\GitHub\AI-Working\.claude\skills --recursive --max-skills 50
+Tooling\SkillSpector\SkillSpector-scan.bat ..\AI-Working\.claude\skills --recursive --max-skills 50
 
 REM JSON or SARIF to the console; verbose output
 Tooling\SkillSpector\SkillSpector-scan.bat <skill> -f json

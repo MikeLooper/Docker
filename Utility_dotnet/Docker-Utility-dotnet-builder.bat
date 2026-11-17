@@ -6,8 +6,10 @@ REM Docker - Setup - API (DotNet) - Compose-first
 pushd "%~dp0"
 
 set "IMAGE_FILE=mcr.microsoft.com/dotnet/aspnet:10.0"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
-set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
+REM GitHub root = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..") do set "GITHUB_ROOT=%%~fI"
+set "WORKING_DIR_WIN=%GITHUB_ROOT%\Working"
+set "WORKING_DIR=%WORKING_DIR_WIN:\=/%"
 set "COMPOSE_FILE=%~dp0docker-compose.utility-dotnet.yml"
 set "COMPOSE_PROJECT=utility-api-dotnet"
 set "UTILITY_DOTNET_DIR=%~dp0..\..\PilotUtilityApi"

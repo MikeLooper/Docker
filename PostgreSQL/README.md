@@ -64,7 +64,7 @@ Then replace values in `..\secrets\postgresql.env`:
 
 ```bat
 set "IMAGE_FILE=postgres:latest"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
+set "WORKING_DIR=%CD%\..\..\Working"
 set "DEV_USER_PASSWORD=replace-me"
 docker pull "%IMAGE_FILE%"
 docker compose -f docker-compose.postgresql.yml -p local-postgres up -d --force-recreate

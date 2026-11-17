@@ -4,7 +4,7 @@ setlocal EnableExtensions DisableDelayedExpansion
 REM SkillSpector - scan a skill and save Markdown and JSON reports.
 REM
 REM Usage: SkillSpector-report.bat <skill-path-or-git-url> [skillspector scan options]
-REM Reports are written to C:\Working\Storage\Dev\GitHub\Working\skillspector-reports
+REM Reports are written to ..\Working\skillspector-reports (next to this repository)
 REM as <name>-<yyyyMMdd-HHmmss>.md and .json, and the folder is opened.
 REM Exit code: 0 = score 50 or less, 1 = score above 50 (or a strict gate fired), 2 = error.
 

@@ -10,8 +10,9 @@ REM ---------------------------------------------------------------------------
 :init
 set "CONTAINER_NAME=local-skillspector"
 set "IMAGE_NAME=local-skillspector:latest"
-set "SCAN_ROOT=C:\Working\Storage\Dev\GitHub"
-set "REPORTS_DIR=C:\Working\Storage\Dev\GitHub\Working\skillspector-reports"
+REM SCAN_ROOT = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..\..") do set "SCAN_ROOT=%%~fI"
+set "REPORTS_DIR=%SCAN_ROOT%\Working\skillspector-reports"
 set "BUILDER=%~dp0..\Docker-SkillSpector-builder.bat"
 set "SECRETS_FILE=%~dp0..\..\secrets\skillspector.env"
 exit /b 0

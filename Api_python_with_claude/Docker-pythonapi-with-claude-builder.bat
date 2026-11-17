@@ -6,13 +6,15 @@ REM Docker - Setup - API (Python with Claude) - Compose-first
 pushd "%~dp0"
 
 set "IMAGE_FILE=python:3.14-slim"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
-set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
+REM GitHub root = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..") do set "GITHUB_ROOT=%%~fI"
+set "WORKING_DIR_WIN=%GITHUB_ROOT%\Working"
+set "WORKING_DIR=%WORKING_DIR_WIN:\=/%"
 set "COMPOSE_FILE=%~dp0docker-compose.api-python-with-claude.yml"
 set "COMPOSE_PROJECT=python-api-with-claude"
 set "CONTAINER_NAME=python-api-with-claude"
 set "BUILD_CONTEXT=%WORKING_DIR_WIN%\api-python-with-claude"
-set "SOURCE_DIR=C:\Working\Storage\Dev\GitHub\PythonAPIWithClaude"
+set "SOURCE_DIR=%GITHUB_ROOT%\PythonAPIWithClaude"
 set "SECRETS_FILE=%~dp0..\secrets\api-python-with-claude.env"
 set "PYTHON_CLAUDE_PORT=11111"
 

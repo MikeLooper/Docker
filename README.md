@@ -18,16 +18,16 @@ Docker documentation:
 Open a command line window.
 The commands found in this, and related, READMEs will be executed in this command line window.
 
-Change to the current directory.
+Change to the root of this repository (the folder that holds this README).
   
 ```
-cd C:\Working\Storage\Dev\GitHub\Docker
+cd /d <path-to-this-repository>
 ```
 
 Create a new working directory (if not already existing):
 
 ```
-if not exist C:\Working\Storage\Dev\GitHub\Working mkdir C:\Working\Storage\Dev\GitHub\Working
+if not exist ..\Working mkdir ..\Working
 ```
 
 Then, execute the networking command listed in the *Network* section below.
@@ -72,6 +72,23 @@ Each script is the primary entry point for its stack and is kept aligned with it
 
 On Windows, the API builder scripts for .NET, Java, Python, Python with Claude, and Data API builder automatically probe and select open
 host ports within predefined ranges when preferred ports are reserved or in use.
+
+## Related GitHub Repositories
+
+Several scripts consume source code from sister repositories cloned next to this one (for example, `..\PilotApiDotNet`).
+Clone each repository the scripts need into the parent folder of this repository (`..`) before running them.
+The scripts locate that parent folder from their own location, so it can be anywhere on any drive.
+`..\Working` is a scratch area, not a repository.
+
+| Local directory | GitHub repository | Scripts that use it |
+| --- | --- | --- |
+| `PilotApiDotNet` | [MikeLooper/PilotApiDotNet](https://github.com/MikeLooper/PilotApiDotNet) | `Api_dotnet\Docker-Api-dotnet-builder.bat`<br>`Clouds\Docker-clouds-api-images-builder.bat`<br>`Testing\RunBrunoTests.bat`<br>`Testing\scripts\RunBrunoCloudTests.bat` |
+| `PilotApiJava` | [MikeLooper/PilotApiJava](https://github.com/MikeLooper/PilotApiJava) | `Api_java\Docker-Api-java-builder.bat`<br>`Clouds\Docker-clouds-api-images-builder.bat`<br>`Testing\RunBrunoTests.bat`<br>`Testing\scripts\RunBrunoCloudTests.bat` |
+| `PilotApiPython` | [MikeLooper/PilotApiPython](https://github.com/MikeLooper/PilotApiPython) | `Api_python\Docker-Api-python-builder.bat`<br>`Clouds\Docker-clouds-api-images-builder.bat`<br>`Testing\RunBrunoTests.bat`<br>`Testing\scripts\RunBrunoCloudTests.bat` |
+| `PilotMcpServer` | [MikeLooper/PilotMcpServer](https://github.com/MikeLooper/PilotMcpServer) | `Testing\RunBrunoTests.bat` |
+| `PilotUiAngular` | [MikeLooper/PilotUiAngular](https://github.com/MikeLooper/PilotUiAngular) | `Ui_angular\Docker-Ui-angular-builder.bat` |
+| `PilotUtilityApi` | [MikeLooper/PilotUtilityApi](https://github.com/MikeLooper/PilotUtilityApi) | `Utility_dotnet\Docker-Utility-dotnet-builder.bat`<br>`Testing\RunBrunoTests.bat` |
+| `PythonAPIWithClaude` | [MikeLooper/PythonAPIWithClaude](https://github.com/MikeLooper/PythonAPIWithClaude) | `Api_python_with_claude\Docker-pythonapi-with-claude-builder.bat`<br>`Testing\RunBrunoTests.bat` |
 
 ## Port Binding
 
@@ -265,7 +282,7 @@ Most collections live in the repository of the API they test. Each Bruno environ
 | PythonAPIWithClaude | `PythonAPIWithClaude\tests\Bruno\PythonAPIWithClaude` | `Docker`, `Local` |
 | PilotMcpServer  | `PilotMcpServer\tests\Bruno`                 | One per Pilot API deployment (`dotnet-mssql`, `java-postgres`, ...) |
 
-Paths outside `Docker\` are relative to `C:\Working\Storage\Dev\GitHub`. Each cloud has a `SQL Server` and a `PostgreSQL` environment (for example `AWS - SQL Server`), which test `cloud-api-<lang>-mssql` and `cloud-api-<lang>-postgres` in that emulator.
+Paths outside `Docker\` are relative to the parent folder of this repository (`..`). Each cloud has a `SQL Server` and a `PostgreSQL` environment (for example `AWS - SQL Server`), which test `cloud-api-<lang>-mssql` and `cloud-api-<lang>-postgres` in that emulator.
 
 ### Docker APIs
 

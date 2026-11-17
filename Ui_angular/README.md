@@ -25,7 +25,7 @@ cd ..
 - Local clone of [PilotUiAngular](https://github.com/MikeLooper/PilotUiAngular) at:
 
 ```
-C:\Working\Storage\Dev\GitHub\PilotUiAngular
+..\..\PilotUiAngular
 ```
 
 ## Files
@@ -76,7 +76,7 @@ Docker-Ui-angular-builder.bat
 3. Backs up `src\environments\environment.ts`, regenerates it from `secrets\ui-angular.env`,
    runs `npm ci` and `npm run build:prod`, then restores the original file.
 4. Copies `dist\PilotUiAngular\browser` and `nginx.conf` into the isolated build context
-   `C:\Working\Storage\Dev\GitHub\Working\ui-angular`.
+   `..\..\Working\ui-angular`.
 5. Runs `docker compose -p pilot-ui-angular up -d --build --force-recreate`, which builds the
    `pilot-ui-angular:1.0` image and starts the `pilot-ui` container on host port `11801`.
 6. Opens `http://localhost:11801/` in the system browser.
@@ -93,7 +93,7 @@ and prints the replacement.
 Run from this repository folder after the Angular bundle has been staged:
 
 ```bat
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
+set "WORKING_DIR=%CD%\..\..\Working"
 set "CURRENT_DATE=2026-08-03 00:00:00Z"
 set "UI_ANGULAR_PORT=11801"
 docker compose -f docker-compose.ui-angular.yml -p pilot-ui-angular up -d --build --force-recreate

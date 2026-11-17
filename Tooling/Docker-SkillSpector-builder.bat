@@ -18,11 +18,13 @@ if not "%~1"=="" set "SKILLSPECTOR_REF=%~1"
 set "CONTAINER_NAME=local-skillspector"
 set "IMAGE_NAME=local-skillspector"
 set "IMAGE_LABEL=local.tool=skillspector"
-set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
+REM GitHub root = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..") do set "GITHUB_ROOT=%%~fI"
+set "WORKING_DIR_WIN=%GITHUB_ROOT%\Working"
 set "SOURCE_DIR=%WORKING_DIR_WIN%\skillspector-src"
 set "REPORTS_DIR=%WORKING_DIR_WIN%\skillspector-reports"
 REM Host folder mounted read-only at /scan; skills under it can be scanned by path.
-set "SCAN_ROOT=C:\Working\Storage\Dev\GitHub"
+set "SCAN_ROOT=%GITHUB_ROOT%"
 set "SECRETS_FILE=%~dp0..\secrets\skillspector.env"
 
 REM 0. Prerequisites.

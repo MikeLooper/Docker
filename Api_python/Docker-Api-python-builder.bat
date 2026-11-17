@@ -6,8 +6,10 @@ REM Docker - Setup - API (Python) - Compose-first
 pushd "%~dp0"
 
 set "IMAGE_FILE=python:3.12-slim"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
-set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
+REM GitHub root = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..") do set "GITHUB_ROOT=%%~fI"
+set "WORKING_DIR_WIN=%GITHUB_ROOT%\Working"
+set "WORKING_DIR=%WORKING_DIR_WIN:\=/%"
 set "COMPOSE_FILE=%~dp0docker-compose.api-python.yml"
 set "COMPOSE_PROJECT=pilot-api-python"
 set "PILOT_PYTHON_DIR=%~dp0..\..\PilotApiPython"

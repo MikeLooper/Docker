@@ -135,7 +135,7 @@ If the docs contradict this prompt (for example about flag names or the MCP endp
 - Proxy authentication: disabling it is acceptable for local use only (`DANGEROUSLY_OMIT_AUTH=true`). Document this in the README.
 - The auto-connect URL format is `http://localhost:11171/?transport=streamable-http&serverUrl=<encoded MCP URL>&MCP_PROXY_PORT=56502`. Verify this against the pinned Inspector version.
 
-7. In the `Testing\MsDab` directory create Bruno tests, similar to those found in `C:\Working\Storage\Dev\GitHub\PilotApiDotNet\test\Bruno`, to validate the DAB endpoints.
+7. In the `Testing\MsDab` directory create Bruno tests, similar to those found in `..\PilotApiDotNet\test\Bruno`, to validate the DAB endpoints.
 - Use the same OpenCollection format (`opencollection.yml`) and environment names that `RunBrunoTests.bat` expects: `Docker - PostgreSQL` (`Host` = `http://localhost:11161/`) and `Docker - SQL Server` (`Host` = `http://localhost:11151/`).
 - Coverage: `/health`; REST for every entity (list, get by key including the composite key on `OrderDetails`, `$filter`, `$select`, `$orderby`, `$first` paging with `nextLink`); one GraphQL query per entity; one MCP call (`tools/list`) over Streamable HTTP.
 - Do not change data. Only include create, update, and delete tests if each one cleans up after itself, so that runs can be repeated.
