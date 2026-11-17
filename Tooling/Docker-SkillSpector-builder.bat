@@ -47,7 +47,7 @@ if errorlevel 1 (
 
 REM 3. Build the image with the repository's own Dockerfile.
 echo Building image %IMAGE_NAME% ...
-docker build --label %IMAGE_LABEL% -t %IMAGE_NAME%:%SKILLSPECTOR_REF% -t %IMAGE_NAME%:latest "%SOURCE_DIR%"
+docker build --label %IMAGE_LABEL% -t %IMAGE_NAME%:%SKILLSPECTOR_REF:/=-% -t %IMAGE_NAME%:latest "%SOURCE_DIR%"
 set "BUILD_RC=%ERRORLEVEL%"
 
 REM 4. Cleanup: the source clone is only needed for the build.
