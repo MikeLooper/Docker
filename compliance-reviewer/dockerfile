@@ -1,0 +1,121 @@
+# syntax=docker/dockerfile:1
+#
+# local-compliance-reviewer: the Compliance Reviewer (skills, reviewer scripts and testers),
+# its API (comp-review-api, port 12001) and its Web UI (comp-review-ui, port 12101) in one container.
+#
+# Build context (prepared by Docker-compliance-reviewer-builder.bat):
+#   reviewer/  a copy of ..\AIAssistants\compliance-reviewer_any-ai without build output
+#   docker/    this dockerfile, entrypoint.sh and spa_server.py
+
+ARG PYTHON_IMAGE=python:3.14-slim-trixie
+ARG NODE_IMAGE=node:24-trixie-slim
+ARG DOTNET_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0
+ARG JDK_IMAGE=eclipse-temurin:25-jdk
+ARG MAVEN_IMAGE=maven:3.9-eclipse-temurin-25
+
+FROM ${DOTNET_IMAGE} AS dotnet
+FROM ${JDK_IMAGE} AS jdk
+FROM ${MAVEN_IMAGE} AS maven
+FROM ${NODE_IMAGE} AS node
+
+# ---------------------------------------------------------------- Web UI: test and build
+FROM ${NODE_IMAGE} AS webui-build
+ARG RUN_TESTS=true
+WORKDIR /src/webui
+COPY reviewer/webui/package.json reviewer/webui/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY reviewer/webui/ ./
+RUN if [ "$RUN_TESTS" = "true" ]; then npm test; else echo "Web UI tests skipped"; fi \
+    && npm run build
+
+# ---------------------------------------------------------------- Runtime base
+FROM ${PYTHON_IMAGE} AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DOTNET_ROOT=/usr/share/dotnet \
+    DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+    DOTNET_NOLOGO=1 \
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 \
+    JAVA_HOME=/opt/java/openjdk \
+    MAVEN_HOME=/usr/share/maven \
+    DISABLE_AUTOUPDATER=1 \
+    PATH=/opt/venv/bin:/opt/java/openjdk/bin:/usr/share/maven/bin:/usr/share/dotnet:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# OS packages: native libraries for .NET (ICU, libstdc++), git for the reviewer, tini as PID 1.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl git libicu76 libstdc++6 procps tini zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+
+# Tool chains used by the testers to build the sample apps (.NET 10, JDK 25 + Maven),
+# and Node.js for the AI tool CLIs.
+COPY --from=dotnet /usr/share/dotnet /usr/share/dotnet
+COPY --from=jdk /opt/java/openjdk /opt/java/openjdk
+COPY --from=maven /usr/share/maven /usr/share/maven
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
+    && dotnet --version && java -version && mvn -v && node -v
+
+# AI tool CLIs that run the reviews: Claude Code and GitHub Copilot CLI.
+ARG CLAUDE_CODE_VERSION=latest
+ARG COPILOT_VERSION=latest
+RUN npm install -g --no-audit --no-fund "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" "@github/copilot@${COPILOT_VERSION}" \
+    && npm cache clean --force \
+    && claude --version && copilot --version
+
+# API dependencies in a virtual environment that is first on PATH, so "python" is this Python.
+COPY reviewer/api/requirements.txt /tmp/requirements.txt
+RUN python -m venv /opt/venv \
+    && pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r /tmp/requirements.txt \
+    && rm /tmp/requirements.txt
+
+# ---------------------------------------------------------------- API: unit tests
+FROM base AS api-test
+ARG RUN_TESTS=true
+# The whole workspace: some tests check the API against the real tester scripts in test/logic/.
+COPY reviewer/ /src/reviewer/
+WORKDIR /src/reviewer/api
+RUN if [ "$RUN_TESTS" = "true" ]; then \
+        python -m venv /tmp/testenv \
+        && /tmp/testenv/bin/pip install --no-cache-dir -q -r requirements-dev.txt \
+        && /tmp/testenv/bin/python -m pytest -q -p no:cacheprovider; \
+    else echo "API tests skipped"; fi \
+    && touch /tmp/api-tests.done
+
+# ---------------------------------------------------------------- Runtime
+FROM base AS runtime
+
+ARG DEPLOY_DATE
+LABEL local.stack="compliance-reviewer" \
+      local.deploy-date="${DEPLOY_DATE}"
+ENV APP_DEPLOY_DATE=${DEPLOY_DATE}
+
+RUN useradd --create-home --uid 10001 --shell /bin/bash reviewer
+
+# The reviewer workspace: skills, orchestrator, scripts, testers, sample apps and the API.
+COPY --chown=reviewer:reviewer reviewer/ /app/reviewer/
+# The built Web UI and the container scripts.
+COPY --from=webui-build --chown=reviewer:reviewer /src/webui/dist/comp-review-ui/browser/ /app/webui/
+COPY --chown=reviewer:reviewer docker/entrypoint.sh docker/spa_server.py /app/docker/
+# Forces the API test stage to run (BuildKit skips stages that nothing depends on).
+COPY --from=api-test /tmp/api-tests.done /app/docker/api-tests.done
+
+# The Web UI is served from the built files; the source and dependencies are not needed at run time.
+RUN rm -rf /app/reviewer/webui/node_modules \
+    && mkdir -p /app/reviewer/transitions /app/reviewer/docs/reports /app/reviewer/test/logic/results \
+    && sed -i 's/\r$//' /app/docker/entrypoint.sh \
+    && chmod +x /app/docker/entrypoint.sh \
+    && chown -R reviewer:reviewer /app
+
+USER reviewer
+WORKDIR /app/reviewer
+
+EXPOSE 12001 12101
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:12001/api/health', timeout=8).status == 200 else 1)"
+
+ENTRYPOINT ["/usr/bin/tini", "-g", "--", "/app/docker/entrypoint.sh"]

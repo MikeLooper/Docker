@@ -1,0 +1,43 @@
+services:
+  local-compliance-reviewer:
+    container_name: local-compliance-reviewer
+    image: local-compliance-reviewer
+    build:
+      # Prepared by Docker-compliance-reviewer-builder.bat (reviewer/ = source copy, docker/ = this folder's files).
+      # The defaults (relative to this file) let standalone commands such as "down" run without the builder.
+      context: ${CR_BUILD_CONTEXT:-../../Working/compliance-reviewer/build}
+      dockerfile: docker/dockerfile
+      args:
+        DEPLOY_DATE: ${CURRENT_DATE:-unknown}
+        RUN_TESTS: ${CR_RUN_TESTS:-true}
+    # AI tool credentials (ANTHROPIC_API_KEY / CLAUDE_CODE_OAUTH_TOKEN / COPILOT_GITHUB_TOKEN) are read at runtime,
+    # not baked into the image.
+    env_file:
+      - ../secrets/compliance-reviewer.env
+    # Container-specific settings; these take precedence over values in the env_file.
+    environment:
+      # Testing environment: development keeps the tester endpoints and the Testers page available.
+      COMP_REVIEW_API_ENVIRONMENT: development
+      COMP_REVIEW_API_HOST: 0.0.0.0
+      COMP_REVIEW_API_PORT: "12001"
+      COMP_REVIEW_API_CORS_ORIGINS: http://localhost:${CR_UI_PORT:-12101},http://127.0.0.1:${CR_UI_PORT:-12101}
+      WEBUI_ENVIRONMENT: development
+      # The browser calls the API through the host port.
+      WEBUI_API_BASE_URL: http://localhost:${CR_API_PORT:-12001}
+    ports:
+      - "${CR_API_PORT:-12001}:12001"
+      - "${CR_UI_PORT:-12101}:12101"
+    volumes:
+      # Kept on the host so they survive rebuilds.
+      - ${CR_DATA_DIR:-../../Working/compliance-reviewer}/reports:/app/reviewer/docs/reports
+      - ${CR_DATA_DIR:-../../Working/compliance-reviewer}/transitions:/app/reviewer/transitions
+      - ${CR_DATA_DIR:-../../Working/compliance-reviewer}/test-results:/app/reviewer/test/logic/results
+    mem_limit: 6g
+    restart: unless-stopped
+    networks:
+      - pilot-net
+
+networks:
+  pilot-net:
+    external: true
+    name: pilot-net

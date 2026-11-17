@@ -15,6 +15,7 @@ For each of the following files, there is a related template file that is named 
 - `secrets/appsettings-utility-dotnet-postgresql.env`
 - `secrets/appsettings-utility-dotnet-sqlserver.env`
 - `secrets/clouds-db.env` (cloud emulator databases and APIs; see `Clouds/README.md`)
+- `secrets/compliance-reviewer.env` (AI tool credentials for the Compliance Reviewer; see `compliance-reviewer/README.md`)
 - `secrets/ms-dab.env`
 - `secrets/skillspector.env` (optional; enables SkillSpector LLM analysis; see `Tooling/README.md`)
 - `secrets/postgresql.env`
