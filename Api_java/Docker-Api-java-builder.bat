@@ -6,8 +6,10 @@ REM Docker - Setup - API (Java) - Compose-first
 pushd "%~dp0"
 
 set "IMAGE_FILE=eclipse-temurin:25-jre-alpine"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
-set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
+REM GitHub root = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..") do set "GITHUB_ROOT=%%~fI"
+set "WORKING_DIR_WIN=%GITHUB_ROOT%\Working"
+set "WORKING_DIR=%WORKING_DIR_WIN:\=/%"
 set "COMPOSE_FILE=%~dp0docker-compose.api-java.yml"
 set "COMPOSE_PROJECT=pilot-api-java"
 set "PILOT_JAVA_DIR=%~dp0..\..\PilotApiJava"

@@ -40,7 +40,8 @@ setlocal EnableExtensions
 set "FILTER_TAG=%~1"
 set "FILTER_NAME=%~2"
 
-set "GITHUB_ROOT=C:\Working\Storage\Dev\GitHub"
+rem GitHub root = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..") do set "GITHUB_ROOT=%%~fI"
 set "SCRIPT=%~f0"
 
 for /f "usebackq delims=" %%T in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"`) do set "STAMP=%%T"

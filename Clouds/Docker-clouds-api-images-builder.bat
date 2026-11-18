@@ -8,7 +8,9 @@ REM each cloud injects them as container env vars (see terraform\modules\api-env
 
 pushd "%~dp0"
 
-set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
+REM GitHub root = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..") do set "GITHUB_ROOT=%%~fI"
+set "WORKING_DIR_WIN=%GITHUB_ROOT%\Working"
 set "CLOUD_WORK=%WORKING_DIR_WIN%\clouds"
 set "REPO_DIR=%~dp0.."
 set "PILOT_DOTNET_DIR=%~dp0..\..\PilotApiDotNet"

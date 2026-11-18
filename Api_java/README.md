@@ -25,7 +25,7 @@ cd ..
 - Local clone of [PilotApiJava](https://github.com/MikeLooper/PilotApiJava) at a sibling path:
 
 ```
-C:\Working\Storage\Dev\GitHub\PilotApiJava
+..\..\PilotApiJava
 ```
 
 ## Primary Script
@@ -58,8 +58,8 @@ Then replace values in `secrets\api-java.env`:
 
 1. Stops prior stack with `docker compose down`.
 2. Creates isolated build contexts under:
-	- `C:\Working\Storage\Dev\GitHub\Working\api-java-mssql`
-	- `C:\Working\Storage\Dev\GitHub\Working\api-java-postgres`
+	- `..\..\Working\api-java-mssql`
+	- `..\..\Working\api-java-postgres`
 3. Runs `mvn clean package -DskipTests` from `PilotApiJava`.
 4. Copies jar to each context as `pilot-api.jar`.
 5. Runs `docker compose -p pilot-api-java up -d --build --force-recreate`.
@@ -78,7 +78,7 @@ port within that range and prints the replacement.
 Run from this repository folder:
 
 ```bat
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
+set "WORKING_DIR=%CD%\..\..\Working"
 set "CURRENT_DATE=2026-08-03 00:00:00Z"
 set "MSSQL_DB_PASSWORD=replace-me"
 set "POSTGRES_DB_PASSWORD=replace-me"

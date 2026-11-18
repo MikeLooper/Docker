@@ -29,7 +29,7 @@ cd ..
 - Local clone of [PilotApiPython](https://github.com/MikeLooper/PilotApiPython) at a sibling path:
 
 ```
-C:\Working\Storage\Dev\GitHub\PilotApiPython
+..\..\PilotApiPython
 ```
 
 ## Files
@@ -63,8 +63,8 @@ Docker-Api-python-builder.bat
    `pilot-api-python-mssql` and `pilot-api-python-postgres`.
 5. Builds (publishes) the Python application as a wheel with `python -m pip wheel`.
 6. Creates isolated build contexts under:
-   - `C:\Working\Storage\Dev\GitHub\Working\api-python-mssql`
-   - `C:\Working\Storage\Dev\GitHub\Working\api-python-postgres`
+   - `..\..\Working\api-python-mssql`
+   - `..\..\Working\api-python-postgres`
 7. Copies the wheel and the database-specific settings file (as `.env`) into each context.
 8. Runs `docker compose -p pilot-api-python up -d --build --force-recreate`.
 9. Opens both healthcheck URLs in the system browser.
@@ -93,7 +93,7 @@ the host.
 Run from this repository folder:
 
 ```bat
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
+set "WORKING_DIR=%CD%\..\..\Working"
 set "CURRENT_DATE=2026-08-16 00:00:00Z"
 set "PYTHON_MSSQL_PORT=11401"
 set "PYTHON_POSTGRES_PORT=11501"

@@ -25,7 +25,7 @@ cd ..
 - Local clone of [PilotApiDotNet](https://github.com/MikeLooper/PilotApiDotNet) at a sibling path:
 
 ```
-C:\Working\Storage\Dev\GitHub\PilotApiDotNet
+..\..\PilotApiDotNet
 ```
 
 ## Primary Script
@@ -46,8 +46,8 @@ This script uses:
 1. Stops prior stack with `docker compose down`.
 2. Publishes .NET API for Linux.
 3. Creates isolated build contexts under:
-   - `C:\Working\Storage\Dev\GitHub\Working\api-dotnet-mssql`
-   - `C:\Working\Storage\Dev\GitHub\Working\api-dotnet-postgres`
+   - `..\..\Working\api-dotnet-mssql`
+   - `..\..\Working\api-dotnet-postgres`
 4. Copies database-specific production settings `appsettings-api-dotnet-*.env` as `appsettings.Production.json` into each context.
 5. Runs `docker compose -p pilot-api-dotnet up -d --build --force-recreate`.
 6. Opens healthcheck URLs.
@@ -65,7 +65,7 @@ port within that range and prints the replacement.
 Run from this repository folder:
 
 ```bat
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
+set "WORKING_DIR=%CD%\..\..\Working"
 set "CURRENT_DATE=2026-08-03 00:00:00Z"
 set "DOTNET_MSSQL_PORT=11001"
 set "DOTNET_POSTGRES_PORT=11101"

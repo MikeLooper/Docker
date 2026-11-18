@@ -6,11 +6,13 @@ REM Docker - Setup - UI (Angular) - Compose-first
 pushd "%~dp0"
 
 set "IMAGE_FILE=nginxinc/nginx-unprivileged:stable-alpine"
-set "WORKING_DIR=C:/Working/Storage/Dev/GitHub/Working"
-set "WORKING_DIR_WIN=C:\Working\Storage\Dev\GitHub\Working"
+REM GitHub root = the folder that holds this repository and its sibling repositories.
+for %%I in ("%~dp0..\..") do set "GITHUB_ROOT=%%~fI"
+set "WORKING_DIR_WIN=%GITHUB_ROOT%\Working"
+set "WORKING_DIR=%WORKING_DIR_WIN:\=/%"
 set "COMPOSE_FILE=%~dp0docker-compose.ui-angular.yml"
 set "COMPOSE_PROJECT=pilot-ui"
-set "PILOT_ANGULAR_DIR=C:\Working\Storage\Dev\GitHub\PilotUiAngular"
+set "PILOT_ANGULAR_DIR=%GITHUB_ROOT%\PilotUiAngular"
 set "ENVIRONMENT_FILE=%PILOT_ANGULAR_DIR%\src\environments\environment.ts"
 set "ENVIRONMENT_BACKUP=%PILOT_ANGULAR_DIR%\src\environments\environment.ts.docker-backup"
 set "SECRETS_FILE=%~dp0..\secrets\ui-angular.env"

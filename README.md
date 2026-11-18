@@ -4,6 +4,42 @@ Setup and usages for Docker, and how it can be used with local development and t
 
 This repository now uses a Docker Compose-first process. Direct Docker CLI is still used only for operations that Compose does not replace well (for example, `dotnet publish`, `mvn package`, and `docker exec` SQL initialization commands).
 
+## Table of Contents
+
+- [Install](#install)
+- [Preparation](#preparation)
+  - [Network](#network)
+- [Compose Files](#compose-files)
+- [Builder Scripts](#builder-scripts)
+- [Related GitHub Repositories](#related-github-repositories)
+- [Port Binding](#port-binding)
+  - [Port usage discovery](#port-usage-discovery)
+  - [Reserving](#reserving)
+  - [Checklist](#checklist)
+- [Secrets](#secrets)
+- [Active Subjects](#active-subjects)
+  - [Cloud Emulators (AWS / Azure / GCP)](#cloud-emulators-aws--azure--gcp)
+  - [Compliance Reviewer](#compliance-reviewer)
+  - [Dozzle](#dozzle)
+  - [Homepage](#homepage)
+  - [Pilot API (DotNet)](#pilot-api-dotnet)
+  - [Pilot API (Java)](#pilot-api-java)
+  - [Pilot API (Data API builder)](#pilot-api-data-api-builder)
+  - [Pilot API (Python)](#pilot-api-python)
+  - [Python API with Claude](#python-api-with-claude)
+  - [Pilot UI (Angular)](#pilot-ui-angular)
+  - [PostgreSQL](#postgresql)
+  - [SkillSpector](#skillspector)
+  - [SQL Server](#sql-server)
+  - [Uptime Kuma](#uptime-kuma)
+  - [Utility API (DotNet)](#utility-api-dotnet)
+- [Bruno Tests](#bruno-tests)
+  - [Collections](#collections)
+  - [Docker APIs](#docker-apis)
+  - [Cloud emulator APIs](#cloud-emulator-apis)
+  - [Reports](#reports)
+- [Docker Containers and Ports](#docker-containers-and-ports)
+
 ## Install
 
 Install and set up Docker on your local PC.
@@ -18,19 +54,32 @@ Docker documentation:
 Open a command line window.
 The commands found in this, and related, READMEs will be executed in this command line window.
 
-Change to the current directory.
+Change to the root of this repository (the folder that holds this README).
   
 ```
-cd C:\Working\Storage\Dev\GitHub\Docker
+cd /d <path-to-this-repository>
 ```
 
 Create a new working directory (if not already existing):
 
 ```
-if not exist C:\Working\Storage\Dev\GitHub\Working mkdir C:\Working\Storage\Dev\GitHub\Working
+if not exist ..\Working mkdir ..\Working
 ```
 
 Then, execute the networking command listed in the *Network* section below.
+
+### Network
+
+Create an internal network that will be shared by the different containers that need to communicate with one another (if not already existing).
+
+```
+docker network inspect pilot-net >nul 2>&1 || docker network create pilot-net
+```
+
+Read details about the new network:
+```
+docker network inspect pilot-net
+```
 
 ## Compose Files
 
@@ -40,6 +89,7 @@ Then, execute the networking command listed in the *Network* section below.
 - `Api_python\docker-compose.api-python.yml`
 - `Api_python_with_claude\docker-compose.api-python-with-claude.yml`
 - `Clouds\docker-compose.clouds.yml`
+- `compliance-reviewer\docker-compose.compliance-reviewer.yml`
 - `Homepage\docker-compose.homepage.yml`
 - `PostgreSQL\docker-compose.postgresql.yml`
 - `SqlServer\docker-compose.sqlserver.yml`
@@ -59,18 +109,38 @@ Then, execute the networking command listed in the *Network* section below.
 - `Clouds\Docker-clouds-azure-dbapi-builder.bat`
 - `Clouds\Docker-clouds-gcp-dbapi-builder.bat`
 - `Clouds\Docker-clouds-<cloud>-start.bat` / `Clouds\Docker-clouds-<cloud>-stop.bat` (`aws`, `azure`, `gcp`)
+- `compliance-reviewer\Docker-compliance-reviewer-builder.bat` (`-skiptests`)
 - `Dozzle\Docker-Dozzle-builder.bat`
 - `Homepage\Docker-Homepage-builder.bat`
 - `PostgreSQL\Docker-PostgreSQL-builder.bat`
 - `SqlServer\Docker-SQLServer-builder.bat`
+- `Tooling\Docker-SkillSpector-builder.bat` (helpers in `Tooling\SkillSpector\`)
 - `Ui_angular\Docker-Ui-angular-builder.bat`
 - `UptimeKuma\Docker-UptimeKuma-builder.bat`
 - `Utility_dotnet\Docker-Utility-dornet-builder.bat`
 
 Each script is the primary entry point for its stack and is kept aligned with its corresponding README.
 
-On Windows, the API builder scripts for .NET, Java, Python, Python with Claude, and Data API builder automatically probe and select open
+On Windows, the API builder scripts for .NET, Java, Python, Python with Claude, Data API builder, and the Compliance Reviewer automatically probe and select open
 host ports within predefined ranges when preferred ports are reserved or in use.
+
+## Related GitHub Repositories
+
+Several scripts consume source code from sister repositories cloned next to this one (for example, `..\PilotApiDotNet`).
+Clone each repository the scripts need into the parent folder of this repository (`..`) before running them.
+The scripts locate that parent folder from their own location, so it can be anywhere on any drive.
+`..\Working` is a scratch area, not a repository.
+
+| Local directory | GitHub repository | Scripts that use it |
+| --- | --- | --- |
+| `AIAssistants` | [MikeLooper/AIAssistants](https://github.com/MikeLooper/AIAssistants) | `compliance-reviewer\Docker-compliance-reviewer-builder.bat` (uses `AIAssistants\compliance-reviewer_any-ai`) |
+| `PilotApiDotNet` | [MikeLooper/PilotApiDotNet](https://github.com/MikeLooper/PilotApiDotNet) | `Api_dotnet\Docker-Api-dotnet-builder.bat`<br>`Clouds\Docker-clouds-api-images-builder.bat`<br>`Testing\RunBrunoTests.bat`<br>`Testing\scripts\RunBrunoCloudTests.bat` |
+| `PilotApiJava` | [MikeLooper/PilotApiJava](https://github.com/MikeLooper/PilotApiJava) | `Api_java\Docker-Api-java-builder.bat`<br>`Clouds\Docker-clouds-api-images-builder.bat`<br>`Testing\RunBrunoTests.bat`<br>`Testing\scripts\RunBrunoCloudTests.bat` |
+| `PilotApiPython` | [MikeLooper/PilotApiPython](https://github.com/MikeLooper/PilotApiPython) | `Api_python\Docker-Api-python-builder.bat`<br>`Clouds\Docker-clouds-api-images-builder.bat`<br>`Testing\RunBrunoTests.bat`<br>`Testing\scripts\RunBrunoCloudTests.bat` |
+| `PilotMcpServer` | [MikeLooper/PilotMcpServer](https://github.com/MikeLooper/PilotMcpServer) | `Testing\RunBrunoTests.bat` |
+| `PilotUiAngular` | [MikeLooper/PilotUiAngular](https://github.com/MikeLooper/PilotUiAngular) | `Ui_angular\Docker-Ui-angular-builder.bat` |
+| `PilotUtilityApi` | [MikeLooper/PilotUtilityApi](https://github.com/MikeLooper/PilotUtilityApi) | `Utility_dotnet\Docker-Utility-dotnet-builder.bat`<br>`Testing\RunBrunoTests.bat` |
+| `PythonAPIWithClaude` | [MikeLooper/PythonAPIWithClaude](https://github.com/MikeLooper/PythonAPIWithClaude) | `Api_python_with_claude\Docker-pythonapi-with-claude-builder.bat`<br>`Testing\RunBrunoTests.bat` |
 
 ## Port Binding
 
@@ -118,19 +188,6 @@ Runtime secrets are now stored in separate local files under the `secrets/` dire
 
 See [secrets/README.md](secrets/README.md) for setup details.
 
-### Network
-
-Create an internal network that will be shared by the different containers that need to communicate with one another (if not already existing).
-
-```
-docker network inspect pilot-net >nul 2>&1 || docker network create pilot-net
-```
-
-Read details about the new network:
-```
-docker network inspect pilot-net
-```
-
 ## Active Subjects
 
 ### Cloud Emulators (AWS / Azure / GCP)
@@ -154,6 +211,26 @@ Clouds\Docker-clouds-<cloud>-start.bat -norebuild
 See [Starting and stopping one cloud](./Clouds/README.md#starting-and-stopping-one-cloud) for details.
 
 To test the APIs deployed in a cloud emulator, see [Cloud emulator APIs](#cloud-emulator-apis).
+
+### Compliance Reviewer
+
+An AI-driven compliance reviewer for codebases (from `..\AIAssistants\compliance-reviewer_any-ai`). It reviews architecture, coding standards, security, testing and operations, and produces one scored Markdown report. It runs as a testing environment (`Environment = development`) in a single container, `local-compliance-reviewer`, which holds:
+
+- the reviewer skills and scripts
+- the nine testers and their sample apps
+- comp-review-api (http://localhost:12001/api/about)
+- comp-review-ui (http://localhost:12101/)
+- Claude Code and GitHub Copilot CLI
+
+It requires an AI tool credential in `secrets/compliance-reviewer.env`. Reports, transition files and tester results are kept in `..\Working\compliance-reviewer`.
+
+```
+compliance-reviewer\Docker-compliance-reviewer-builder.bat
+```
+
+The builder runs the API and Web UI unit tests during the image build (`-skiptests` skips them). When the container is up, it opens the API's About endpoint and the Web UI.
+
+Follow the directions in the [Compliance Reviewer README](./compliance-reviewer/README.md).
 
 ### Dozzle
 
@@ -209,6 +286,12 @@ A PostgreSQL database installation.
 
 Follow the directions in the [PostgreSQL README](./PostgreSQL/README.md).
 
+### SkillSpector
+
+NVIDIA's security scanner for AI agent skills (for example, a Claude Code skill folder with a `SKILL.md`). It runs as a command-line tool in the `local-skillspector` container.
+
+Follow the directions in the [Tooling README](./Tooling/README.md#skillspector).
+
 ### SQL Server
 
 A Microsoft SQL Server database installation.
@@ -258,7 +341,7 @@ Most collections live in the repository of the API they test. Each Bruno environ
 | PythonAPIWithClaude | `PythonAPIWithClaude\tests\Bruno\PythonAPIWithClaude` | `Docker`, `Local` |
 | PilotMcpServer  | `PilotMcpServer\tests\Bruno`                 | One per Pilot API deployment (`dotnet-mssql`, `java-postgres`, ...) |
 
-Paths outside `Docker\` are relative to `C:\Working\Storage\Dev\GitHub`. Each cloud has a `SQL Server` and a `PostgreSQL` environment (for example `AWS - SQL Server`), which test `cloud-api-<lang>-mssql` and `cloud-api-<lang>-postgres` in that emulator.
+Paths outside `Docker\` are relative to the parent folder of this repository (`..`). Each cloud has a `SQL Server` and a `PostgreSQL` environment (for example `AWS - SQL Server`), which test `cloud-api-<lang>-mssql` and `cloud-api-<lang>-postgres` in that emulator.
 
 ### Docker APIs
 
@@ -269,7 +352,7 @@ Testing\RunBrunoTests.bat PostgreSQL PilotApiDotNet
 Testing\RunBrunoTests.bat McpServer
 ```
 
-Runs every collection against the Docker containers, in this order: `Docker - PostgreSQL`, `Docker - SQL Server`, `Docker`, then PilotMcpServer once per Pilot API deployment. The first argument selects one environment (`PostgreSQL`, `SqlServer`, `Docker`, `McpServer` or one MCP deployment) and the second one collection. The containers must already be running. `RunBrunoTests.lnk` in the repository root starts the full run.
+Runs every collection against the Docker containers, in this order: `Docker - PostgreSQL`, `Docker - SQL Server`, `Docker`, then PilotMcpServer once per Pilot API deployment. The first argument selects one environment (`PostgreSQL`, `SqlServer`, `Docker`, `McpServer` or one MCP deployment) and the second one collection. The containers must already be running.
 
 ### Cloud emulator APIs
 
@@ -302,32 +385,6 @@ Each run writes to its own folder under `Testing\BrunoReports` (git-ignored): `<
 
 The exit code is `0` when every collection passed, and `1` otherwise.
 
-## Future Subjects
-
-### Jaeger
-
-Natively supports OTLP to receive trace data.
-
-Follow the directions in the [Jaeger README](./Future/README-Jaeger.md).
-
-### Prometheus
-
-Send your metric data to Prometheus.
-
-Follow the directions in the [Prometheus README](./Future/README-Prometheus.md).
-
-### Zipkin
-
-A distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
-
-Follow the directions in the [Zipkin README](./Future/README-Zipkin.md).
-
-### Redis
-
-Redis provides solutions for caching
-
-Follow the directions in the [Redis README](./Future/README-Redis.md).
-
 ## Docker Containers and Ports
 
 | Status: | Type:                   | Name:                       | Inner Port: | Outer Port: | URL |
@@ -340,6 +397,8 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |  √      | ApiMsDab (SQL Server)   | pilot-api-msdab-mssql       | 5000        | 11151       | http://localhost:11151/swagger, http://localhost:11151/graphql |
 |  √      | ApiMsDab (PostgreSQL)   | pilot-api-msdab-postgres    | 5000        | 11161       | http://localhost:11161/swagger, http://localhost:11161/graphql |
 |  √      | MCP Inspector (DAB)     | pilot-msdab-mcp-inspector   | 6274        | 11171       | http://localhost:11171/ |
+|  √      | Compliance Reviewer API | local-compliance-reviewer   | 12001       | 12001       | http://localhost:12001/api/about, http://localhost:12001/swagger |
+|  √      | Compliance Reviewer UI  | local-compliance-reviewer   | 12101       | 12101       | http://localhost:12101/ |
 |  √      | ApiPython (SQL Server)  | pilot-api-python-mssql      | 8000        | 11401       | http://localhost:11401/docs, http://localhost:11401/redoc |
 |  √      | ApiPython (PostgreSQL)  | pilot-api-python-postgres   | 8000        | 11501       | http://localhost:11501/docs, http://localhost:11501/redoc |
 |  √      | ApiPythonWithClaude     | python-api-with-claude      | 11111       | 11111       | http://localhost:11111/docs, http://localhost:11111/health |
@@ -354,11 +413,12 @@ Follow the directions in the [Redis README](./Future/README-Redis.md).
 |  √      | Dozzle                  | local-dozzle                | 8080        | 11121       | http://localhost:11121  |
 |  √      | Grafana                 | local-grafana               | 3000        | 3000        | http://localhost:3000   |
 |  √      | Homepage                | local-homepage              | 3000        | 11131       | http://localhost:11131  |
+| √       | Keycloak                | local-keycloak              | 8080         | 11141         |                         |
 |  √      | PostgreSQL              | local-postgres              | 5432        | 5432        |                         |
+|  √      | SkillSpector (CLI)      | local-skillspector          |             |             | (no ports; see [Tooling README](./Tooling/README.md#skillspector)) |
 |  √      | SQL Server              | local-mssql                 | 1433        | 1433        |                         |
 |  √      | Uptime Kuma             | local-uptimekuma            | 3001        | 3001        | http://localhost:3001   |
 | TBD     | Komodo                  | local-komodo                | 9120        | 9120        |                         |
 | TBD     | Bitwarden               | local-bitwarden             | ???         | ???         |                         |
 | TBD     | Duplicati               | local-duplicati             | 8200        | 8200        |                         |
-| TBD     | Keycloak                | local-keycloak              | ???         | ???         |                         |
 | TBD     | GO Feature Flag         | local-gofeatureflag         | ???         | ???         |                         |

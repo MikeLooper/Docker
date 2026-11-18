@@ -12,7 +12,7 @@ single container using Docker Compose.
 - Local clone of PythonAPIWithClaude at:
 
 ```
-C:\Working\Storage\Dev\GitHub\PythonAPIWithClaude
+..\..\PythonAPIWithClaude
 ```
 
 ## Files
@@ -34,7 +34,7 @@ into the image.
 2. Pulls the `python:3.14-slim` base image.
 3. Stops the prior stack and force-removes the `python-api-with-claude` container.
 4. Runs `pytest`, then builds the application wheel with `python -m pip wheel`.
-5. Copies the wheel into `C:\Working\Storage\Dev\GitHub\Working\api-python-with-claude`.
+5. Copies the wheel into `..\..\Working\api-python-with-claude`.
 6. Runs `docker compose -p python-api-with-claude up -d --build --force-recreate`.
 7. Opens the health check URL in the system browser.
 
@@ -60,7 +60,7 @@ http://localhost:11111/api/v1/questions   (POST)
 ## Bruno Tests
 
 The Bruno collection is in the application repository at
-`C:\Working\Storage\Dev\GitHub\PythonAPIWithClaude\tests\Bruno\PythonAPIWithClaude`. Its `Docker`
+`..\..\PythonAPIWithClaude\tests\Bruno\PythonAPIWithClaude`. Its `Docker`
 environment targets `http://localhost:11111/`. No IDP token is needed, but the `Ask` and
 `Ask_WithOverrides` requests call the Claude API and use tokens from your key.
 
